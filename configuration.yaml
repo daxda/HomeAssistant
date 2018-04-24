@@ -1,0 +1,148 @@
+homeassistant:
+  name: Dari's Home Assistant
+  latitude: !secret latitude_home
+  longitude: !secret longitude_home
+  elevation: 29    # Impacts weather/sunrise data (altitude above sea level in meters)
+  unit_system: metric
+  time_zone: Europe/Rome
+  customize: !include customize.yaml
+
+
+netatmo:
+  api_key: !secret netatmo_api_key
+  secret_key: !secret netatmo_secret_key
+  username: !secret netatmo_username
+  password:  !secret netatmo_password
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+zone: !include zones.yaml
+cover: !include cover.yaml
+sensor: !include sensor.yaml
+scene: !include scene.yaml
+switch:
+  platform: dlink
+  host: 192.168.1.131
+  username: !secret dlink_user
+  password: !secret dlink_password
+#customizer:
+#  custom_ui: hosted
+
+zwave:
+    usb_path: /dev/ttyACM0
+
+media_player:
+  - platform: sonos
+    hosts:
+    - 192.168.1.78
+    - 192.168.1.66
+  - platform: lg_netcast
+    host: 192.168.1.89
+    access_token: 577887
+  - platform: firetv
+
+# Enables the frontend
+frontend:
+#  extra_html_url:
+#    - /local/custom_ui/state-card-hline.html
+#  extra_html_url_es5:
+#    - /local/custom_ui/state-card-hline_es5.html
+
+# Enables configuration UI
+config:
+
+http:
+  api_password: !secret http_password
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  base_url: http://hassio.local:8123
+#  base_url: https://hassio.local:8123
+#  ssl_certificate: /ssl/fullchain.pem
+#  ssl_key: /ssl/privkey.pem
+
+# Checks for available updates
+updater:
+
+  # Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+#  use_include_order: True
+#  include:
+#    entities:#
+#      - sensor.neo_coolcam_power_plug_12a_power
+# View all events in a logbook
+recorder:
+  purge_keep_days: 5
+  exclude:
+    domains:
+      - automation
+      - light
+      - switch
+      - sensor
+      - media_player
+      - conver
+  include:
+    entities:
+      - sensor.neo_coolcam_power_plug_12a_power
+      - sensor.neo_coolcam_power_plug_12a_power_2
+      - sensor.neo_coolcam_power_plug_12a_power_8
+
+#logbook:
+#  include:
+#    domains:
+#      - switch
+
+# Enables a map showing the location of tracked devices  Tracking app iOS
+map:
+ios:
+dyson:
+  username: !secret dyson_username
+  password: !secret dyson_password
+  language: IT
+  devices:
+    - device_id: !secret dyson_device_id # eg: Pure Cool Link device
+      device_ip: 192.168.1.64
+
+weather:
+  - platform: yweather
+    name: Meteo
+    woeid: !secret yweather_woeid
+#  - platform: darksky
+#    api_key: !secret darksky_apikey
+
+# Track the sun
+sun:
+
+# Text to speech
+tts:
+  platform: google
+  language: 'it'
+
+# Cloud
+cloud:
+
+mqtt:
+  broker: core-mosquitto
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+
+notify:
+  - name: telefoni
+    platform: group
+    services:
+      - service: davides_iphone8
+      - service: iphone_di_muriel
+
+device_tracker:
+  # - platform: thomson
+  #  host: 192.168.1.254
+  #  username: !secret thomson_user
+  #  password: !secret thomson_pass
+  #  interval_seconds: 60
+  #  consider_home: 180
+  #  track_new_devices: yes

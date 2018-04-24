@@ -1,0 +1,60 @@
+
+
+  - platform: speedtest
+    minute: 50
+    monitored_conditions:
+      - ping
+      - download
+      - upload
+  - platform: systemmonitor
+    resources:
+    - type: disk_use_percent
+      arg: /
+    - type: memory_free
+    - type: memory_use_percent
+    - type: processor_use
+    - type: since_last_boot
+    - type: network_in
+      arg: eth0
+    - type: network_out
+      arg: eth0
+  - platform: moon
+
+  # Meteo Yahoo
+  #- platform: yweather
+  #  forecast: 1
+  #  name: yw_day1
+  #  monitored_conditions:
+  #    - weather
+  #    - temp_min
+  #    - temp_max
+  #    - wind_speed
+
+  - platform: darksky
+    api_key: !secret darksky_apikey
+    monitored_conditions:
+      - summary
+      - icon
+      - apparent_temperature
+      - wind_speed
+      - cloud_cover
+
+  - platform: template
+    sensors:
+      consumo_finestre:
+        friendly_name: "Cosumi Fibaro RollerShutter"
+        icon_template: mdi:chart-bar
+        unit_of_measurement: 'W'
+        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int }} "
+
+  - platform: template
+    sensors:
+      dlink_consumo:
+        friendly_name: 'D-Link Consumi'
+        value_template: '{{ states.switch.dlink_smart_plug_w215.attributes.power_consumption }}'
+
+  - platform: template
+    sensors:
+      dlink_automazione:
+        friendly_name: 'D-Link Automazione'
+        value_template: '{{ states.sensor.dlink_consumo.state | replace(" W", "") | float }}'

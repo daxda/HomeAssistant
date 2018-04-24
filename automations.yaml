@@ -1,0 +1,137 @@
+########## ILLUMINAZIONE ###################
+
+########## Luce Bagno Grande
+  - alias: Bagno Sera
+    trigger:
+      platform: state
+      entity_id: light.level
+      from: 'off'
+      to: 'on'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+      - condition: time
+        after: '18:00:00'
+        before: '23:59:59'
+    action:
+      service: light.turn_on
+      data:
+        entity_id: light.level
+        brightness: 30
+
+  - alias: Bagno Notte
+    trigger:
+      platform: state
+      entity_id: light.level
+      from: 'off'
+      to: 'on'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+      - condition: time
+        after: '00:00:01'
+        before: '07:00:00'
+    action:
+      service: light.turn_on
+      data:
+        entity_id: light.level
+        brightness: 3
+
+
+########## Luce Philips
+  - alias: Guardo la TV
+    trigger:
+      platform: state
+      entity_id: media_player.lg_tv_remote
+      to: 'playing'
+    condition:
+      condition: state
+      entity_id: sun.sun
+      state: "below_horizon"
+    action:
+      service: switch.turn_on
+      entity_id: switch.switch_15
+
+
+#  - alias: Pulsante Philips
+#    trigger:
+#      platform: state
+#      entity_id: zwave.neo_coolcam_power_plug_12a_5
+#      to: ''
+#    action:
+#      service: switch.toggle
+#      entity_id: switch.switch_15
+############## BACKUP #################
+
+  - alias: Backup Automatico
+    trigger:
+      platform: time
+      at: '3:00:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+    action:
+      - service: hassio.snapshot_full
+        data_template:
+          name: Automated Backup {{ now().strftime('%Y-%m-%d') }}
+
+
+########### NOTIFICHE ##########
+  - alias: Attiva Notifica lavatrice
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.neo_coolcam_power_plug_12a_power_8
+      above: '50'
+    action:
+      - service: automation.turn_on
+        entity_id: automation.notifica_fine_lavaggio
+
+  - alias: Notifica fine lavaggio
+    initial_state: False
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.neo_coolcam_power_plug_12a_power_8
+      below: '3'
+      for:
+        minutes: 8
+    action:
+      - service: notify.ios_davides_iphone8
+        data:
+          message: "La lavatrice ha completato il lavaggio"
+      - service: notify.ios_iphone_di_muriel
+        data:
+          message: "Vedi che il marito NERD può essere utile ?!! La LAVATRICE è Pronta"
+      - service: automation.turn_off
+        entity_id: automation.notifica_fine_lavaggio
+
+  - alias: Notifica aggiornamento
+    trigger:
+    - platform: state
+      entity_id: updater.updater
+    action:
+      service: notify.ios_davides_iphone8
+      data_template:
+        message: "È disponibile Home Assistant {{ states.updater.updater.state }}."
+
+
+  - alias: Spazio Libero
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.disk_use_percent_
+      above: 85
+      below: 90
+    action:
+      - service: notify.ios_davides_iphone8
+        data:
+          message: "Spazio libero sulla SD in esaurimento!"
+      - service: automation.turn_off
+        data:
+          entity_id: automation.backup_automatico
+      - service: notify.ios_davides_iphone8
+        data:
+          message: "Backup Automatico disattivato"
+
+########### METEO ##########

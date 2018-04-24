@@ -1,0 +1,6 @@
+  apricancelloauto:
+    alias: "Apri-Chiudi"
+    sequence:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch

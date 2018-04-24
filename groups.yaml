@@ -1,0 +1,276 @@
+
+ default_view:
+    view: yes
+    icon: mdi:home
+    entities:
+    - device_tracker.davides_iphone8
+    - device_tracker.iphone_di_muriel
+    - group.giardino
+    - group.living
+    - group.luci
+    - group.finestre
+    - group.consumi
+    - media_player.salotto
+
+ meteo:
+    name: meteo
+    view: yes
+    icon: mdi:umbrella-outline
+    entities:
+      - group.meteo_card
+
+ multimedia:
+    name: multimedia
+    view: yes
+    icon: mdi:movie
+    entities:
+      - media_player.salotto
+      - media_player.camere
+      - media_player.lg_tv_remote
+      - media_player.aftt
+
+
+ automation:
+    name: automazioni
+    view: yes
+    icon: mdi:auto-fix
+    entities:
+      - group.automazioni
+
+ settings:
+    name: Utility
+    view: yes
+    icon: mdi:settings
+    entities:
+      - group.utility
+      - group.raspberry
+      # - group.inutility
+      - group.zwave
+
+########################################
+
+ consumi:
+    name: Energy
+    view: no
+    entities:
+    #Forno
+    - switch.switch_6
+    - sensor.neo_coolcam_power_plug_12a_power
+    #Lavastoviglie
+    - switch.switch_7
+    - sensor.neo_coolcam_power_plug_12a_power_2
+    #Lavatrice
+    - switch.switch_16
+    - sensor.neo_coolcam_power_plug_12a_power_8
+    #Dlink
+    #- switch.dlink_smart_plug_w215
+    #- sensor.dlink_consumo
+    #iMac
+    - switch.switch_10
+    - sensor.neo_coolcam_power_plug_12a_power_3
+    #Finestre
+    - sensor.consumo_finestre
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8
+
+ luci:
+    name: Luci
+    view: no
+    entities:
+    - switch.switch_9
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+    - switch.switch_8
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
+    - switch.switch_15 # luce colorata philips
+    - switch.switch_14
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+    #piano superiore
+    - light.level
+
+
+ finestre:
+    name: Finestre
+    view: no
+    entities:
+    - cover.level
+    - cover.level_4
+    - cover.level_2
+    - cover.level_3
+
+ living:
+    name: Confort Living
+    view: no
+    entities:
+    - climate.termostatod
+    - fan.sala
+    - sensor.netatmo_indoor_temperature
+    - sensor.netatmo_indoor_humidity
+    - sensor.sala_humidity
+    - sensor.netatmo_indoor_pressure
+    - sensor.sala_air_quality
+    - sensor.netatmo_indoor_co2
+    - sensor.sala_dust
+    - sensor.netatmo_indoor_noise
+
+
+ giardino:
+    name: Giardino
+    view: no
+    entities:
+    #- sensor.dark_sky_summary
+    - sun.sun
+    - sensor.moon
+    - sensor.dark_sky_cloud_coverage
+    - sensor.netatmo_outdoor_temperature
+    - sensor.netatmo_outdoor_humidity
+    - sensor.dark_sky_apparent_temperature
+    - sensor.dark_sky_wind_speed
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+    - switch.switch
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+
+ automazioni:
+    name: Automazioni
+    view: no
+    entities:
+    - automation.guardo_la_tv
+    - automation.bagno_sera
+    - automation.bagno_notte
+    - automation.backup_automatico
+    - automation.spazio_libero
+    - automation.notifica_aggiornamento
+    - automation.notifica_fine_lavaggio
+
+
+
+ meteo_card:
+    name: Meteo
+    view: no
+    entities:
+    - weather.meteo
+
+
+ utility:
+    name: Utility
+    view: no
+    entities:
+    - sensor.davides_iphone_battery_level
+    - sensor.iphone_di_muriel_battery_level
+    - sensor.ipad_di_muriel_battery_level
+    - sensor.speedtest_download
+    - sensor.speedtest_upload
+    - sensor.speedtest_ping
+    - sensor.netatmo_outdoor_battery
+    - sensor.netatmo_outdoor_radio
+    - sensor.netatmo_indoor_wifi
+    - sensor.sala_filter_life
+
+
+ raspberry:
+    name: Raspberry
+    view: no
+    entities:
+    - sensor.processor_use
+    - sensor.disk_use_percent_
+    - sensor.memory_free
+    - sensor.network_in_eth0
+    - sensor.network_out_eth0
+    - sensor.memory_use_percent
+    - sensor.since_last_boot
+
+
+ inutility:
+    name: Inutility
+    view: no
+    entities:
+    - sensor.fibaro_system_fgd212_dimmer_2_power_2 # WATT Luce Bagno
+    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown
+    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_2
+    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_3
+    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_4
+    #- sensor.alarm_level
+    #- sensor.alarm_level_2
+    #- sensor.alarm_level_3
+    #- sensor.alarm_type
+    #- sensor.alarm_type_2
+    #- sensor.alarm_type_3
+    - sensor.neo_coolcam_power_plug_12a_current #Ampere Forno
+    - sensor.neo_coolcam_power_plug_12a_current_2 #Ampere Lavastoviglie
+    - sensor.neo_coolcam_power_plug_12a_current_3 #Ampere iMac
+    - sensor.neo_coolcam_power_plug_12a_current_4 #Ampere Lavatrice
+    - sensor.neo_coolcam_power_plug_12a_voltage
+    - sensor.neo_coolcam_power_plug_12a_voltage_2
+    - sensor.neo_coolcam_power_plug_12a_voltage_3
+    - sensor.neo_coolcam_power_plug_12a_voltage_4
+    - sensor.unknown                            # kwh Forno
+    - sensor.unknown_2                             # kwh Lavastoviglie
+    - sensor.unknown_3                              # kwh iMac
+    - sensor.unknown_4                               #kwh Lavatrice
+    - sensor.unknown_8 #kwh luce bagno
+    - light.fibaro_system_fgd212_dimmer_2_level
+    #- sensor.neo_coolcam_power_plug_12a_exporting
+    #- sensor.neo_coolcam_power_plug_12a_exporting_2
+    #- sensor.neo_coolcam_power_plug_12a_exporting_3
+    #- sensor.neo_coolcam_power_plug_12a_interval
+    #- sensor.neo_coolcam_power_plug_12a_interval_2
+    #- sensor.neo_coolcam_power_plug_12a_interval_3
+    #- sensor.neo_coolcam_power_plug_12a_interval_4
+    #- sensor.neo_coolcam_power_plug_12a_interval_5
+    #- sensor.neo_coolcam_power_plug_12a_interval_6
+    #- sensor.neo_coolcam_power_plug_12a_interval_7
+    #- sensor.neo_coolcam_power_plug_12a_interval_8
+    #- sensor.neo_coolcam_power_plug_12a_power_management
+    #- sensor.neo_coolcam_power_plug_12a_power_management_2
+    #- sensor.neo_coolcam_power_plug_12a_power_management_3
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading_2
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading_3
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading_4
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading_5
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading_6
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading_7
+    #- sensor.neo_coolcam_power_plug_12a_previous_reading_8
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting_2
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting_3
+    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting_4
+    #- sensor.neo_coolcam_power_plug_12a_sourcenodeid
+    #- sensor.neo_coolcam_power_plug_12a_sourcenodeid_2
+    #- sensor.neo_coolcam_power_plug_12a_sourcenodeid_3
+
+
+ zwave:
+    name: Zwave
+    view: no
+    entities:
+    - zwave.aeotec_zw090_zstick_gen5_eu
+    - zwave.aeotec_zw117_range_extender_6
+    - zwave.fibaro_system_fgd212_dimmer_2
+    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2
+    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_2
+    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_3
+    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_4
+    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw
+    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_2
+    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_3
+    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_4
+    - zwave.neo_coolcam_power_plug_12a
+    - zwave.neo_coolcam_power_plug_12a_2
+    - zwave.neo_coolcam_power_plug_12a_3
+    - zwave.neo_coolcam_power_plug_12a_4
+    - zwave.neo_coolcam_power_plug_12a_5
+
+
+
+ mediaplayer:
+    name: Mediaplayer
+    view: no
+    entities:
+    - media_player.salotto
+    - media_player.camere

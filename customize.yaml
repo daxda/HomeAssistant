@@ -1,0 +1,209 @@
+# Luci
+ switch.switch_9:
+    friendly_name: Luce Cucina
+    icon: mdi:lightbulb
+    device_class: light
+    homebridge_visible: true
+
+ switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2:
+    friendly_name: Luce Tavolo
+    icon: mdi:lightbulb
+    device_class: light
+    homebridge_visible: true
+
+ switch.switch_8:
+    friendly_name: Luce Pranzo
+    icon: mdi:lightbulb
+    device_class: light
+    homebridge_visible: true
+
+ switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3:
+    friendly_name: Luce Sala
+    icon: mdi:lightbulb
+    device_class: light
+    homebridge_visible: true
+
+ switch.switch_15:
+    friendly_name: Luce Colorata
+    icon: mdi:bowling
+    device_class: light
+    homebridge_visible: true
+
+ switch.switch_14:
+    friendly_name: Luce Terrazza
+    icon: mdi:lightbulb
+    device_class: light
+    homebridge_visible: true
+
+ switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4:
+    friendly_name: Faro Giardino
+    icon: mdi:white-balance-iridescent
+    device_class: light
+    homebridge_visible: true
+
+
+ light.level:
+   friendly_name: Luce Bagno Grande
+   icon: mdi:lightbulb
+   homebridge_visible: true
+
+ switch.switch:
+    friendly_name: Cancello Auto
+    icon: mdi:car-side
+
+
+ cover.apricancello_auto:
+    friendly_name: Cancello Auto
+    homebridge_visible: true
+    homebridge_cover_type: rollershutter
+    device_class: cover
+    homebridge_name: "Apricancello"
+    homebridge_mfg: "DAXDA"
+    homebridge_model: "Fibaro double "
+
+
+ switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch:
+    friendly_name: Cancello 2
+    icon: mdi:logout
+    device_class: switch
+    homebridge_cover_type: lock
+    homebridge_visible: true
+
+
+ cover.level:
+    friendly_name: Finestra Sala
+    device_class: cover
+    homebridge_cover_type: rollershutter
+    homebridge_visible: true
+
+
+ cover.level_2:
+    friendly_name: Finestra Scale
+    device_class: cover
+    homebridge_cover_type: rollershutter
+    homebridge_visible: true
+
+ cover.level_3:
+    friendly_name: Finestra Camera
+    device_class: cover
+    homebridge_cover_type: rollershutter
+    homebridge_visible: true
+
+ cover.level_4:
+    friendly_name: Finestra Bagno
+    device_class: cover
+    homebridge_cover_type: rollershutter
+    homebridge_visible: true
+
+
+ switch.switch_6:
+    friendly_name: Forno
+    icon: mdi:power
+    device_class: switch
+    homebridge_visible: true
+
+ switch.switch_7:
+    friendly_name: Lavastoviglie
+    icon: mdi:power
+    device_class: switch
+    homebridge_visible: true
+
+ switch.dlink_smart_plug_w215:
+    friendly_name: Dlink switch
+    icon: mdi:power
+    device_class: switch
+    homebridge_visible: true
+
+ switch.switch_16: 
+    friendly_name: Lavatrice
+    icon: mdi:power
+
+ switch.switch_10:
+    friendly_name: iMac
+    icon: mdi:power
+    device_class: switch
+    homebridge_visible: true
+
+ climate.termostatod:
+    friendly_name: Termostato
+    homebridge_visible: true
+
+ fan.sala:
+    friendly_name: Dyson Sala
+    homebridge_visible: true
+    device_class: fan
+    homebridge_name: "Dyson Sala"
+    homebridge_mfg: "daxda"
+    homebridge_model: "Dyson Air Purifier "
+
+ device_tracker.davides_iphone8:
+    friendly_name: Davide
+
+
+ device_tracker.iphone_di_muriel:
+    friendly_name: Muriel
+
+
+ device_tracker.ipad_di_muriel:
+    friendly_name: iPad
+
+
+ # sensori Living
+
+
+ sensor.netatmo_indoor_humidity:
+   friendly_name: Umidità Zona Pranzo
+   icon: mdi:water-percent
+
+
+ sensor.sala_humidity:
+   friendly_name: Umidità zona TV
+   icon: mdi:water-percent
+
+ sensor.netatmo_indoor_temperature:
+   friendly_name: Temperatura Zona Pranzo
+
+ sensor.netatmo_indoor_pressure:
+   friendly_name: Pressione interna
+
+ sensor.sala_air_quality:
+   friendly_name: Dyson Air Quality
+   icon: mdi:blur
+
+ sensor.netatmo_indoor_co2:
+   friendly_name: Co2
+
+ sensor.sala_dust:
+   friendly_name: Polveri
+   icon: mdi:chart-bubble
+
+ # sensori giardino
+
+ sensor.dark_sky_wind_speed:
+   friendly_name: Vento
+
+ sensor.dark_sky_apparent_temperature:
+   friendly_name: Temperatura Percepita
+
+ sensor.netatmo_outdoor_temperature:
+   friendly_name: Temperatura Esterna
+
+ sensor.netatmo_outdoor_humidity:
+   friendly_name: Umidità Esterna
+
+
+  #sensori consumi
+
+ sensor.neo_coolcam_power_plug_12a_power:
+   icon: mdi:chart-bar
+ sensor.neo_coolcam_power_plug_12a_power_2:
+   icon: mdi:chart-bar
+ sensor.neo_coolcam_power_plug_12a_power_3:
+   icon: mdi:chart-bar
+ sensor.neo_coolcam_power_plug_12a_power_8:
+   icon: mdi:chart-bar
+ sensor.neo_coolcam_power_plug_12a_power_5:
+   icon: mdi:chart-bar
+ sensor.dlink_consumo:
+   icon: mdi:chart-bar
+   friendly_name: Consumo Dlink

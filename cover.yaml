@@ -1,0 +1,22 @@
+  - platform: template
+    covers:
+     apricancello_auto:
+        friendly_name: "Apricancello Auto"
+        value_template: >-
+          {% if is_state('switch.switch', 'on') %}
+            open
+          {% else %}
+            closed
+          {% endif %}
+        open_cover:
+          service: script.apricancelloauto
+        close_cover:
+          service: script.apricancelloauto
+        stop_cover:
+          service: script.apricancelloauto
+        icon_template: >-
+          {% if is_state('switch.switch', 'on') %}
+            mdi:garage-open
+          {% else %}
+            mdi:garage
+          {% endif %}

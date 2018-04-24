@@ -1,0 +1,8 @@
+*
+!*.yaml
+!*.md
+!.gitignore
+secrets.yaml
+zones.yaml
+entity_registry.yaml
+zones.yaml
