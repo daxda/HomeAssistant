@@ -9,6 +9,7 @@
     - group.living
     - group.luci
     - group.finestre
+    - group.prese
     - group.consumi
     - media_player.salotto
 
@@ -44,30 +45,31 @@
     entities:
       - group.utility
       - group.raspberry
+      - group.movimento
       # - group.inutility
       - group.zwave
 
 ########################################
 
- consumi:
-    name: Energy
+ prese:
+    name: Power
     view: no
     entities:
-    #Forno
-    - switch.switch_6
-    - sensor.neo_coolcam_power_plug_12a_power
-    #Lavastoviglie
-    - switch.switch_7
-    - sensor.neo_coolcam_power_plug_12a_power_2
-    #Lavatrice
-    - switch.switch_16
-    - sensor.neo_coolcam_power_plug_12a_power_8
-    #Dlink
-    #- switch.dlink_smart_plug_w215
-    #- sensor.dlink_consumo
-    #iMac
-    - switch.switch_10
-    - sensor.neo_coolcam_power_plug_12a_power_3
+    - switch.switch_6 #Forno
+    - switch.switch_7 #Lavastoviglie
+    - switch.switch_10   #iMac
+    #- switch.dlink_smart_plug_w215   #Dlink
+    - switch.switch_16   #Lavatrice
+
+ consumi:
+    name: Consumi
+    view: no
+    entities:
+    - sensor.neo_coolcam_power_plug_12a_power  #Forno
+    - sensor.neo_coolcam_power_plug_12a_power_2  #Lavastoviglie
+    - sensor.neo_coolcam_power_plug_12a_power_8    #Lavatrice
+    #- sensor.dlink_consumo   #Dlink
+    - sensor.neo_coolcam_power_plug_12a_power_3   #iMac
     #Finestre
     - sensor.consumo_finestre
     #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power
@@ -91,17 +93,18 @@
     - switch.switch_14
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
     #piano superiore
-    - light.level
+    - light.level # fibaro dim bagno
+    - light.camera #yeelight
 
 
  finestre:
     name: Finestre
     view: no
     entities:
-    - cover.level
-    - cover.level_4
-    - cover.level_2
-    - cover.level_3
+    - cover.level #sala
+    - cover.level_4 #bagno
+    - cover.level_2 #scale
+    - cover.level_3 #camera
 
  living:
     name: Confort Living
@@ -132,8 +135,8 @@
     - sensor.dark_sky_apparent_temperature
     - sensor.dark_sky_wind_speed
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
-    - switch.switch
-    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+    - switch.switch #apricancello auto
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch #apricancello
 
  automazioni:
     name: Automazioni
@@ -148,6 +151,13 @@
     - automation.notifica_fine_lavaggio
 
 
+ movimento:
+    name: Sensore di Movimento
+    view: no
+    entities:
+    - binary_sensor.sensor
+    - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
+    - sensor.neo_coolcam_battery_powered_pir_sensor_burglar
 
  meteo_card:
     name: Meteo
@@ -194,12 +204,6 @@
     - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_2
     - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_3
     - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_4
-    #- sensor.alarm_level
-    #- sensor.alarm_level_2
-    #- sensor.alarm_level_3
-    #- sensor.alarm_type
-    #- sensor.alarm_type_2
-    #- sensor.alarm_type_3
     - sensor.neo_coolcam_power_plug_12a_current #Ampere Forno
     - sensor.neo_coolcam_power_plug_12a_current_2 #Ampere Lavastoviglie
     - sensor.neo_coolcam_power_plug_12a_current_3 #Ampere iMac
@@ -213,7 +217,7 @@
     - sensor.unknown_3                              # kwh iMac
     - sensor.unknown_4                               #kwh Lavatrice
     - sensor.unknown_8 #kwh luce bagno
-    - light.fibaro_system_fgd212_dimmer_2_level
+    #- light.fibaro_system_fgd212_dimmer_2_level
     #- sensor.neo_coolcam_power_plug_12a_exporting
     #- sensor.neo_coolcam_power_plug_12a_exporting_2
     #- sensor.neo_coolcam_power_plug_12a_exporting_3
@@ -265,12 +269,4 @@
     - zwave.neo_coolcam_power_plug_12a_3
     - zwave.neo_coolcam_power_plug_12a_4
     - zwave.neo_coolcam_power_plug_12a_5
-
-
-
- mediaplayer:
-    name: Mediaplayer
-    view: no
-    entities:
-    - media_player.salotto
-    - media_player.camere
+    - zwave.neo_coolcam_battery_powered_pir_sensor

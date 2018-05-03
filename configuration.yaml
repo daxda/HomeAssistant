@@ -21,6 +21,12 @@ zone: !include zones.yaml
 cover: !include cover.yaml
 sensor: !include sensor.yaml
 scene: !include scene.yaml
+light:
+  - platform: yeelight
+    devices:
+      192.168.1.184:
+        name: camera
+        transition: 1000
 switch:
   platform: dlink
   host: 192.168.1.131

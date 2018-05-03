@@ -47,6 +47,11 @@
    icon: mdi:lightbulb
    homebridge_visible: true
 
+ light.camera:
+   friendly_name: Luce Camera
+   icon: mdi:lightbulb
+   homebridge_visible: true
+
  switch.switch:
     friendly_name: Cancello Auto
     icon: mdi:car-side
@@ -114,7 +119,7 @@
     device_class: switch
     homebridge_visible: true
 
- switch.switch_16: 
+ switch.switch_16:
     friendly_name: Lavatrice
     icon: mdi:power
 
