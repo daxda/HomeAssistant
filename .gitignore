@@ -3,6 +3,7 @@
 !*.md
 !.gitignore
 !screenshot
+!page*.png
 secrets.yaml
 zones.yaml
 entity_registry.yaml
