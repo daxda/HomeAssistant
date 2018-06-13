@@ -1,5 +1,78 @@
 ########## ILLUMINAZIONE ###################
 
+
+#####Luce Camerina
+  - alias: Camerina out # dopo 5 minuti di assenza imposta la luminosità al minimo
+    trigger:
+      platform: state
+      entity_id: binary_sensor.sensor
+      to: 'off'
+      for:
+        minutes: 4
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+      - condition: state
+        entity_id: light.level_2
+        state: 'on'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.level_2
+          brightness: 3
+      - service: automation.turn_on
+        entity_id: automation.camerina_return
+  - alias: Camerina return # se rientro nella stanza reimposta la luminosità al 50%
+    initial_state: False
+    trigger:
+      platform: state
+      entity_id: binary_sensor.sensor
+      to: 'on'
+    action:
+      - service: light.turn_on
+        data:
+          entity_id: light.level_2
+          brightness_pct: 50
+      - service: automation.turn_off
+        entity_id: automation.camerina_return
+  - alias: Camerina out out # se dopo 15 minuti non sono rientrato spengi la luce e disattiva la riaccensione automatica
+    trigger:
+      platform: state
+      entity_id: binary_sensor.sensor
+      to: 'off'
+      for:
+        minutes: 15
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+      - condition: state
+        entity_id: light.level_2
+        state: 'on'
+    action:
+      - service: light.turn_off
+        data:
+          entity_id: light.level_2
+      - service: automation.turn_off
+        entity_id: automation.camerina_return
+  - alias: Camerina out day #di giorno spengi dopo 6 minuti
+    trigger:
+      platform: state
+      entity_id: binary_sensor.sensor
+      to: 'off'
+      for:
+        minutes: 6
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
+    action:
+      service: light.turn_off
+      data:
+        entity_id: light.level_2
+
+
 ########## Luce Bagno Grande
   - alias: Bagno Sera
     trigger:
@@ -53,7 +126,20 @@
     action:
       service: switch.turn_on
       entity_id: switch.switch_15
-
+  - alias: Philips Energy
+    trigger:
+      platform: time
+      at:  '1:40:00'
+    condition:
+      - condition: state
+        entity_id: switch.switch_15
+        state: 'on'
+      - condition: state
+        entity_id: media_player.lg_tv_remote
+        state: 'off'
+    action:
+      service: switch.turn_off
+      entity_id: switch.switch_15
 
 #  - alias: Pulsante Philips
 #    trigger:
@@ -63,7 +149,15 @@
 #    action:
 #      service: switch.toggle
 #      entity_id: switch.switch_15
+
 ############## BACKUP #################
+
+#  - alias: Start HomeKit
+#    trigger:
+#      - platform: event
+#        event_type: zwave.network_ready
+#    action:
+#      - service: homekit.start
 
   - alias: Backup Automatico
     trigger:

@@ -21,12 +21,20 @@ zone: !include zones.yaml
 cover: !include cover.yaml
 sensor: !include sensor.yaml
 scene: !include scene.yaml
+#homekit: !include homekit.yaml
 light:
   - platform: yeelight
     devices:
       192.168.1.184:
         name: camera
+        transition: 350
+        use_music_mode: True #(defaults to False)
+        save_on_change: False #(defaults to True)
+      192.168.1.139:
+        name: studio
         transition: 1000
+        use_music_mode: True #(defaults to False)
+        save_on_change: False #(defaults to True)
 switch:
   platform: dlink
   host: 192.168.1.131
@@ -61,17 +69,18 @@ config:
 http:
   api_password: !secret http_password
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-  base_url: http://hassio.local:8123
-#  base_url: https://hassio.local:8123
-#  ssl_certificate: /ssl/fullchain.pem
-#  ssl_key: /ssl/privkey.pem
+#  base_url: http://hassio.local:8123
+  base_url: !secret dns_url
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
 
 # Checks for available updates
 updater:
 
   # Discover some devices automatically
 discovery:
-
+  ignore:
+    - yeelight
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
@@ -132,10 +141,10 @@ tts:
 # Cloud
 cloud:
 
-mqtt:
-  broker: core-mosquitto
-  username: !secret mqtt_username
-  password: !secret mqtt_password
+#mqtt:
+#  broker: core-mosquitto
+#  username: !secret mqtt_username
+#  password: !secret mqtt_password
 
 notify:
   - name: telefoni
@@ -145,10 +154,10 @@ notify:
       - service: iphone_di_muriel
 
 device_tracker:
-  # - platform: thomson
-  #  host: 192.168.1.254
-  #  username: !secret thomson_user
-  #  password: !secret thomson_pass
-  #  interval_seconds: 60
-  #  consider_home: 180
-  #  track_new_devices: yes
+
+
+panel_iframe:
+#  router:
+#    icon: mdi:router-wireless
+#    title: 'Router'
+#    url: 'http://192.168.1.254'

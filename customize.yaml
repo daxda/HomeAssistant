@@ -1,8 +1,7 @@
-# Luci
+########## Luci
  switch.switch_9:
     friendly_name: Luce Cucina
     icon: mdi:lightbulb
-    device_class: light
     homebridge_visible: true
 
  switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2:
@@ -47,15 +46,27 @@
    icon: mdi:lightbulb
    homebridge_visible: true
 
+ light.level_2:
+   friendly_name: Luce Camerina
+   icon: mdi:lightbulb
+   homebridge_visible: true
+
  light.camera:
    friendly_name: Luce Camera
    icon: mdi:lightbulb
    homebridge_visible: true
 
+ light.studio:
+   friendly_name: Luce studio
+   icon: mdi:lightbulb
+   homebridge_visible: true
+
+
+
+####### Finestre e apricancello
  switch.switch:
     friendly_name: Cancello Auto
     icon: mdi:car-side
-
 
  cover.apricancello_auto:
     friendly_name: Cancello Auto
@@ -66,12 +77,10 @@
     homebridge_mfg: "DAXDA"
     homebridge_model: "Fibaro double "
 
-
  switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch:
     friendly_name: Cancello 2
     icon: mdi:logout
     device_class: switch
-    homebridge_cover_type: lock
     homebridge_visible: true
 
 
@@ -101,6 +110,7 @@
     homebridge_visible: true
 
 
+###### Plug Elettrodomestici
  switch.switch_6:
     friendly_name: Forno
     icon: mdi:power
@@ -129,6 +139,9 @@
     device_class: switch
     homebridge_visible: true
 
+
+
+###### Altri dispositivi IOT
  climate.termostatod:
     friendly_name: Termostato
     homebridge_visible: true
@@ -153,13 +166,10 @@
     friendly_name: iPad
 
 
- # sensori Living
-
-
+ ########## sensori Living
  sensor.netatmo_indoor_humidity:
    friendly_name: Umidità Zona Pranzo
    icon: mdi:water-percent
-
 
  sensor.sala_humidity:
    friendly_name: Umidità zona TV
@@ -182,7 +192,19 @@
    friendly_name: Polveri
    icon: mdi:chart-bubble
 
- # sensori giardino
+
+########## sensori Movimento
+ binary_sensor.sensor:
+#   friendly_name: Movimento Camerina
+   icon: mdi:walk
+ sensor.neo_coolcam_battery_powered_pir_sensor_luminance:
+#   friendly_name: Luminosità Camerina
+   icon: mdi:brightness-5
+ sensor.neo_coolcam_battery_powered_pir_sensor_burglar:
+#   friendly_name: Battery Motion Sensor Camerina
+   icon: mdi:battery-50
+
+####### sensori giardino
 
  sensor.dark_sky_wind_speed:
    friendly_name: Vento
@@ -196,8 +218,7 @@
  sensor.netatmo_outdoor_humidity:
    friendly_name: Umidità Esterna
 
-
-  #sensori consumi
+###### sensori consumi
 
  sensor.neo_coolcam_power_plug_12a_power:
    icon: mdi:chart-bar
