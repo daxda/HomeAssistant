@@ -2,6 +2,7 @@
 !*.yaml
 !*.md
 !.gitignore
+!screenshot
 secrets.yaml
 zones.yaml
 entity_registry.yaml
