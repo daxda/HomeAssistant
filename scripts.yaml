@@ -4,3 +4,40 @@
       - service: switch.turn_on
         data:
           entity_id: switch.switch
+
+
+#######SCENE########
+  buonanotte:
+    alias: "Buonanotte"
+    sequence:
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level #sala
+          position: 0
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_2 #scale
+          position: 0
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_4 #bagno
+          position: 13
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_3 #camera
+          position: 55
+  buongiorno:
+    alias: "Buongiorno"
+    sequence:
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level #sala
+          position: 95
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_2 #scale
+          position: 75
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_4 #bagno
+          position: 80

@@ -22,6 +22,7 @@ cover: !include cover.yaml
 sensor: !include sensor.yaml
 scene: !include scene.yaml
 #homekit: !include homekit.yaml
+cloud: !include cloud.yaml
 light:
   - platform: yeelight
     devices:
@@ -36,10 +37,13 @@ light:
         use_music_mode: True #(defaults to False)
         save_on_change: False #(defaults to True)
 switch:
-  platform: dlink
-  host: 192.168.1.131
-  username: !secret dlink_user
-  password: !secret dlink_password
+#  - platform: dlink
+#    host: 192.168.1.131
+#    username: !secret dlink_user
+#    password: !secret dlink_password
+  - platform: wake_on_lan
+    name: WOL iMac
+    mac_address: !secret wol_imac
 #customizer:
 #  custom_ui: hosted
 
@@ -56,8 +60,10 @@ media_player:
     access_token: 577887
   - platform: firetv
 
+
 # Enables the frontend
 frontend:
+  themes: !include_dir_merge_named themes
 #  extra_html_url:
 #    - /local/custom_ui/state-card-hline.html
 #  extra_html_url_es5:
@@ -81,6 +87,7 @@ updater:
 discovery:
   ignore:
     - yeelight
+    - sonos
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
@@ -139,7 +146,7 @@ tts:
   language: 'it'
 
 # Cloud
-cloud:
+
 
 #mqtt:
 #  broker: core-mosquitto
@@ -152,6 +159,13 @@ notify:
     services:
       - service: davides_iphone8
       - service: iphone_di_muriel
+  - name: firetv
+    platform: nfandroidtv
+    host: 192.168.1.124
+    position: top-right
+    duration: 2
+
+
 
 device_tracker:
 

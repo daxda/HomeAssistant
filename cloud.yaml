@@ -1,0 +1,39 @@
+  google_actions:
+    filter:
+      include_entities:
+#Luci
+        - switch.switch_9
+        - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+        - switch.switch_8
+        - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
+        - switch.switch_15 # luce colorata philips
+        - switch.switch_14
+        - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+  #piano superiore
+        - light.level # fibaro dim bagno
+        - light.level_2 # fibaro dim camerina
+        - light.camera # yeelight camera
+        - light.studio # yeelight studio
+#Elettrodomestici
+        - switch.switch_6 #Forno
+        - switch.switch_7 #Lavastoviglie
+        - switch.switch_10   #iMac
+        #- switch.dlink_smart_plug_w215   #Dlink
+        - switch.switch_16   #Lavatrice
+#Rotolanti
+        - cover.level #sala
+        - cover.level_4 #bagno
+        - cover.level_2 #scale
+        - cover.level_3 #camera
+#Accessori
+        - climate.termostatod
+        - fan.sala
+        - media_player.salotto
+        - media_player.camere
+#Cancello
+        - switch.switch #apricancello auto
+#        - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch #apricancello
+#        - cover.apricancello_auto
+#Scene
+        - script.buongiorno
+        - script.buonanotte

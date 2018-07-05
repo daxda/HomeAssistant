@@ -195,6 +195,9 @@
       - service: notify.ios_davides_iphone8
         data:
           message: "La lavatrice ha completato il lavaggio"
+      - service: notify.firetv
+        data:
+          message: "La lavatrice ha completato il lavaggio"
       - service: notify.ios_iphone_di_muriel
         data:
           message: "Vedi che il marito NERD può essere utile ?!! La LAVATRICE è Pronta"
@@ -228,4 +231,19 @@
         data:
           message: "Backup Automatico disattivato"
 
-########### METEO ##########
+
+
+  - alias: Test Notifica
+    initial_state: False
+    trigger:
+      platform: state
+      entity_id: automation.test_notifica
+      to: 'on'
+    action:
+      - service: notify.firetv
+        data:
+          title: "TEST"
+          message: "Test Notifica"
+      - service: notify.ios_davides_iphone8
+        data:
+          message: "Test Notifica iOS"

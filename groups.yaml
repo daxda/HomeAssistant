@@ -27,6 +27,7 @@
     entities:
       - media_player.salotto
       - media_player.camere
+      - media_player.living
       - media_player.lg_tv_remote
       - media_player.aftt
 
@@ -36,6 +37,7 @@
     view: yes
     icon: mdi:auto-fix
     entities:
+      - group.scene
       - group.automazioni
       - group.automazioni_camerina
       - group.automazioni_sistema
@@ -142,9 +144,18 @@
     - switch.switch #apricancello auto
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch #apricancello
 
+ scene:
+    name: Scene
+    view: no
+    control: hidden
+    entities:
+    - script.buongiorno
+    - script.buonanotte
+
  automazioni:
     name: Automazioni
     view: no
+    control: hidden
     entities:
     - automation.guardo_la_tv
     - automation.philips_energy
@@ -153,17 +164,20 @@
     - automation.notifica_fine_lavaggio
 
  automazioni_sistema:
-    name: Automazioni
+    name: Automazioni di Sistema
     view: no
+    control: hidden
     entities:
     - automation.backup_automatico
     - automation.spazio_libero
     - automation.notifica_aggiornamento
-    - automation.start_homekit
+    - automation.test_notifica
+    # - automation.start_homekit
 
  automazioni_camerina:
-    name: Energy Saver Camerina
+    name: Energy Saver
     view: no
+    control: hidden
     entities:
     - automation.camerina_out_day
     - automation.camerina_out
@@ -188,6 +202,7 @@
     name: Utility
     view: no
     entities:
+    - switch.wol_imac
     - sensor.davides_iphone_battery_level
     - sensor.iphone_di_muriel_battery_level
     - sensor.ipad_di_muriel_battery_level
@@ -236,36 +251,7 @@
     - sensor.unknown_3                              # kwh iMac
     - sensor.unknown_4                               #kwh Lavatrice
     - sensor.unknown_8 #kwh luce bagno
-    #- light.fibaro_system_fgd212_dimmer_2_level
-    #- sensor.neo_coolcam_power_plug_12a_exporting
-    #- sensor.neo_coolcam_power_plug_12a_exporting_2
-    #- sensor.neo_coolcam_power_plug_12a_exporting_3
-    #- sensor.neo_coolcam_power_plug_12a_interval
-    #- sensor.neo_coolcam_power_plug_12a_interval_2
-    #- sensor.neo_coolcam_power_plug_12a_interval_3
-    #- sensor.neo_coolcam_power_plug_12a_interval_4
-    #- sensor.neo_coolcam_power_plug_12a_interval_5
-    #- sensor.neo_coolcam_power_plug_12a_interval_6
-    #- sensor.neo_coolcam_power_plug_12a_interval_7
-    #- sensor.neo_coolcam_power_plug_12a_interval_8
-    #- sensor.neo_coolcam_power_plug_12a_power_management
-    #- sensor.neo_coolcam_power_plug_12a_power_management_2
-    #- sensor.neo_coolcam_power_plug_12a_power_management_3
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading_2
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading_3
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading_4
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading_5
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading_6
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading_7
-    #- sensor.neo_coolcam_power_plug_12a_previous_reading_8
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting_2
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting_3
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_exporting_4
-    #- sensor.neo_coolcam_power_plug_12a_sourcenodeid
-    #- sensor.neo_coolcam_power_plug_12a_sourcenodeid_2
-    #- sensor.neo_coolcam_power_plug_12a_sourcenodeid_3
+
 
 
  zwave:
