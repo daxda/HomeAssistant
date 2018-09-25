@@ -5,6 +5,12 @@
         data:
           entity_id: switch.switch
 
+  spengitv:
+    alias: "Spengi la Televisione"
+    sequence:
+      - service: media_player.turn_off
+        data:
+          entity_id: media_player.lg_tv_remote
 
 #######SCENE########
   buonanotte:
@@ -25,7 +31,7 @@
       - service: cover.set_cover_position
         data:
           entity_id: cover.level_3 #camera
-          position: 55
+          position: 35
   buongiorno:
     alias: "Buongiorno"
     sequence:

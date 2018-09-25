@@ -21,16 +21,6 @@
       arg: eth0
   - platform: moon
 
-  # Meteo Yahoo
-  #- platform: yweather
-  #  forecast: 1
-  #  name: yw_day1
-  #  monitored_conditions:
-  #    - weather
-  #    - temp_min
-  #    - temp_max
-  #    - wind_speed
-
   - platform: darksky
     api_key: !secret darksky_apikey
     monitored_conditions:
@@ -42,20 +32,56 @@
 
   - platform: template
     sensors:
-      consumo_finestre:
-        friendly_name: "Cosumi Fibaro RollerShutter"
-        icon_template: mdi:chart-bar
-        unit_of_measurement: 'W'
-        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int }} "
 
-  - platform: template
-    sensors:
+#      consumo_finestre:
+#        friendly_name: "Cosumi Fibaro RollerShutter"
+#        icon_template: mdi:chart-bar
+#        unit_of_measurement: 'W'
+#        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int }} "
+
       dlink_consumo:
         friendly_name: 'D-Link Consumi'
         value_template: '{{ states.switch.dlink_smart_plug_w215.attributes.power_consumption }}'
 
-  - platform: template
-    sensors:
       dlink_automazione:
         friendly_name: 'D-Link Automazione'
         value_template: '{{ states.sensor.dlink_consumo.state | replace(" W", "") | float }}'
+
+      fasilunari:
+        friendly_name: "Luna"
+        icon_template: >
+          {% if is_state('sensor.moon', 'new_moon') %}
+            mdi:circle-outline
+          {% elif is_state('sensor.moon', 'waxing_crescent') %}
+            mdi:arrow-up-bold
+          {% elif is_state('sensor.moon', 'first_quarter') %}
+            mdi:arrow-up-bold
+          {% elif is_state('sensor.moon', 'waxing_gibbous') %}
+            mdi:arrow-up-bold
+          {% elif is_state('sensor.moon', 'full_moon') %}
+            mdi:brightness-1
+          {% elif is_state('sensor.moon', 'waning_gibbous') %}
+            mdi:arrow-down-bold
+          {% elif is_state('sensor.moon', 'last_quarter') %}
+            mdi:arrow-down-bold
+          {% elif is_state('sensor.moon', 'waning_crescent') %}
+            mdi:arrow-down-bold
+          {% endif %}
+        value_template: >
+          {% if is_state('sensor.moon', 'new_moon') %}
+            Luna Nuova
+          {% elif is_state('sensor.moon', 'waxing_crescent') %}
+            Luna Crescente
+          {% elif is_state('sensor.moon', 'first_quarter') %}
+            Primo Quarto
+          {% elif is_state('sensor.moon', 'waxing_gibbous') %}
+            Gibbosa Crescente
+          {% elif is_state('sensor.moon', 'full_moon') %}
+            Luna Piena
+          {% elif is_state('sensor.moon', 'waning_gibbous') %}
+            Gibbosa Calante
+          {% elif is_state('sensor.moon', 'last_quarter') %}
+            Ultimo Quarto
+          {% elif is_state('sensor.moon', 'waning_crescent') %}
+            Luna Calante
+          {% endif %}

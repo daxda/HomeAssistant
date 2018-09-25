@@ -23,19 +23,23 @@ sensor: !include sensor.yaml
 scene: !include scene.yaml
 #homekit: !include homekit.yaml
 cloud: !include cloud.yaml
+wake_on_lan:
+
+
 light:
   - platform: yeelight
     devices:
       192.168.1.184:
         name: camera
-        transition: 350
-        use_music_mode: True #(defaults to False)
+        transition: 1000
+        use_music_mode: False #(defaults to False)
         save_on_change: False #(defaults to True)
       192.168.1.139:
         name: studio
         transition: 1000
-        use_music_mode: True #(defaults to False)
+        use_music_mode: False #(defaults to False)
         save_on_change: False #(defaults to True)
+
 switch:
 #  - platform: dlink
 #    host: 192.168.1.131
@@ -93,22 +97,30 @@ conversation:
 
 # Enables support for tracking state changes over time
 history:
-#  use_include_order: True
-#  include:
-#    entities:#
-#      - sensor.neo_coolcam_power_plug_12a_power
+  use_include_order: True
+  include:
+    domains:
+      - light
+      - switch
+    entities:
+      - media_player.lg_tv_remote
+      - sensor.neo_coolcam_power_plug_12a_power
+      - sensor.neo_coolcam_power_plug_12a_power_2
+      - sensor.neo_coolcam_power_plug_12a_power_8
+  exclude:
+    entities:
+      - light.fibaro_system_fgd212_dimmer_2_level_2
+      - light.fibaro_system_fgd212_dimmer_2_level
 # View all events in a logbook
 recorder:
   purge_keep_days: 5
   exclude:
     domains:
-      - automation
+      - sensor
+  include:
+    domains:
       - light
       - switch
-      - sensor
-      - media_player
-      - conver
-  include:
     entities:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
@@ -134,8 +146,7 @@ weather:
   - platform: yweather
     name: Meteo
     woeid: !secret yweather_woeid
-#  - platform: darksky
-#    api_key: !secret darksky_apikey
+
 
 # Track the sun
 sun:
@@ -144,9 +155,6 @@ sun:
 tts:
   platform: google
   language: 'it'
-
-# Cloud
-
 
 #mqtt:
 #  broker: core-mosquitto
@@ -165,11 +173,7 @@ notify:
     position: top-right
     duration: 2
 
-
-
 device_tracker:
-
-
 panel_iframe:
 #  router:
 #    icon: mdi:router-wireless

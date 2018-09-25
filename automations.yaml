@@ -72,6 +72,25 @@
       data:
         entity_id: light.level_2
 
+########## Luce studio
+  - alias: Bagno Sera
+    trigger:
+      platform: state
+      entity_id: light.studio
+      to: 'on'
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+      - condition: time
+        after: '18:00:00'
+        before: '23:59:59'
+    action:
+      service: light.turn_on
+      data:
+        entity_id: light.studio
+        brightness_pct: 10
+        transition: 5
 
 ########## Luce Bagno Grande
   - alias: Bagno Sera
@@ -150,14 +169,16 @@
 #      service: switch.toggle
 #      entity_id: switch.switch_15
 
-############## BACKUP #################
+############## AUTOMAZIONI DI SERVIZIO #################
 
-#  - alias: Start HomeKit
-#    trigger:
-#      - platform: event
-#        event_type: zwave.network_ready
-#    action:
-#      - service: homekit.start
+  - alias: Start HomeKit
+    trigger:
+      - platform: event
+        event_type: zwave.network_ready
+    action:
+      - delay: '00:01:00'
+      - service: homekit.start
+
 
   - alias: Backup Automatico
     trigger:

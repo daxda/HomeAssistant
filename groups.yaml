@@ -13,6 +13,7 @@
     - group.consumi
     - media_player.salotto
 
+
  meteo:
     name: meteo
     view: yes
@@ -58,6 +59,7 @@
  prese:
     name: Power
     view: no
+    control: hidden
     entities:
     - switch.switch_6 #Forno
     - switch.switch_7 #Lavastoviglie
@@ -131,10 +133,12 @@
  giardino:
     name: Giardino
     view: no
+    control: hidden
     entities:
     #- sensor.dark_sky_summary
     - sun.sun
-    - sensor.moon
+#    - sensor.moon
+    - sensor.fasilunari
     - sensor.dark_sky_cloud_coverage
     - sensor.netatmo_outdoor_temperature
     - sensor.netatmo_outdoor_humidity
@@ -151,6 +155,7 @@
     entities:
     - script.buongiorno
     - script.buonanotte
+    - script.spengitv
 
  automazioni:
     name: Automazioni
