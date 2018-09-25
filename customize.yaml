@@ -66,11 +66,12 @@
 ####### Finestre e apricancello
  switch.switch:
     friendly_name: Cancello Auto
+    homebridge_visible: true
     icon: mdi:car-side
 
  cover.apricancello_auto:
     friendly_name: Cancello Auto
-    homebridge_visible: true
+#    homebridge_visible: true
     homebridge_cover_type: rollershutter
     device_class: cover
     homebridge_name: "Apricancello"
@@ -165,7 +166,8 @@
  device_tracker.ipad_di_muriel:
     friendly_name: iPad
 
-
+ sensor.samsung_m2020_series_1921681137_toner_black:
+    friendly_name: Toner Samsung M2020
  ########## sensori Living
  sensor.netatmo_indoor_humidity:
    friendly_name: Umidità Zona Pranzo
@@ -218,6 +220,17 @@
  sensor.netatmo_outdoor_humidity:
    friendly_name: Umidità Esterna
 
+
+ sensor.netatmo_regenmesser_rain: #Estimated rainfall for today in mm.
+    friendly_name: Pioggia prevista
+ sensor.netatmo_regenmesser_battery:
+    friendly_name: Netatmo Pluviometro Battery
+ sensor.netatmo_regenmesser_radio:
+    friendly_name: Netatmo Pluviometro Radio
+ sensor.netatmo_regenmesser_sum_rain_1: #Rainfall in the last hour in mm.
+   friendly_name: Pioggia ultima ora
+ sensor.netatmo_regenmesser_sum_rain_24: #Rainfall in mm from 00:00am - 23:59pm.
+   friendly_name: Pioggia ultime 24 H
 ###### sensori consumi
 
  sensor.neo_coolcam_power_plug_12a_power:

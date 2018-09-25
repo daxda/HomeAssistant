@@ -1,5 +1,11 @@
 
 
+  - platform: netatmo
+    modules:
+      Regenmesser:
+        - sum_rain_1
+        - sum_rain_24
+
   - platform: speedtest
     minute: 10
     hour: 19
@@ -30,6 +36,7 @@
       - wind_speed
       - cloud_cover
 
+############ Da qui in poi tutti i sensori creati tramite template
   - platform: template
     sensors:
 

@@ -137,9 +137,11 @@
     entities:
     #- sensor.dark_sky_summary
     - sun.sun
-#    - sensor.moon
     - sensor.fasilunari
     - sensor.dark_sky_cloud_coverage
+    - sensor.netatmo_regenmesser_rain # pioggia prevista
+    - sensor.netatmo_regenmesser_sum_rain_1 # pioggia ultima ora
+#    - sensor.netatmo_regenmesser_sum_rain_24
     - sensor.netatmo_outdoor_temperature
     - sensor.netatmo_outdoor_humidity
     - sensor.dark_sky_apparent_temperature
@@ -156,17 +158,20 @@
     - script.buongiorno
     - script.buonanotte
     - script.spengitv
+    - script.pioggia
 
  automazioni:
     name: Automazioni
     view: no
     control: hidden
     entities:
+    - automation.pioggia
     - automation.guardo_la_tv
     - automation.philips_energy
     - automation.bagno_sera
     - automation.bagno_notte
     - automation.notifica_fine_lavaggio
+    - automation.toner
 
  automazioni_sistema:
     name: Automazioni di Sistema
@@ -216,8 +221,11 @@
     - sensor.speedtest_ping
     - sensor.neo_coolcam_battery_powered_pir_sensor_burglar
     - sensor.netatmo_outdoor_battery
+    - sensor.netatmo_regenmesser_battery
     - sensor.netatmo_outdoor_radio
+    - sensor.netatmo_regenmesser_radio
     - sensor.netatmo_indoor_wifi
+    - sensor.samsung_m2020_series_1921681137_toner_black
     - sensor.sala_filter_life
 
 

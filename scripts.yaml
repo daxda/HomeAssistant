@@ -47,3 +47,24 @@
         data:
           entity_id: cover.level_4 #bagno
           position: 80
+
+  pioggia:
+    alias: "Pioggia"
+    sequence:
+###### devono essere raccordate con l'allarme
+#      - service: cover.set_cover_position
+#        data:
+#          entity_id: cover.level #sala
+#          position: 0
+#      - service: cover.set_cover_position
+#        data:
+#          entity_id: cover.level_4 #bagno
+#          position: 13
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_2 #scale
+          position: 0
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_3 #camera
+          position: 25

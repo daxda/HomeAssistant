@@ -1,3 +1,31 @@
+##### METEO
+
+  - alias: Pioggia
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.netatmo_regenmesser_sum_rain_1
+      above: 0.2
+    condition:
+      condition: and
+      conditions:
+        # Solo una volta all'ora
+        - condition: template
+          value_template: >
+            {% if states.automation.pioggia.last_triggered is not none %}
+              {% if as_timestamp(now()) | int - as_timestamp(states.automation.pioggia.attributes.last_triggered) | int > 3600 %} true {% else %} false
+              {% endif %}
+            {% else %}
+            false
+            {% endif %}
+        # Solo se la posizione di entrambe le finestre non è già semibassa
+        - condition: template
+          value_template: '{{ (states.cover.level_2.attributes.current_position > 20) and (states.cover.level_3.attributes.current_position > 20) }}'
+    action:
+      - service: notify.telefoni
+        data:
+          message: "Piove...! Chiudo le finestre che posso chiudere, per le altre organizzati!"
+      - service: script.pioggia
+
 ########## ILLUMINAZIONE ###################
 
 
@@ -110,7 +138,7 @@
       service: light.turn_on
       data:
         entity_id: light.level
-        brightness: 30
+        brightness_pct: 15
 
   - alias: Bagno Notte
     trigger:
@@ -129,7 +157,7 @@
       service: light.turn_on
       data:
         entity_id: light.level
-        brightness: 3
+        brightness_pct: 3
 
 
 ########## Luce Philips
@@ -252,6 +280,15 @@
         data:
           message: "Backup Automatico disattivato"
 
+  - alias: Toner
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.samsung_m2020_series_1921681137_toner_black
+      below: 10
+    action:
+      - service: notify.telefoni
+        data:
+          message: "È quasi finito il toner della stampante Samsung M2020, ricordati di comprarlo"
 
 
   - alias: Test Notifica

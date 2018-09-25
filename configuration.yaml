@@ -29,12 +29,12 @@ wake_on_lan:
 light:
   - platform: yeelight
     devices:
-      192.168.1.184:
+      192.168.1.87:
         name: camera
         transition: 1000
         use_music_mode: False #(defaults to False)
         save_on_change: False #(defaults to True)
-      192.168.1.139:
+      192.168.1.72:
         name: studio
         transition: 1000
         use_music_mode: False #(defaults to False)
@@ -57,8 +57,8 @@ zwave:
 media_player:
   - platform: sonos
     hosts:
-    - 192.168.1.78
-    - 192.168.1.66
+    - 192.168.1.82 #sala
+    - 192.168.1.66 #camera
   - platform: lg_netcast
     host: 192.168.1.89
     access_token: 577887
@@ -92,6 +92,7 @@ discovery:
   ignore:
     - yeelight
     - sonos
+    - plex_mediaserver
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
@@ -107,6 +108,7 @@ history:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
+      - sensor.netatmo_regenmesser_rain
   exclude:
     entities:
       - light.fibaro_system_fgd212_dimmer_2_level_2
@@ -125,6 +127,7 @@ recorder:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
+      - sensor.netatmo_regenmesser_rain
 
 #logbook:
 #  include:
@@ -140,7 +143,7 @@ dyson:
   language: IT
   devices:
     - device_id: !secret dyson_device_id # eg: Pure Cool Link device
-      device_ip: 192.168.1.64
+      device_ip: 192.168.1.70
 
 weather:
   - platform: yweather
@@ -165,8 +168,8 @@ notify:
   - name: telefoni
     platform: group
     services:
-      - service: davides_iphone8
-      - service: iphone_di_muriel
+      - service: ios_davides_iphone8
+      - service: ios_iphone_di_muriel
   - name: firetv
     platform: nfandroidtv
     host: 192.168.1.124
@@ -175,7 +178,7 @@ notify:
 
 device_tracker:
 panel_iframe:
-#  router:
+#  ubiquiti:
 #    icon: mdi:router-wireless
-#    title: 'Router'
-#    url: 'http://192.168.1.254'
+#    title: 'Ubiquiti'
+#    url: 'https://darishome.duckdns.org:8443'
