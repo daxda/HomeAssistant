@@ -1,0 +1,10 @@
+  prova1:
+    name: prova1
+    icon: mdi:puzzle
+    initial: off
+#
+  prova2:
+    name: prova2
+    icon: mdi:puzzle
+    initial: off
+#

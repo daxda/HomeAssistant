@@ -1,0 +1,209 @@
+
+
+title: Home
+views:
+  - title: default_view  #pagina
+    icon: mdi:home
+    badges:
+      - device_tracker.davides_iphone
+      - device_tracker.iphone_di_muriel
+      #- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+    cards:               # card della pagina
+      - type: entities
+        title: Giardino
+        show_header_toggle: false
+        entities:
+          - sun.sun
+          - sensor.fasilunari
+          - sensor.dark_sky_cloud_coverage
+          - sensor.netatmo_regenmesser_rain
+          - sensor.netatmo_regenmesser_sum_rain_1
+          - sensor.netatmo_outdoor_temperature
+          - sensor.netatmo_outdoor_humidity
+          - sensor.dark_sky_apparent_temperature
+          - sensor.dark_sky_wind_speed
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+          - switch.switch
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+      - type: entities
+        title: Confort Living
+        show_header_toggle: false
+        entities:
+          - climate.termostatod
+          - fan.sala
+          - sensor.netatmo_indoor_temperature
+          - sensor.netatmo_indoor_humidity
+          - sensor.sala_humidity
+          - sensor.netatmo_indoor_pressure
+          - sensor.sala_aqi
+          - sensor.netatmo_indoor_co2
+          - sensor.sala_dust
+          - sensor.netatmo_indoor_noise
+      - type: entities
+        title: Luci
+        show_header_toggle: true
+        entities:
+          - switch.switch_9
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+          - switch.switch_8
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
+          - switch.switch_15
+          - switch.switch_14
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+          - light.level
+          - light.level_2
+          - light.camera
+          - light.studio
+      - type: entities
+        title: Finestre
+        show_header_toggle: true
+        entities:
+          - cover.level
+          - cover.level_4
+          - cover.level_2
+          - cover.level_3
+      - type: entities
+        title: Power
+        show_header_toggle: false
+        entities:
+          - switch.switch_6
+          - switch.switch_7
+          - switch.switch_10
+          - switch.switch_16
+      - type: entities
+        title: Consumi
+        show_header_toggle: true
+        entities:
+          - sensor.neo_coolcam_power_plug_12a_power
+          - sensor.neo_coolcam_power_plug_12a_power_2
+          - sensor.neo_coolcam_power_plug_12a_power_8
+          - sensor.neo_coolcam_power_plug_12a_power_3
+      - type: entities
+        title: Sonos
+        entities:
+          - media_player.salotto
+          - media_player.camere
+
+
+  - title: meteo
+    icon: mdi:umbrella-outline
+    cards:
+      - type: weather-forecast
+        entity: weather.meteo
+
+  - title: multimedia
+    icon: mdi:movie
+    cards:
+      - type: media-control
+        entity: media_player.salotto
+      - type: media-control
+        entity: media_player.camere
+      - type: media-control
+        entity: media_player.living
+      - type: media-control
+        entity: media_player.lg_tv_remote
+
+
+  - title: automazioni
+    icon: mdi:auto-fix
+    cards:
+      - type: entities
+        title: Scene
+        show_header_toggle: false
+        entities:
+          - script.buongiorno
+          - script.buonanotte
+          - script.spengitv
+          - script.dolcedivano
+          - script.pioggia
+      - type: entities
+        title: Automazioni
+        show_header_toggle: false
+        entities:
+          - automation.pioggia
+          - automation.guardo_la_tv
+          - automation.philips_energy
+          - automation.bagno_sera
+          - automation.bagno_notte
+          - automation.notifica_fine_lavaggio
+          - automation.toner
+          - automation.test_sonos
+      - type: entities
+        title: Energy Saver
+        show_header_toggle: false
+        entities:
+          - automation.camerina_out_day
+          - automation.camerina_out
+          - automation.camerina_out_out
+          - automation.camerina_return
+      - type: entities
+        title: Automazioni di Sistema
+        show_header_toggle: false
+        entities:
+          - automation.backup_automatico
+          - automation.spazio_libero
+          - automation.notifica_aggiornamento
+          - automation.test_notifica
+
+
+  - title: Utility
+    icon: mdi:settings
+    cards:
+      - type: entities
+        title: Utility
+        show_header_toggle: true
+        entities:
+          - switch.wol_imac
+          - sensor.davides_iphone_battery_level
+          - sensor.iphone_di_muriel_battery_level
+          - sensor.ipad_di_muriel_battery_level
+          - sensor.speedtest_download
+          - sensor.speedtest_upload
+          - sensor.speedtest_ping
+          - sensor.neo_coolcam_battery_powered_pir_sensor_burglar
+          - sensor.netatmo_outdoor_battery
+          - sensor.netatmo_regenmesser_battery
+          - sensor.netatmo_outdoor_radio
+          - sensor.netatmo_regenmesser_radio
+          - sensor.netatmo_indoor_wifi
+          - sensor.samsung_m2020_series_1921681137_toner_black
+          - sensor.sala_filter_life
+      - type: entities
+        title: Raspberry
+        show_header_toggle: true
+        entities:
+          - sensor.processor_use
+          - sensor.disk_use_percent_
+          - sensor.memory_free
+          - sensor.network_in_eth0
+          - sensor.network_out_eth0
+          - sensor.memory_use_percent
+          - sensor.since_last_boot
+      - type: entities
+        title: Sensore di Movimento
+        show_header_toggle: true
+        entities:
+          - binary_sensor.sensor
+          - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
+      - type: entities
+        title: Zwave
+        show_header_toggle: true
+        entities:
+          - zwave.aeotec_zw090_zstick_gen5_eu
+          - zwave.aeotec_zw117_range_extender_6
+          - zwave.fibaro_system_fgd212_dimmer_2
+          - zwave.fibaro_system_fgd212_dimmer_2_2
+          - zwave.fibaro_system_fgrm222_roller_shutter_controller_2
+          - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_2
+          - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_3
+          - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_4
+          - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw
+          - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_2
+          - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_3
+          - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_4
+          - zwave.neo_coolcam_power_plug_12a
+          - zwave.neo_coolcam_power_plug_12a_2
+          - zwave.neo_coolcam_power_plug_12a_3
+          - zwave.neo_coolcam_power_plug_12a_4
+          - zwave.neo_coolcam_power_plug_12a_5
+          - zwave.neo_coolcam_battery_powered_pir_sensor

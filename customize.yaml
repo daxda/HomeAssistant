@@ -155,7 +155,7 @@
     homebridge_mfg: "daxda"
     homebridge_model: "Dyson Air Purifier "
 
- device_tracker.davides_iphone8:
+ device_tracker.davides_iphone:
     friendly_name: Davide
 
 
@@ -183,7 +183,7 @@
  sensor.netatmo_indoor_pressure:
    friendly_name: Pressione interna
 
- sensor.sala_air_quality:
+ sensor.sala_aqi:
    friendly_name: Dyson Air Quality
    icon: mdi:blur
 

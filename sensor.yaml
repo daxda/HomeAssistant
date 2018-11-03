@@ -39,20 +39,19 @@
 ############ Da qui in poi tutti i sensori creati tramite template
   - platform: template
     sensors:
-
 #      consumo_finestre:
+#        entity_id: sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8
 #        friendly_name: "Cosumi Fibaro RollerShutter"
 #        icon_template: mdi:chart-bar
 #        unit_of_measurement: 'W'
 #        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int }} "
 
-      dlink_consumo:
-        friendly_name: 'D-Link Consumi'
-        value_template: '{{ states.switch.dlink_smart_plug_w215.attributes.power_consumption }}'
-
-      dlink_automazione:
-        friendly_name: 'D-Link Automazione'
-        value_template: '{{ states.sensor.dlink_consumo.state | replace(" W", "") | float }}'
+#      dlink_consumo:
+#        friendly_name: 'D-Link Consumi'
+#        value_template: '{{ states.switch.dlink_smart_plug_w215.attributes.power_consumption }}'
+#      dlink_automazione:
+#        friendly_name: 'D-Link Automazione'
+#        value_template: '{{ states.sensor.dlink_consumo.state | replace(" W", "") | float }}'
 
       fasilunari:
         friendly_name: "Luna"

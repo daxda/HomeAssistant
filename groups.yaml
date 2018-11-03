@@ -3,7 +3,7 @@
     view: yes
     icon: mdi:home
     entities:
-    - device_tracker.davides_iphone8
+    - device_tracker.davides_iphone
     - device_tracker.iphone_di_muriel
     - group.giardino
     - group.living
@@ -124,7 +124,7 @@
     - sensor.netatmo_indoor_humidity
     - sensor.sala_humidity
     - sensor.netatmo_indoor_pressure
-    - sensor.sala_air_quality
+    - sensor.sala_aqi
     - sensor.netatmo_indoor_co2
     - sensor.sala_dust
     - sensor.netatmo_indoor_noise
@@ -158,6 +158,7 @@
     - script.buongiorno
     - script.buonanotte
     - script.spengitv
+    - script.dolcedivano
     - script.pioggia
 
  automazioni:
@@ -172,6 +173,7 @@
     - automation.bagno_notte
     - automation.notifica_fine_lavaggio
     - automation.toner
+    - automation.test_sonos
 
  automazioni_sistema:
     name: Automazioni di Sistema
