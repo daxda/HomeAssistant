@@ -57,21 +57,17 @@
   dolcedivano:
     alias: "Divano"
     sequence:
-      - service: light.turn_on
+      - service:  homeassistant.turn_on
         data:
           entity_id: switch.switch_15
-      - service: light.turn_off
+      - service:  homeassistant.turn_off
         data:
-          entity_id: switch.switch_9
-      - service: light.turn_off
-        data:
-          entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
-      - service: light.turn_off
-        data:
-          entity_id: switch.switch_8
-      - service: light.turn_off
-        data:
-          entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
+          entity_id:
+            - switch.switch_9
+            - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+            - switch.switch_8
+            - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
+
 
   pioggia:
     alias: "Pioggia"
