@@ -114,29 +114,33 @@
 ###### Plug Elettrodomestici
  switch.switch_6:
     friendly_name: Forno
-    icon: mdi:power
+    icon: mdi:cupcake
     device_class: switch
     homebridge_visible: true
 
  switch.switch_7:
     friendly_name: Lavastoviglie
-    icon: mdi:power
+    icon: mdi:stove
     device_class: switch
     homebridge_visible: true
 
+ switch.neo_coolcam_power_plug_12a_switch: #cantinetta
+      icon: mdi:glass-wine
+      device_class: switch
+
  switch.dlink_smart_plug_w215:
     friendly_name: Dlink switch
-    icon: mdi:power
+    icon: mdi:gift
     device_class: switch
     homebridge_visible: true
 
  switch.switch_16:
     friendly_name: Lavatrice
-    icon: mdi:power
+    icon: mdi:washing-machine
 
  switch.switch_10:
     friendly_name: iMac
-    icon: mdi:power
+    icon: mdi:monitor-dashboard
     device_class: switch
     homebridge_visible: true
 
@@ -240,6 +244,8 @@
  sensor.neo_coolcam_power_plug_12a_power_3:
    icon: mdi:chart-bar
  sensor.neo_coolcam_power_plug_12a_power_8:
+   icon: mdi:chart-bar
+ sensor.neo_coolcam_power_plug_12a_power_10:
    icon: mdi:chart-bar
  sensor.neo_coolcam_power_plug_12a_power_5:
    icon: mdi:chart-bar

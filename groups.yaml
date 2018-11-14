@@ -63,9 +63,11 @@
     entities:
     - switch.switch_6 #Forno
     - switch.switch_7 #Lavastoviglie
+    - switch.neo_coolcam_power_plug_12a_switch #cantina portavino
     - switch.switch_10   #iMac
     #- switch.dlink_smart_plug_w215   #Dlink
     - switch.switch_16   #Lavatrice
+
 
  consumi:
     name: Consumi
@@ -73,9 +75,11 @@
     entities:
     - sensor.neo_coolcam_power_plug_12a_power  #Forno
     - sensor.neo_coolcam_power_plug_12a_power_2  #Lavastoviglie
+    - sensor.neo_coolcam_power_plug_12a_power_10 # cantina portavino
     - sensor.neo_coolcam_power_plug_12a_power_8    #Lavatrice
     #- sensor.dlink_consumo   #Dlink
     - sensor.neo_coolcam_power_plug_12a_power_3   #iMac
+
     #Finestre
     - sensor.consumo_finestre
     #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power

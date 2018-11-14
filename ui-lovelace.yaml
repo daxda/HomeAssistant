@@ -9,6 +9,20 @@ views:
       - device_tracker.iphone_di_muriel
       #- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
     cards:               # card della pagina
+      - type: horizontal-stack
+        cards:
+        - type: entity-button
+          tap_action: toggle
+          entity: switch.switch
+        - type: entity-button
+          tap_action: toggle
+          name: Cancello pedonale
+          entity: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+        - type: entity-button
+          tap_action: call-service
+          entity: script.spengitv
+          icon: mdi:power
+          service: script.turn_on
       - type: entities
         title: Giardino
         show_header_toggle: false
@@ -22,15 +36,37 @@ views:
           - sensor.netatmo_outdoor_humidity
           - sensor.dark_sky_apparent_temperature
           - sensor.dark_sky_wind_speed
+          - type: divider
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
           - switch.switch
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+      - type: entities
+        title: Luci
+        show_header_toggle: true
+        entities:
+          - type: section
+            label: Piano Terra
+          - switch.switch_9
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+          - switch.switch_8
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
+          - switch.switch_15
+          - type: divider
+          - switch.switch_14
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+          - type: section
+            label: Piano Primo
+          - light.level
+          - light.level_2
+          - light.camera
+          - light.studio
       - type: entities
         title: Confort Living
         show_header_toggle: false
         entities:
           - climate.termostatod
           - fan.sala
+          - type: divider
           - sensor.netatmo_indoor_temperature
           - sensor.netatmo_indoor_humidity
           - sensor.sala_humidity
@@ -40,21 +76,6 @@ views:
           - sensor.sala_dust
           - sensor.netatmo_indoor_noise
       - type: entities
-        title: Luci
-        show_header_toggle: true
-        entities:
-          - switch.switch_9
-          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
-          - switch.switch_8
-          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
-          - switch.switch_15
-          - switch.switch_14
-          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
-          - light.level
-          - light.level_2
-          - light.camera
-          - light.studio
-      - type: entities
         title: Finestre
         show_header_toggle: true
         entities:
@@ -62,46 +83,62 @@ views:
           - cover.level_4
           - cover.level_2
           - cover.level_3
-      - type: entities
-        title: Power
-        show_header_toggle: false
-        entities:
-          - switch.switch_6
-          - switch.switch_7
-          - switch.switch_10
-          - switch.switch_16
-      - type: entities
-        title: Consumi
-        show_header_toggle: true
-        entities:
-          - sensor.neo_coolcam_power_plug_12a_power
-          - sensor.neo_coolcam_power_plug_12a_power_2
-          - sensor.neo_coolcam_power_plug_12a_power_8
-          - sensor.neo_coolcam_power_plug_12a_power_3
+      - type: vertical-stack
+        cards:
+        - type: entities
+          title: Power
+          show_header_toggle: false
+          entities:
+            - entity: switch.switch_6 #Forno
+            - switch.switch_7 # Lavastoviglie
+            - switch.neo_coolcam_power_plug_12a_switch #cantina portavino
+            - switch.switch_10 # Lavatrice
+            - switch.switch_16 # iMac
+        - type: entities
+          title: Consumi
+          show_header_toggle: true
+          entities:
+            - sensor.neo_coolcam_power_plug_12a_power
+            - sensor.neo_coolcam_power_plug_12a_power_2
+            - sensor.neo_coolcam_power_plug_12a_power_10
+            - sensor.neo_coolcam_power_plug_12a_power_8
+            - sensor.neo_coolcam_power_plug_12a_power_3
       - type: entities
         title: Sonos
         entities:
           - media_player.salotto
           - media_player.camere
 
-
   - title: meteo
     icon: mdi:umbrella-outline
+    badges:
+      - sensor.dark_sky_summary
     cards:
-      - type: weather-forecast
-        entity: weather.meteo
+      - type: vertical-stack
+        cards:
+        - type: iframe
+          url: https://embed.windy.com/embed2.html?lat=42.912&lon=10.525&zoom=8&level=surface&overlay=rain&menu=&message=&marker=&calendar=now&pressure=true&type=map&location=coordinates&detail=&detailLat=42.011&detailLon=10.522&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1
+          aspect_ratio: 100%
+        - type: weather-forecast
+          entity: weather.meteo
+        - type: thermostat
+          entity: climate.termostatod
 
   - title: multimedia
     icon: mdi:movie
     cards:
-      - type: media-control
-        entity: media_player.salotto
-      - type: media-control
-        entity: media_player.camere
-      - type: media-control
-        entity: media_player.living
-      - type: media-control
-        entity: media_player.lg_tv_remote
+      - type: horizontal-stack
+        cards:
+        - type: media-control
+          entity: media_player.salotto
+        - type: media-control
+          entity: media_player.camere
+      - type: horizontal-stack
+        cards:
+        - type: media-control
+          entity: media_player.living
+        - type: media-control
+          entity: media_player.lg_tv_remote
 
 
   - title: automazioni
@@ -154,7 +191,7 @@ views:
         show_header_toggle: true
         entities:
           - switch.wol_imac
-          - sensor.davides_iphone_battery_level
+          - sensor.iphone_battery_level
           - sensor.iphone_di_muriel_battery_level
           - sensor.ipad_di_muriel_battery_level
           - sensor.speedtest_download
@@ -168,23 +205,6 @@ views:
           - sensor.netatmo_indoor_wifi
           - sensor.samsung_m2020_series_1921681137_toner_black
           - sensor.sala_filter_life
-      - type: entities
-        title: Raspberry
-        show_header_toggle: true
-        entities:
-          - sensor.processor_use
-          - sensor.disk_use_percent_
-          - sensor.memory_free
-          - sensor.network_in_eth0
-          - sensor.network_out_eth0
-          - sensor.memory_use_percent
-          - sensor.since_last_boot
-      - type: entities
-        title: Sensore di Movimento
-        show_header_toggle: true
-        entities:
-          - binary_sensor.sensor
-          - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
       - type: entities
         title: Zwave
         show_header_toggle: true
@@ -206,4 +226,22 @@ views:
           - zwave.neo_coolcam_power_plug_12a_3
           - zwave.neo_coolcam_power_plug_12a_4
           - zwave.neo_coolcam_power_plug_12a_5
+          - zwave.neo_coolcam_power_plug_12a_6
           - zwave.neo_coolcam_battery_powered_pir_sensor
+      - type: entities
+        title: Raspberry
+        show_header_toggle: true
+        entities:
+          - sensor.processor_use
+          - sensor.disk_use_percent_
+          - sensor.memory_free
+          - sensor.network_in_eth0
+          - sensor.network_out_eth0
+          - sensor.memory_use_percent
+          - sensor.since_last_boot
+      - type: entities
+        title: Sensore di Movimento
+        show_header_toggle: true
+        entities:
+          - binary_sensor.sensor
+          - sensor.neo_coolcam_battery_powered_pir_sensor_luminance

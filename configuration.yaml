@@ -115,6 +115,7 @@ history:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
+      - sensor.neo_coolcam_power_plug_12a_power_10
       - sensor.netatmo_regenmesser_rain
   exclude:
     entities:
@@ -134,6 +135,7 @@ recorder:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
+      - sensor.neo_coolcam_power_plug_12a_power_10
       - sensor.netatmo_regenmesser_rain
 
 #logbook:
