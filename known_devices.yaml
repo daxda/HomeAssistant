@@ -1,9 +1,9 @@
 
-davides_iphone8:
+davides_iphone:
   hide_if_away: false
   icon:
-  mac: 
-  name: davides iphone8
+  mac:
+  name: davides iphone
   picture:
   gravatar: dax.da1@gmail.com
   track: true
@@ -12,19 +12,18 @@ davides_iphone8:
 ipad_di_muriel:
   hide_if_away: false
   icon:
-  mac: 
+  mac:
   name: ipad di muriel
-  picture: 
+  picture:
   track: true
   vendor: Apple
 
 iphone_di_muriel:
   hide_if_away: false
   icon:
-  mac: 
+  mac:
   name: iphone di muriel
-  picture: 
+  picture:
   gravatar: dax.da.1@gmail.com
   track: true
   vendor: Apple
-

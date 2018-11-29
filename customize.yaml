@@ -61,7 +61,9 @@
    icon: mdi:lightbulb
    homebridge_visible: true
 
-
+ switch.christmas_light:
+   icon: mdi:candycane
+   homebridge_visible: true
 
 ####### Finestre e apricancello
  switch.switch:

@@ -31,7 +31,6 @@ wake_on_lan:
 #  password: !secret TUYA_PASSWORD
 #  country_code: !secret TUYA_COUNTRYCODE
 
-
 light:
   - platform: yeelight
     devices:
@@ -47,16 +46,12 @@ light:
         save_on_change: False #(defaults to True)
 
 switch:
-#  - platform: dlink
-#    host: 192.168.1.131
-#    username: !secret dlink_user
-#    password: !secret dlink_password
   - platform: wake_on_lan
     name: WOL iMac
     mac_address: !secret wol_imac
-
-#customizer:
-#  custom_ui: hosted
+  - platform: tplink
+    host: 192.168.1.115
+    name: christmas_light
 
 zwave:
     usb_path: /dev/ttyACM0
@@ -74,10 +69,6 @@ media_player:
 # Enables the frontend
 frontend:
   themes: !include_dir_merge_named themes
-#  extra_html_url:
-#    - /local/custom_ui/state-card-hline.html
-#  extra_html_url_es5:
-#    - /local/custom_ui/state-card-hline_es5.html
 
 # Enables configuration UI
 config:
@@ -93,7 +84,6 @@ http:
     - 172.17.0.0/16 # Example Docker bridge
     - 172.30.32.0/23 # Example Docker hassio
 
-# Checks for available updates
 updater:
 discovery:
   ignore:
@@ -121,7 +111,6 @@ history:
     entities:
       - light.fibaro_system_fgd212_dimmer_2_level_2
       - light.fibaro_system_fgd212_dimmer_2_level
-# View all events in a logbook
 recorder:
   purge_keep_days: 5
   exclude:
@@ -131,19 +120,18 @@ recorder:
     domains:
       - light
       - switch
+      - input_datetime
     entities:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
       - sensor.neo_coolcam_power_plug_12a_power_10
       - sensor.netatmo_regenmesser_rain
-
 #logbook:
 #  include:
 #    domains:
 #      - switch
 
-# Enables a map showing the location of tracked devices  Tracking app iOS
 map:
 ios:
 dyson:
@@ -158,9 +146,6 @@ weather:
   - platform: yweather
     name: Meteo
     woeid: !secret yweather_woeid
-
-
-# Track the sun
 sun:
 
 # Text to speech

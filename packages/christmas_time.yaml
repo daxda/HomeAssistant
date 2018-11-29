@@ -1,0 +1,114 @@
+
+homeassistant:
+
+# ORARIO ACCENSIONE SPEGNIMENTO
+input_datetime:
+  accendi_natale:
+    name: Accendi alle
+    has_date: false
+    has_time: true
+    initial: 17:00
+
+  spengi_natale:
+    name: Spengi alle
+    has_date: false
+    has_time: true
+    initial: 22:30
+
+# Boleano Tramonto , se attivo esclude accendi alle...
+input_boolean:
+  tramonto_natale:
+    name: Accendi al tramonto
+    initial: on
+    icon: mdi:weather-sunset
+
+  musica_natale:
+    name: Facciamo un pò d'atmosfera
+    initial: off
+    icon: mdi:music
+
+###### Sensore mancano X giorni a natale
+#sensor:
+#  - platform: template
+#    sensors:
+#      giornianatale:
+#        friendly_name: 'Giorni al Natale'
+#        value_template: '{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
+#        unit_of_measurement: "Days"
+#        icon_template: mdi:calendar
+############ AUTOMAZIONI #######################################################
+automation:
+  - alias: Accendi il Natale 1
+    initial_state: True
+    trigger:
+      platform: time
+      minutes: '/1'
+      seconds: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.tramonto_natale
+        state: 'off'
+      - condition: template
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.accendi_natale.state }}'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.christmas_light   # lo switch delle mie luci di natale
+
+  - alias: Accendi il Natale 2
+    initial_state: true
+    trigger:
+      platform: sun
+      event: sunset
+#      offset: '-00:45:00'
+    condition:
+      - condition: state
+        entity_id: input_boolean.tramonto_natale
+        state: 'on'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.christmas_light   # lo switch delle mie luci di natale
+
+  - alias: Spengi il Natale
+    initial_state: True
+    trigger:
+      platform: time
+      minutes: '/1'
+      seconds: 0
+    condition:
+      - condition: template
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.spengi_natale.state }}'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.christmas_light   # lo switch delle mie luci di natale
+
+  - alias: Atmosfera_Natale
+    initial_state: True
+    trigger:
+      platform: state
+      entity_id: input_boolean.musica_natale
+      to: 'on'
+    action:
+      - service: media_player.select_source
+        data:
+          entity_id: media_player.salotto
+          source: Tutte le belle canzoni di Natale
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.salotto
+          volume_level: 0.17
+      - delay: 0:01
+      - service: homeassistant.turn_off
+        data:
+          entity_id: input_boolean.musica_natale
+
+group:
+  automazioni_natale:
+    name: Attiva Timer
+    icon: mdi:gift
+    entities:
+      - automation.accendi_il_natale_1
+      - automation.accendi_il_natale_2
+      - automation.spengi_il_natale

@@ -1,6 +1,6 @@
 
+title: Dari's Home Assistant
 
-title: Home
 views:
   - title: default_view  #pagina
     icon: mdi:home
@@ -13,14 +13,16 @@ views:
         cards:
         - type: entity-button
           tap_action: toggle
+          name: CANCELLO
           entity: switch.switch
         - type: entity-button
           tap_action: toggle
-          name: Cancello pedonale
+          name: PEDONALE
           entity: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
         - type: entity-button
           tap_action: call-service
           entity: script.spengitv
+          name: TV OFF
           icon: mdi:power
           service: script.turn_on
       - type: entities
@@ -52,6 +54,7 @@ views:
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
           - switch.switch_15
           - type: divider
+          - switch.christmas_light
           - switch.switch_14
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
           - type: section
@@ -59,7 +62,8 @@ views:
           - light.level
           - light.level_2
           - light.camera
-          - light.studio
+          - entity: light.studio
+
       - type: entities
         title: Confort Living
         show_header_toggle: false
@@ -144,27 +148,68 @@ views:
   - title: automazioni
     icon: mdi:auto-fix
     cards:
+      - type: horizontal-stack
+        cards:
+        - type: entity-button
+          tap_action: call-service
+          service: script.turn_on
+          entity: script.buongiorno
+          name: GIORNO
+          icon: mdi:alarm-check
+        - type: entity-button
+          tap_action: call-service
+          service: script.turn_on
+          name: NOTTE
+          entity: script.buonanotte
+          icon: mdi:hotel
+        - type: entity-button
+          tap_action: call-service
+          service: script.turn_on
+          entity: script.spengitv
+          name: TV OFF
+          icon: mdi:television-classic-off
+        - type: entity-button
+          tap_action: call-service
+          service: script.turn_on
+          entity: script.dolcedivano
+          icon: mdi:sofa
+        - type: entity-button
+          tap_action: call-service
+          service: script.turn_on
+          entity: script.pioggia
+          icon: mdi:weather-pouring
+#     - type: entities
+#        title: Scene
+#        show_header_toggle: false
+#        entities:
+#          - script.buongiorno
+#          - script.buonanotte
+#          - script.spengitv
+#          - script.dolcedivano
+#          - script.pioggia
       - type: entities
-        title: Scene
+        title: Christmass Card
         show_header_toggle: false
         entities:
-          - script.buongiorno
-          - script.buonanotte
-          - script.spengitv
-          - script.dolcedivano
-          - script.pioggia
+          - sensor.giornianatale
+          - switch.christmas_light
+          - input_boolean.musica_natale
+          - type: section
+            label: Timer
+          - group.automazioni_natale
+          - input_datetime.accendi_natale
+          - input_boolean.tramonto_natale
+          - input_datetime.spengi_natale
       - type: entities
         title: Automazioni
         show_header_toggle: false
         entities:
           - automation.pioggia
           - automation.guardo_la_tv
-          - automation.philips_energy
           - automation.bagno_sera
           - automation.bagno_notte
           - automation.notifica_fine_lavaggio
-          - automation.toner
-          - automation.test_sonos
+          - script.sonosflow
       - type: entities
         title: Energy Saver
         show_header_toggle: false
@@ -173,14 +218,19 @@ views:
           - automation.camerina_out
           - automation.camerina_out_out
           - automation.camerina_return
+          - automation.philips_energy
       - type: entities
         title: Automazioni di Sistema
         show_header_toggle: false
         entities:
+          - automation.start_homekit
           - automation.backup_automatico
           - automation.spazio_libero
           - automation.notifica_aggiornamento
+          - automation.toner
+          - type: divider
           - automation.test_notifica
+          - automation.test_sonos
 
 
   - title: Utility
@@ -232,6 +282,7 @@ views:
         title: Raspberry
         show_header_toggle: true
         entities:
+          - sensor.cpu_temperature
           - sensor.processor_use
           - sensor.disk_use_percent_
           - sensor.memory_free

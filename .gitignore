@@ -3,6 +3,7 @@
 !*.md
 !.gitignore
 !screenshot
+!packages
 !page*.png
 secrets.yaml
 zones.yaml

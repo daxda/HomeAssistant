@@ -12,10 +12,17 @@
         data:
           entity_id: media_player.lg_tv_remote
 
-#  sonosflow:
-#    alias: "Avvia Flow"
-#    sequence:
-#      - service:
+  sonosflow:
+    alias: "Avvia Flow"
+    sequence:
+     - service: media_player.select_source
+       data:
+         entity_id: media_player.salotto
+         source: Lancia Flow
+     - service: media_player.volume_set
+       data:
+         entity_id: media_player.salotto
+         volume_level: 0.17
 
 #######SCENE########
   buonanotte:
