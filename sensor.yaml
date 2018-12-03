@@ -51,11 +51,6 @@
 #        unit_of_measurement: 'W'
 #        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int }} "
 
-      giornianatale:
-        friendly_name: 'Giorni al Natale'
-        value_template: '{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
-        unit_of_measurement: "Days"
-        icon_template: mdi:calendar
 
       fasilunari:
         friendly_name: "Luna"

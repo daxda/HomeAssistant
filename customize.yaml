@@ -65,6 +65,11 @@
    icon: mdi:candycane
    homebridge_visible: true
 
+ switch.sonoff_100009f6b1:
+   icon: mdi:power
+   frendly_name: Sonoff 1
+   homebridge_visible: true
+
 ####### Finestre e apricancello
  switch.switch:
     friendly_name: Cancello Auto

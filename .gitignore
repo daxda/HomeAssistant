@@ -4,6 +4,7 @@
 !.gitignore
 !screenshot
 !packages
+!custom_components
 !page*.png
 secrets.yaml
 zones.yaml

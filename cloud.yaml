@@ -19,7 +19,6 @@
         - switch.switch_6 #Forno
         - switch.switch_7 #Lavastoviglie
         - switch.switch_10   #iMac
-        #- switch.dlink_smart_plug_w215   #Dlink
         - switch.switch_16   #Lavatrice
 #Rotolanti
         - cover.level #sala
@@ -29,12 +28,12 @@
 #Accessori
         - climate.termostatod
         - fan.sala
-        - media_player.salotto
-        - media_player.camere
+        - switch.sonoff_100009f6b1 #sonoff
 #Cancello
         - switch.switch #apricancello auto
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch #apricancello
 #        - cover.apricancello_auto
+
 #Scene
         - script.buongiorno
         - script.buonanotte
@@ -65,6 +64,9 @@
         display_categories: SPEAKER
       media_player.camere:
         display_categories: SPEAKER
+      switch.sonoff_100009f6b1:
+        display_categories: SMARTPLUG
+        name: sonoff
 ###########################GOOGLE HOME ##################
   google_actions:
     filter:
@@ -86,8 +88,8 @@
         - switch.switch_6 #Forno
         - switch.switch_7 #Lavastoviglie
         - switch.switch_10   #iMac
-        #- switch.dlink_smart_plug_w215   #Dlink
         - switch.switch_16   #Lavatrice
+        - switch.sonoff_100009f6b1 #sonoff
 #Rotolanti
         - cover.level #sala
         - cover.level_4 #bagno
@@ -114,3 +116,5 @@
           - spengi la TV
           - Spengi la televisione
         room: Zona Giorno
+      switch.sonoff_100009f6b1:
+        name: Albero di natale #sonoff

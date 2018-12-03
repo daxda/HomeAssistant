@@ -31,6 +31,13 @@ wake_on_lan:
 #  password: !secret TUYA_PASSWORD
 #  country_code: !secret TUYA_COUNTRYCODE
 
+sonoff:
+  email: !secret sonoff_username
+  password: !secret sonoff_password
+  scan_interval: 60
+  grace_period: 600
+  apihost: 'eu-api.coolkit.cc'
+
 light:
   - platform: yeelight
     devices:
