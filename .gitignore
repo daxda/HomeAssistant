@@ -1,12 +1,17 @@
 *
 !*.yaml
+!*.py
 !*.md
 !.gitignore
 !screenshot
 !packages
 !custom_components
+!custom_components/switch
+!custom_components/sonoff-debug
+!custom_components/lovelace
 !page*.png
 secrets.yaml
 zones.yaml
 entity_registry.yaml
 zones.yaml
+known_devices.yaml
