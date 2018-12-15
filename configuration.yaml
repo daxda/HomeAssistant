@@ -7,7 +7,6 @@ homeassistant:
   time_zone: Europe/Rome
   customize: !include customize.yaml
   packages: !include_dir_named packages
-
 netatmo:
   api_key: !secret netatmo_api_key
   secret_key: !secret netatmo_secret_key
@@ -24,6 +23,9 @@ scene: !include scene.yaml
 input_boolean: !include boolean.yaml
 #homekit: !include homekit.yaml
 cloud: !include cloud.yaml
+lovelace:
+  mode: yaml
+  
 wake_on_lan:
 
 #tuya:
@@ -162,8 +164,8 @@ tts:
 
 #mqtt:
 #  broker: core-mosquitto
-#  username: !secret mqtt_username
-#  password: !secret mqtt_password
+#  username: !secret mosquito_user
+#  password: !secret mosquito_password
 
 notify:
   - name: telefoni

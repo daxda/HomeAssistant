@@ -29,14 +29,15 @@ input_boolean:
     initial: off
     icon: mdi:music
 
-###### Sensore mancano X giorni a natale 
+###### Sensore mancano X giorni a natale
 sensor:
   - platform: template
     sensors:
       giornianatale:
         friendly_name: 'Giorni al Natale'
-        value_template: '{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
+        value_template: '{{ (( as_timestamp(strptime("25.12."+ now().strftime("%Y"), "%d.%m.%Y")) - as_timestamp(strptime(now().strftime("%d")+"."+now().strftime("%m")+"."+now().strftime("%Y"), "%d.%m.%Y"))) / 86400 ) | round(0) }}' #'{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
         unit_of_measurement: "Giorni"
+        entity_id: sensor.date
         icon_template: mdi:calendar
 
 ############ AUTOMAZIONI #######################################################

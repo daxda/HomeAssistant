@@ -1,5 +1,5 @@
 # The domain of your component. Should be equal to the name of your component.
-import logging, time, hmac, hashlib, random, base64, json, socket, requests
+import logging, time, hmac, hashlib, random, base64, json, socket, requests, re
 import voluptuous as vol
 
 from datetime import timedelta
@@ -10,12 +10,12 @@ from homeassistant.helpers import discovery
 from homeassistant.helpers import config_validation as cv
 from homeassistant.const import (
     EVENT_HOMEASSISTANT_STOP, CONF_SCAN_INTERVAL,
-    CONF_EMAIL, CONF_PASSWORD,
-    HTTP_MOVED_PERMANENTLY, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED)
+    CONF_EMAIL, CONF_PASSWORD, CONF_USERNAME,
+    HTTP_MOVED_PERMANENTLY, HTTP_BAD_REQUEST, 
+    HTTP_UNAUTHORIZED, HTTP_NOT_FOUND)
 # from homeassistant.util import Throttle
 
-# CONF_WSHOST         = 'wshost'
-CONF_APIHOST        = 'apihost'
+CONF_API_REGION     = 'api_region'
 CONF_GRACE_PERIOD   = 'grace_period'
 
 SCAN_INTERVAL = timedelta(seconds=60)
@@ -27,13 +27,14 @@ _LOGGER = logging.getLogger(__name__)
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
-        vol.Required(CONF_EMAIL): cv.string,
+        vol.Exclusive(CONF_USERNAME, CONF_PASSWORD): cv.string, 
+        vol.Exclusive(CONF_EMAIL, CONF_PASSWORD): cv.string,
+
         vol.Required(CONF_PASSWORD): cv.string,
-        vol.Optional(CONF_APIHOST, default='eu-api.coolkit.cc'): cv.string,
-        # vol.Optional(CONF_WSHOST, default='us-long.coolkit.cc'): cv.string,
+        vol.Optional(CONF_API_REGION, default='eu'): cv.string,
         vol.Optional(CONF_SCAN_INTERVAL, default=SCAN_INTERVAL): cv.time_period,
-        vol.Optional(CONF_GRACE_PERIOD, default=600): cv.positive_int,
-    }),
+        vol.Optional(CONF_GRACE_PERIOD, default=600): cv.positive_int
+    }, extra=vol.ALLOW_EXTRA),
 }, extra=vol.ALLOW_EXTRA)
 
 def gen_nonce(length=8):
@@ -42,31 +43,22 @@ def gen_nonce(length=8):
 
 async def async_setup(hass, config):
     """Set up the eWelink/Sonoff component."""
-    
-    # get email & password from configuration.yaml
-    email           = config.get(DOMAIN, {}).get(CONF_EMAIL,'')
-    password        = config.get(DOMAIN, {}).get(CONF_PASSWORD,'')
-    apihost         = config.get(DOMAIN, {}).get(CONF_APIHOST,'')
-    # wshost          = config.get(DOMAIN, {}).get(CONF_WSHOST,'')
-    grace_period    = config.get(DOMAIN, {}).get(CONF_GRACE_PERIOD,'')
 
     SCAN_INTERVAL   = config.get(DOMAIN, {}).get(CONF_SCAN_INTERVAL,'')
 
     _LOGGER.debug("Create the main object")
 
-    hass.data[DOMAIN] = Sonoff(hass, email, password, apihost, grace_period)
+    # hass.data[DOMAIN] = Sonoff(hass, email, password, api_region, grace_period)
+    hass.data[DOMAIN] = Sonoff(config)
 
     for component in ['switch']:
         discovery.load_platform(hass, component, DOMAIN, {}, config)
 
-    # maybe close websocket with this (if it runs)
-    # hass.bus.listen_once(EVENT_HOMEASSISTANT_STOP, hass.data[DOMAIN].restore_all())
-
     def update_devices(event_time):
         """Refresh"""     
-        _LOGGER.info("Updating devices status")
+        _LOGGER.debug("Updating devices status")
 
-        # @REMINDER figure it out how this works exactly
+        # @REMINDER figure it out how this works exactly and/or replace it with websocket
         run_coroutine_threadsafe( hass.data[DOMAIN].async_update(), hass.loop)
 
     async_track_time_interval(hass, update_devices, SCAN_INTERVAL)
@@ -74,13 +66,25 @@ async def async_setup(hass, config):
     return True
 
 class Sonoff():
-    def __init__(self, hass, email, password, apihost, grace_period):
-        self._hass          = hass
-        self._email         = email
+    # def __init__(self, hass, email, password, api_region, grace_period):
+    def __init__(self, config):
+
+        # get username & password from configuration.yaml
+        email           = config.get(DOMAIN, {}).get(CONF_EMAIL,'')
+        username        = config.get(DOMAIN, {}).get(CONF_USERNAME,'')
+        password        = config.get(DOMAIN, {}).get(CONF_PASSWORD,'')
+        api_region      = config.get(DOMAIN, {}).get(CONF_API_REGION,'')
+        grace_period    = config.get(DOMAIN, {}).get(CONF_GRACE_PERIOD,'')
+
+        if email and not username: # backwards compatibility
+            self._username = email.strip()
+
+        else: # already validated by voluptous
+            self._username      = username.strip()
+
         self._password      = password
-        self._apihost       = apihost
+        self._api_region    = api_region
         self._wshost        = None
-        self._region        = apihost.split('-')[0]
 
         self._skipped_login = 0
         self._grace_period  = timedelta(seconds=grace_period)
@@ -98,7 +102,6 @@ class Sonoff():
         self._skipped_login = 0
         
         app_details = {
-            'email'     : self._email,
             'password'  : self._password,
             'version'   : '6',
             'ts'        : int(time.time()),
@@ -110,6 +113,11 @@ class Sonoff():
             'romVersion': '11.1.2',
             'appVersion': '3.5.3'
         }
+
+        if re.match(r'[^@]+@[^@]+\.[^@]+', self._username):
+            app_details['email'] = self._username
+        else:
+            app_details['phoneNumber'] = self._username
 
         decryptedAppSecret = b'6Nz4n0xA8s8qdxQf2GqurZj2Fs55FUvM'
 
@@ -125,35 +133,44 @@ class Sonoff():
             'Content-Type'  : 'application/json;charset=UTF-8'
         }
 
-        r = requests.post('https://{}:8080/api/user/login'.format(self._apihost), 
+        r = requests.post('https://{}-api.coolkit.cc:8080/api/user/login'.format(self._api_region), 
             headers=self._headers, json=app_details)
 
         resp = r.json()
 
         # get a new region to login
         if 'error' in resp and 'region' in resp and resp['error'] == HTTP_MOVED_PERMANENTLY:
-            self._apihost   = self._apihost.replace(self._region+'-', resp['region']+'-')
-            self._region    = resp['region']
-            self._wshost    = None
+            self._api_region    = resp['region']
 
-            _LOGGER.debug("got new region: %s", self._region)
+            _LOGGER.warning("found new region: >>> %s <<< (you should change api_region option to this value in configuration.yaml)", self._api_region)
 
             # re-login using the new localized endpoint
             self.do_login()
+            return
 
-        else:
-            self._bearer_token  = resp['at']
-            self._user_apikey   = resp['user']['apikey']
-            self._headers.update({'Authorization' : 'Bearer ' + self._bearer_token})
+        elif 'error' in resp and resp['error'] in [HTTP_NOT_FOUND, HTTP_BAD_REQUEST]:
+            # (most likely) login with +86... phone number and region != cn
+            if '@' not in self._username and self._api_region != 'cn':
+                self._api_region    = 'cn'
+                self.do_login()
 
-            self.update_devices() # to write the devices list 
+            else:
+                _LOGGER.error("Couldn't authenticate using the provided credentials!")
 
-            # get the websocket host
-            if not self._wshost:
-                self.set_wshost()
+            return
+
+        self._bearer_token  = resp['at']
+        self._user_apikey   = resp['user']['apikey']
+        self._headers.update({'Authorization' : 'Bearer ' + self._bearer_token})
+
+        # get the websocket host
+        if not self._wshost:
+            self.set_wshost()
+
+        self.update_devices() # to get the devices list 
 
     def set_wshost(self):
-        r = requests.post('https://%s-disp.coolkit.cc:8080/dispatch/app' % self._region, headers=self._headers)
+        r = requests.post('https://%s-disp.coolkit.cc:8080/dispatch/app' % self._api_region, headers=self._headers)
         resp = r.json()
 
         if 'error' in resp and resp['error'] == 0 and 'domain' in resp:
@@ -172,25 +189,33 @@ class Sonoff():
         return grace_status
 
     def update_devices(self):
+
+        # the login failed, nothing to update
+        if not self._wshost:
+            return []
+
         # we are in the grace period, no updates to the devices
         if self._skipped_login and self.is_grace_period():          
             _LOGGER.info("Grace period active")            
             return self._devices
 
-        r = requests.get('https://{}:8080/api/user/device'.format(self._apihost), 
+        r = requests.get('https://{}-api.coolkit.cc:8080/api/user/device'.format(self._api_region), 
             headers=self._headers)
 
-        self._devices = r.json()
-
-        if 'error' in self._devices and self._devices['error'] in [HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED]:
+        resp = r.json()
+        if 'error' in resp and resp['error'] in [HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED]:
             # @IMPROVE add maybe a service call / switch to deactivate sonoff component
             if self.is_grace_period():
                 _LOGGER.warning("Grace period activated!")
+
+                # return the current (and possible old) state of devices
+                # in this period any change made with the mobile app (on/off) won't be shown in HA
                 return self._devices
 
-            _LOGGER.warning("Re-login component")
+            _LOGGER.info("Re-login component")
             self.do_login()
 
+        self._devices = r.json()
         return self._devices
 
     def get_devices(self, force_update = False):
@@ -226,7 +251,7 @@ class Sonoff():
 
         if self._ws is None:
             try:
-                self._ws = create_connection(('wss://{}:8080/api/ws'.format(self._wshost)), timeout=5)
+                self._ws = create_connection(('wss://{}:8080/api/ws'.format(self._wshost)), timeout=10)
 
                 payload = {
                     'action'    : "userOnline",
@@ -253,29 +278,35 @@ class Sonoff():
 
         return self._ws
         
-    def switch(self, deviceid, newstate):
+    def switch(self, new_state, deviceid, outlet):
         """Switch on or off."""
 
         # we're in the grace period, no state change
         if self._skipped_login:
             _LOGGER.info("Grace period, no state change")
-            return (not newstate)
+            return (not new_state)
 
         self._ws = self._get_ws()
         
         if not self._ws:
             _LOGGER.warning('invalid websocket, state cannot be changed')
-
-        _LOGGER.debug("Switching `%s` to state: %s", deviceid, newstate)
+            return (not new_state)
 
         # convert from True/False to on/off
-        if isinstance(newstate, (bool)):
-            newstate = 'on' if newstate else 'off'
+        if isinstance(new_state, (bool)):
+            new_state = 'on' if new_state else 'off'
 
         device = self.get_device(deviceid)
 
+        if outlet is not None:
+            _LOGGER.debug("Switching `%s - %s` on outlet %d to state: %s", \
+                device['deviceid'], device['name'] , (outlet+1) , new_state)
+        else:
+            _LOGGER.debug("Switching `%s` to state: %s", deviceid, new_state)
+
         if not device:
             _LOGGER.error('unknown device to be updated')
+            return False
 
         # the payload rule is like this:
         #   normal device (non-shared) 
@@ -285,16 +316,21 @@ class Sonoff():
         #       apikey      = device apikey
         #       selfApiKey  = login apikey (yes, it's typed corectly selfApikey and not selfApiKey :|)
 
+        if outlet is not None:
+            params = { 'switches' : device['params']['switches'] }
+            params['switches'][outlet]['switch'] = new_state
+
+        else:
+            params = { 'switch' : new_state }
+
         payload = {
             'action'        : 'update',
             'userAgent'     : 'app',
-            'params'        : {
-                'switch' : newstate
-            },
+            'params'        : params,
             'apikey'        : device['apikey'],
             'deviceid'      : str(deviceid),
             'sequence'      : str(time.time()).replace('.',''),
-            'controlType'   : 4,
+            'controlType'   : device['params']['controlType'] if 'controlType' in device['params'] else 4,
             'ts'            : 0
         }
 
@@ -304,54 +340,67 @@ class Sonoff():
 
         self._ws.send(json.dumps(payload))
         wsresp = self._ws.recv()
-        # _LOGGER.error("switch socket: %s", wsresp)
+        # _LOGGER.debug("switch socket: %s", wsresp)
         
         self._ws.close() # no need to keep websocket open (for now)
         self._ws = None
 
-        # set also te pseudo-internal state of the device
+        # set also te pseudo-internal state of the device until the real refresh kicks in
         for idx, device in enumerate(self._devices):
             if device['deviceid'] == deviceid:
-                self._devices[idx]['params']['switch'] = newstate
+                if outlet is not None:
+                    self._devices[idx]['params']['switches'][outlet]['switch'] = new_state
+                else:
+                    self._devices[idx]['params']['switch'] = new_state
+
 
         # @TODO add some sort of validation here, maybe call the devices status 
         # only IF MAIN STATUS is done over websocket exclusively
 
-        return newstate
+        return new_state
 
 class SonoffDevice(Entity):
     """Representation of a Sonoff device"""
 
-    def __init__(self, hass, device):
+    def __init__(self, hass, device, outlet = None):
         """Initialize the device."""
 
         self._hass          = hass
-        self._name          = 'sonoff_{}'.format(device['deviceid']) 
-        self._device_name   = device['name']
+        self._name          = '{}{}'.format(device['name'], '' if outlet is None else ' '+str(outlet+1))
         self._deviceid      = device['deviceid']
-        self._user_apikey   = device['apikey']
-        self._state         = device['params']['switch'] == 'on'
         self._available     = device['online']
+        self._outlet        = outlet 
 
         self._attributes    = {
-            'device_name'   : self._device_name,
-            'device_id'     : self._deviceid,
-            'friendly_name' : self._device_name
+            'device_id'     : self._deviceid
         }
 
-    def get_device(self, deviceid):
+    def get_device(self):
         for device in self._hass.data[DOMAIN].get_devices():
-            if 'deviceid' in device and device['deviceid'] == deviceid:
+            if 'deviceid' in device and device['deviceid'] == self._deviceid:
                 return device
 
         return None
 
-    def get_state(self, deviceid):
-        device = self.get_device(deviceid)
-        return device['params']['switch'] == 'on' if device else False
+    def get_state(self):
+        device = self.get_device()
 
-    def get_available(self, deviceid):
-        device = self.get_device(deviceid)
+        # the device has more switches
+        if self._outlet is not None:
+            return device['params']['switches'][self._outlet]['switch'] == 'on' if device else False
+
+        else:
+            return device['params']['switch'] == 'on' if device else False
+
+    def get_available(self):
+        device = self.get_device()
+
+        if self._outlet is not None and device:
+            # this is a particular case where the state of the switch is reported as `keep` 
+            # and i want to track this visualy using the unavailability status in history panel
+            if device['online'] and device['params']['switches'][self._outlet]['switch'] == 'keep':
+                return False
+
         return device['online'] if device else False
 
     @property
@@ -367,12 +416,13 @@ class SonoffDevice(Entity):
     @property
     def is_on(self):
         """Return true if device is on."""
-        return self.get_state(self._deviceid)
+        self._state = self.get_state()
+        return self._state
 
     @property
     def available(self):
         """Return true if device is online."""
-        return self.get_available(self._deviceid)
+        return self.get_available()
 
     # @Throttle(MIN_TIME_BETWEEN_UPDATES)
     def update(self):
@@ -384,12 +434,12 @@ class SonoffDevice(Entity):
 
     def turn_on(self, **kwargs):
         """Turn the device on."""
-        self._state = self._hass.data[DOMAIN].switch(self._deviceid, True)
+        self._state = self._hass.data[DOMAIN].switch(True, self._deviceid, self._outlet)
         self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs):
         """Turn the device off."""
-        self._state = self._hass.data[DOMAIN].switch(self._deviceid, False)
+        self._state = self._hass.data[DOMAIN].switch(False, self._deviceid, self._outlet)
         self.schedule_update_ha_state()
 
     @property
