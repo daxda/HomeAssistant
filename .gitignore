@@ -2,9 +2,11 @@
 !*.yaml
 !*.py
 !*.md
+!*.js
 !.gitignore
 !screenshot
 !packages
+!www
 !custom_components
 !custom_components/switch
 !custom_components/sonoff-debug

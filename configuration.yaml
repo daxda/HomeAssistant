@@ -25,7 +25,7 @@ input_boolean: !include boolean.yaml
 cloud: !include cloud.yaml
 lovelace:
   mode: yaml
-  
+
 wake_on_lan:
 
 #tuya:
@@ -34,11 +34,11 @@ wake_on_lan:
 #  country_code: !secret TUYA_COUNTRYCODE
 
 sonoff:
-  email: !secret sonoff_username
+  username: !secret sonoff_username
   password: !secret sonoff_password
   scan_interval: 60
   grace_period: 600
-  apihost: 'eu-api.coolkit.cc'
+  api_region: 'eu'
 
 light:
   - platform: yeelight
@@ -74,6 +74,8 @@ media_player:
     host: 192.168.1.89
     access_token: 577887
   - platform: firetv
+    name: Fire TV
+    host: 192.168.1.124
 
 # Enables the frontend
 frontend:
@@ -92,6 +94,9 @@ http:
     - 192.168.1.0/24
     - 172.17.0.0/16 # Example Docker bridge
     - 172.30.32.0/23 # Example Docker hassio
+#  ip_ban_enabled: true
+#  login_attempts_threshold: 5
+  ssl_profile: modern
 
 updater:
 discovery:
@@ -109,6 +114,7 @@ history:
     domains:
       - light
       - switch
+      - device_tracker
     entities:
       - media_player.lg_tv_remote
       - sensor.neo_coolcam_power_plug_12a_power
@@ -116,12 +122,14 @@ history:
       - sensor.neo_coolcam_power_plug_12a_power_8
       - sensor.neo_coolcam_power_plug_12a_power_10
       - sensor.netatmo_regenmesser_rain
+      - sensor.cpu_temperature
+      - sensor.processor_use
   exclude:
     entities:
       - light.fibaro_system_fgd212_dimmer_2_level_2
       - light.fibaro_system_fgd212_dimmer_2_level
 recorder:
-  purge_keep_days: 5
+  purge_keep_days: 3
   exclude:
     domains:
       - sensor
@@ -130,12 +138,15 @@ recorder:
       - light
       - switch
       - input_datetime
+      - device_tracker
     entities:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
       - sensor.neo_coolcam_power_plug_12a_power_10
       - sensor.netatmo_regenmesser_rain
+      - sensor.cpu_temperature
+      - sensor.processor_use
 #logbook:
 #  include:
 #    domains:
@@ -180,4 +191,12 @@ notify:
     duration: 2
 
 device_tracker:
+  - platform: unifi_direct
+    host: !secret unifi_host
+    username: !secret unifi_user
+    password: !secret unifi_password
 panel_iframe:
+  pihole:
+    title: Pi-hole
+    icon: mdi:block-helper
+    url: !secret pihole_url

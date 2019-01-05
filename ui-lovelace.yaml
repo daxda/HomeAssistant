@@ -1,5 +1,11 @@
 
+resources:
+  - url: /local/slider-entity-row.js
+    type: js
+
+
 title: Dari's Home Assistant
+
 
 views:
   - title: default_view  #pagina
@@ -12,36 +18,25 @@ views:
       - type: horizontal-stack
         cards:
         - type: entity-button
-          tap_action: toggle
+          tap_action:
+            action: toggle
           name: CANCELLO
           entity: switch.switch
         - type: entity-button
-          tap_action: toggle
+          tap_action:
+            action: toggle
           name: PEDONALE
           entity: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
         - type: entity-button
-          tap_action: call-service
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.spengitv
           entity: script.spengitv
           name: TV OFF
           icon: mdi:power
-          service: script.turn_on
-      - type: entities
-        title: Giardino
-        show_header_toggle: false
-        entities:
-          - sun.sun
-          - sensor.fasilunari
-          - sensor.dark_sky_cloud_coverage
-          - sensor.netatmo_regenmesser_rain
-          - sensor.netatmo_regenmesser_sum_rain_1
-          - sensor.netatmo_outdoor_temperature
-          - sensor.netatmo_outdoor_humidity
-          - sensor.dark_sky_apparent_temperature
-          - sensor.dark_sky_wind_speed
-          - type: divider
-          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
-          - switch.switch
-          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+
       - type: entities
         title: Luci
         show_header_toggle: true
@@ -59,10 +54,15 @@ views:
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
           - type: section
             label: Piano Primo
-          - light.level
-          - light.level_2
-          - light.camera
-          - entity: light.studio
+          - type: custom:slider-entity-row
+            entity: light.level
+          - type: custom:slider-entity-row
+            entity: light.level_2
+          - type: custom:slider-entity-row
+            entity: light.camera
+          - type: custom:slider-entity-row
+            entity: light.studio
+
 
       - type: entities
         title: Confort Living
@@ -79,6 +79,23 @@ views:
           - sensor.netatmo_indoor_co2
           - sensor.sala_dust
           - sensor.netatmo_indoor_noise
+      - type: entities
+        title: Giardino
+        show_header_toggle: false
+        entities:
+          - sun.sun
+          - sensor.fasilunari
+          - sensor.dark_sky_cloud_coverage
+          - sensor.netatmo_regenmesser_rain
+          - sensor.netatmo_regenmesser_sum_rain_1
+          - sensor.netatmo_outdoor_temperature
+          - sensor.netatmo_outdoor_humidity
+          - sensor.dark_sky_apparent_temperature
+          - sensor.dark_sky_wind_speed
+          - type: divider
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+          - switch.switch
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
       - type: entities
         title: Finestre
         show_header_toggle: true
@@ -151,31 +168,46 @@ views:
       - type: horizontal-stack
         cards:
         - type: entity-button
-          tap_action: call-service
-          service: script.turn_on
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.buongiorno
           entity: script.buongiorno
           name: GIORNO
           icon: mdi:alarm-check
         - type: entity-button
-          tap_action: call-service
-          service: script.turn_on
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.buonanotte
           name: NOTTE
           entity: script.buonanotte
           icon: mdi:hotel
         - type: entity-button
-          tap_action: call-service
-          service: script.turn_on
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.spengitv
           entity: script.spengitv
           name: TV OFF
           icon: mdi:television-classic-off
         - type: entity-button
-          tap_action: call-service
-          service: script.turn_on
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.dolcedivano
           entity: script.dolcedivano
           icon: mdi:sofa
         - type: entity-button
-          tap_action: call-service
-          service: script.turn_on
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.pioggia
           entity: script.pioggia
           icon: mdi:weather-pouring
       - type: entities
@@ -186,7 +218,7 @@ views:
           - switch.christmas_light
           - entity: switch.sonoff_100009f6b1
             name: Albero di natale
-            icon: mdi:android-auto          
+            icon: mdi:android-auto
           - input_boolean.musica_natale
           - type: section
             label: Timer
@@ -232,15 +264,13 @@ views:
     cards:
       - type: entities
         title: Utility
-        show_header_toggle: true
+        show_header_toggle: false
         entities:
           - switch.wol_imac
           - sensor.iphone_battery_level
           - sensor.iphone_di_muriel_battery_level
           - sensor.ipad_di_muriel_battery_level
-          - sensor.speedtest_download
-          - sensor.speedtest_upload
-          - sensor.speedtest_ping
+          - type: divider
           - sensor.neo_coolcam_battery_powered_pir_sensor_burglar
           - sensor.netatmo_outdoor_battery
           - sensor.netatmo_regenmesser_battery
@@ -251,7 +281,7 @@ views:
           - sensor.sala_filter_life
       - type: entities
         title: Zwave
-        show_header_toggle: true
+        show_header_toggle: false
         entities:
           - zwave.aeotec_zw090_zstick_gen5_eu
           - zwave.aeotec_zw117_range_extender_6
@@ -272,18 +302,36 @@ views:
           - zwave.neo_coolcam_power_plug_12a_5
           - zwave.neo_coolcam_power_plug_12a_6
           - zwave.neo_coolcam_battery_powered_pir_sensor
-      - type: entities
-        title: Raspberry
-        show_header_toggle: true
-        entities:
-          - sensor.cpu_temperature
-          - sensor.processor_use
-          - sensor.disk_use_percent_
-          - sensor.memory_free
-          - sensor.network_in_eth0
-          - sensor.network_out_eth0
-          - sensor.memory_use_percent
-          - sensor.since_last_boot
+      - type: vertical-stack
+        cards:
+        - type: entities
+          title: Raspberry
+          show_header_toggle: false
+          entities:
+            - sensor.cpu_temperature
+            - sensor.processor_use
+            - sensor.disk_use_percent_
+            - sensor.memory_free
+            - sensor.network_in_eth0
+            - sensor.network_out_eth0
+            - sensor.memory_use_percent
+            - sensor.last_boot
+        - type: history-graph
+          entities:
+            - sensor.cpu_temperature
+            - sensor.processor_use
+        - type: entities
+          title: Connessione
+          show_header_toggle: False
+          entities:
+          - sensor.ssl_certificate_expiry
+          - sensor.pihole_ads_blocked_today
+          - sensor.pihole_dns_queries_today
+          - sensor.pihole_dns_unique_clients
+          - sensor.speedtest_download
+          - sensor.speedtest_upload
+          - sensor.speedtest_ping
+
       - type: entities
         title: Sensore di Movimento
         show_header_toggle: true

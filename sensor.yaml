@@ -13,6 +13,13 @@
       - ping
       - download
       - upload
+  - platform: pi_hole
+    host: !secret pihole_localhost
+    monitored_conditions:
+      - ads_blocked_today
+      - dns_queries_today
+      - unique_clients
+
   - platform: systemmonitor
     resources:
     - type: disk_use_percent
@@ -20,7 +27,7 @@
     - type: memory_free
     - type: memory_use_percent
     - type: processor_use
-    - type: since_last_boot
+    - type: last_boot
     - type: network_in
       arg: eth0
     - type: network_out
@@ -30,6 +37,8 @@
     command: cat /sys/class/thermal/thermal_zone0/temp
     unit_of_measurement: °C
     value_template: '{{ value | multiply(0.001) | round(1) }}'
+  - platform: cert_expiry
+    host: !secret domain
   - platform: moon
 
   - platform: darksky
