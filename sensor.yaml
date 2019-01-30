@@ -1,4 +1,23 @@
 
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      - 'time_date'
+      - 'time_utc'
+
+  - platform: miflora
+    mac: 'C4:7C:8D:65:F1:26'
+    name: Flower 1
+    force_update: false
+    median: 3
+    monitored_conditions:
+      - moisture
+      - light
+      - temperature
+      - conductivity
+      - battery
 
   - platform: netatmo
     modules:
@@ -53,13 +72,26 @@
 ############ Da qui in poi tutti i sensori creati tramite template
   - platform: template
     sensors:
-#      consumo_:
-#        entity_id: sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8
-#        friendly_name: "Cosumi Fibaro RollerShutter"
-#        icon_template: mdi:chart-bar
-#        unit_of_measurement: 'W'
-#        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int }} "
+      consumototale:
+        entity_id: sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8, sensor.neo_coolcam_power_plug_12a_power, sensor.neo_coolcam_power_plug_12a_power_2, sensor.neo_coolcam_power_plug_12a_power_10, sensor.neo_coolcam_power_plug_12a_power_11, sensor.neo_coolcam_power_plug_12a_power_8, sensor.neo_coolcam_power_plug_12a_power_3, sensor.fibaro_system_fgd212_dimmer_2_power_2, sensor.neo_coolcam_power_plug_12a_power_7, sensor.fibaro_system_fgd212_dimmer_2_power_4, sensor.fibaro_system_fgd212_dimmer_2_power, sensor.fibaro_system_fgd212_dimmer_2_power_3
+        friendly_name: "Cosumi Quasi Generali"
+        icon_template: mdi:chart-bar
+        unit_of_measurement: 'W'
+        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int + states.sensor.neo_coolcam_power_plug_12a_power.state | int + states.sensor.neo_coolcam_power_plug_12a_power_2.state | int + states.sensor.neo_coolcam_power_plug_12a_power_10.state | int + states.sensor.neo_coolcam_power_plug_12a_power_11.state | int + states.sensor.neo_coolcam_power_plug_12a_power_8.state | int + states.sensor.neo_coolcam_power_plug_12a_power_3.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_2.state | int + states.sensor.neo_coolcam_power_plug_12a_power_7.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_4.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_3.state | int }} "
 
+      consumoroller:
+        entity_id: sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8
+        friendly_name: "Cosumi Rotolanti"
+        icon_template: mdi:chart-bar
+        unit_of_measurement: 'W'
+        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int }} "
+
+      giornianatale:
+        friendly_name: 'Giorni al Natale'
+        value_template: '{{ (( as_timestamp(strptime("25.12."+ now().strftime("%Y"), "%d.%m.%Y")) - as_timestamp(strptime(now().strftime("%d")+"."+now().strftime("%m")+"."+now().strftime("%Y"), "%d.%m.%Y"))) / 86400 ) | round(0) }}' #'{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
+        unit_of_measurement: "Giorni"
+        entity_id: sensor.date
+        icon_template: mdi:calendar
 
       fasilunari:
         friendly_name: "Luna"

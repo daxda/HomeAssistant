@@ -2,7 +2,7 @@ homeassistant:
   name: Dari's Home Assistant
   latitude: !secret latitude_home
   longitude: !secret longitude_home
-  elevation: 29    # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 38    # Impacts weather/sunrise data (altitude above sea level in meters)
   unit_system: metric
   time_zone: Europe/Rome
   customize: !include customize.yaml
@@ -19,10 +19,14 @@ script: !include scripts.yaml
 zone: !include zones.yaml
 cover: !include cover.yaml
 sensor: !include sensor.yaml
+switch: !include switch.yaml
+light: !include light.yaml
+plant: !include plant.yaml
 scene: !include scene.yaml
 input_boolean: !include boolean.yaml
-#homekit: !include homekit.yaml
 cloud: !include cloud.yaml
+#homekit: !include homekit.yaml
+
 lovelace:
   mode: yaml
 
@@ -33,34 +37,12 @@ wake_on_lan:
 #  password: !secret TUYA_PASSWORD
 #  country_code: !secret TUYA_COUNTRYCODE
 
-sonoff:
-  username: !secret sonoff_username
-  password: !secret sonoff_password
-  scan_interval: 60
-  grace_period: 600
-  api_region: 'eu'
-
-light:
-  - platform: yeelight
-    devices:
-      192.168.1.87:
-        name: camera
-        transition: 1000
-        use_music_mode: False #(defaults to False)
-        save_on_change: False #(defaults to True)
-      192.168.1.72:
-        name: studio
-        transition: 1000
-        use_music_mode: False #(defaults to False)
-        save_on_change: False #(defaults to True)
-
-switch:
-  - platform: wake_on_lan
-    name: WOL iMac
-    mac_address: !secret wol_imac
-  - platform: tplink
-    host: 192.168.1.115
-    name: christmas_light
+#sonoff:
+#  username: !secret sonoff_username
+#  password: !secret sonoff_password
+#  scan_interval: 60
+#  grace_period: 600
+#  api_region: 'eu'
 
 zwave:
     usb_path: /dev/ttyACM0
@@ -81,7 +63,6 @@ media_player:
 frontend:
   themes: !include_dir_merge_named themes
 
-# Enables configuration UI
 config:
 
 http:
@@ -94,9 +75,9 @@ http:
     - 192.168.1.0/24
     - 172.17.0.0/16 # Example Docker bridge
     - 172.30.32.0/23 # Example Docker hassio
+  ssl_profile: modern
 #  ip_ban_enabled: true
 #  login_attempts_threshold: 5
-  ssl_profile: modern
 
 updater:
 discovery:
@@ -104,8 +85,6 @@ discovery:
     - yeelight
     - sonos
     - plex_mediaserver
-# Allows you to issue voice commands from the frontend in enabled browsers
-conversation:
 
 # Enables support for tracking state changes over time
 history:
@@ -114,46 +93,55 @@ history:
     domains:
       - light
       - switch
-      - device_tracker
     entities:
+      - device_tracker.davides_iphone
+      - device_tracker.iphone_di_muriel
       - media_player.lg_tv_remote
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
       - sensor.neo_coolcam_power_plug_12a_power_10
+      - sensor.neo_coolcam_power_plug_12a_power_11
+      - sensor.consumototale
       - sensor.netatmo_regenmesser_rain
       - sensor.cpu_temperature
       - sensor.processor_use
+      - device_tracker.suocera
   exclude:
     entities:
       - light.fibaro_system_fgd212_dimmer_2_level_2
       - light.fibaro_system_fgd212_dimmer_2_level
 recorder:
-  purge_keep_days: 3
+  purge_keep_days: 2
   exclude:
     domains:
       - sensor
+      - device_tracker
   include:
     domains:
       - light
       - switch
       - input_datetime
-      - device_tracker
     entities:
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
+      - sensor.neo_coolcam_power_plug_12a_power_3
       - sensor.neo_coolcam_power_plug_12a_power_8
       - sensor.neo_coolcam_power_plug_12a_power_10
+      - sensor.neo_coolcam_power_plug_12a_power_11
+      - sensor.consumototale
       - sensor.netatmo_regenmesser_rain
       - sensor.cpu_temperature
       - sensor.processor_use
+      - device_tracker.davides_iphone
+      - device_tracker.iphone_di_muriel
+      - device_tracker.suocera
+
 #logbook:
 #  include:
 #    domains:
 #      - switch
 
-map:
-ios:
 dyson:
   username: !secret dyson_username
   password: !secret dyson_password
@@ -162,21 +150,20 @@ dyson:
     - device_id: !secret dyson_device_id # eg: Pure Cool Link device
       device_ip: 192.168.1.70
 
-weather:
-  - platform: yweather
-    name: Meteo
-    woeid: !secret yweather_woeid
 sun:
+weather:
+  - platform: darksky
+    name: Meteo
+    api_key: !secret darksky_apikey
 
-# Text to speech
-tts:
+tts:  # Text to speech
   platform: google
   language: 'it'
+conversation:
 
-#mqtt:
-#  broker: core-mosquitto
-#  username: !secret mosquito_user
-#  password: !secret mosquito_password
+map:
+
+ios:
 
 notify:
   - name: telefoni
@@ -195,8 +182,5 @@ device_tracker:
     host: !secret unifi_host
     username: !secret unifi_user
     password: !secret unifi_password
+
 panel_iframe:
-  pihole:
-    title: Pi-hole
-    icon: mdi:block-helper
-    url: !secret pihole_url

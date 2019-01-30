@@ -13,7 +13,6 @@ views:
     badges:
       - device_tracker.davides_iphone
       - device_tracker.iphone_di_muriel
-      #- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
     cards:               # card della pagina
       - type: horizontal-stack
         cards:
@@ -39,15 +38,17 @@ views:
 
       - type: entities
         title: Luci
-        show_header_toggle: true
+        show_header_toggle: False
         entities:
           - type: section
             label: Piano Terra
           - switch.switch_9
+          - switch.shellypensili
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
           - switch.switch_8
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
           - switch.switch_15
+          - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
           - type: divider
 #          - switch.christmas_light
           - switch.switch_14
@@ -62,8 +63,6 @@ views:
             entity: light.camera
           - type: custom:slider-entity-row
             entity: light.studio
-
-
       - type: entities
         title: Confort Living
         show_header_toggle: false
@@ -113,54 +112,28 @@ views:
             - entity: switch.switch_6 #Forno
             - switch.switch_7 # Lavastoviglie
             - switch.neo_coolcam_power_plug_12a_switch #cantina portavino
-            - switch.switch_10 # Lavatrice
-            - switch.switch_16 # iMac
+            - switch.switch_10 # iMac
+            - switch.neo_coolcam_power_plug_12a_switch_2 #Asciugatrice
+            - switch.switch_16 # Lavatrice
         - type: entities
           title: Consumi
-          show_header_toggle: true
+          show_header_toggle: false
           entities:
+            - automation.controllocarichi
             - sensor.neo_coolcam_power_plug_12a_power
             - sensor.neo_coolcam_power_plug_12a_power_2
             - sensor.neo_coolcam_power_plug_12a_power_10
             - sensor.neo_coolcam_power_plug_12a_power_8
+            - sensor.neo_coolcam_power_plug_12a_power_11
             - sensor.neo_coolcam_power_plug_12a_power_3
+            - type: divider
+            - sensor.consumototale
       - type: entities
         title: Sonos
         entities:
           - media_player.salotto
           - media_player.camere
-
-  - title: meteo
-    icon: mdi:umbrella-outline
-    badges:
-      - sensor.dark_sky_summary
-    cards:
-      - type: vertical-stack
-        cards:
-        - type: iframe
-          url: https://embed.windy.com/embed2.html?lat=42.912&lon=10.525&zoom=8&level=surface&overlay=rain&menu=&message=&marker=&calendar=now&pressure=true&type=map&location=coordinates&detail=&detailLat=42.011&detailLon=10.522&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1
-          aspect_ratio: 100%
-        - type: weather-forecast
-          entity: weather.meteo
-        - type: thermostat
-          entity: climate.termostatod
-
-  - title: multimedia
-    icon: mdi:movie
-    cards:
-      - type: horizontal-stack
-        cards:
-        - type: media-control
-          entity: media_player.salotto
-        - type: media-control
-          entity: media_player.camere
-      - type: horizontal-stack
-        cards:
-        - type: media-control
-          entity: media_player.living
-        - type: media-control
-          entity: media_player.lg_tv_remote
-
+############################################################################
 
   - title: automazioni
     icon: mdi:auto-fix
@@ -210,18 +183,17 @@ views:
               entity_id: script.pioggia
           entity: script.pioggia
           icon: mdi:weather-pouring
+      - type: plant-status
+        name: Chamadorea
+        entity: plant.chamadorea
       - type: entities
-        title: Christmass Card
+        title: Timer
         show_header_toggle: false
         entities:
-          - sensor.giornianatale
-          - switch.christmas_light
-          - entity: switch.sonoff_100009f6b1
-            name: Albero di natale
-            icon: mdi:android-auto
-          - input_boolean.musica_natale
-          - type: section
-            label: Timer
+          - entity: switch.christmas_light
+            name: Luce Terrario
+            icon: mdi:tortoise
+          - type: divider
           - group.automazioni_natale
           - input_datetime.accendi_natale
           - input_boolean.tramonto_natale
@@ -231,25 +203,31 @@ views:
         show_header_toggle: false
         entities:
           - automation.pioggia
-          - automation.guardo_la_tv
-          - automation.bagno_sera
-          - automation.bagno_notte
           - automation.notifica_fine_lavaggio
+          - automation.arrivabetty
           - script.sonosflow
       - type: entities
-        title: Energy Saver
+        title: Automazioni Luci
         show_header_toggle: false
         entities:
+          - automation.guardo_la_tv
           - automation.camerina_out_day
           - automation.camerina_out
           - automation.camerina_out_out
           - automation.camerina_return
           - automation.philips_energy
+          - automation.bagno_pir
+          - automation.bagno_sera
+          - automation.bagno_notte
+          - automation.bagno_energy
+          - automation.risparmio_energetico_giorno
+          - automation.assente
       - type: entities
         title: Automazioni di Sistema
         show_header_toggle: false
         entities:
-          - automation.start_homekit
+#          - automation.start_homekit
+          - automation.controllocarichi
           - automation.backup_automatico
           - automation.spazio_libero
           - automation.notifica_aggiornamento
@@ -257,7 +235,39 @@ views:
           - type: divider
           - automation.test_notifica
           - automation.test_sonos
+#########################################################################
 
+  - title: meteo
+    icon: mdi:umbrella-outline
+    badges:
+      - sensor.dark_sky_summary
+    cards:
+      - type: vertical-stack
+        cards:
+        - type: iframe
+          url: https://embed.windy.com/embed2.html?lat=42.912&lon=10.525&zoom=8&level=surface&overlay=rain&menu=&message=&marker=&calendar=now&pressure=true&type=map&location=coordinates&detail=&detailLat=42.011&detailLon=10.522&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1
+          aspect_ratio: 100%
+        - type: weather-forecast
+          entity: weather.meteo
+        - type: thermostat
+          entity: climate.termostatod
+
+  - title: multimedia
+    icon: mdi:movie
+    cards:
+      - type: horizontal-stack
+        cards:
+        - type: media-control
+          entity: media_player.salotto
+        - type: media-control
+          entity: media_player.camere
+      - type: horizontal-stack
+        cards:
+        - type: media-control
+          entity: media_player.living
+        - type: media-control
+          entity: media_player.lg_tv_remote
+########################################################
 
   - title: Utility
     icon: mdi:settings
@@ -295,13 +305,16 @@ views:
           - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_2
           - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_3
           - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_4
+          - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_6
           - zwave.neo_coolcam_power_plug_12a
           - zwave.neo_coolcam_power_plug_12a_2
           - zwave.neo_coolcam_power_plug_12a_3
           - zwave.neo_coolcam_power_plug_12a_4
           - zwave.neo_coolcam_power_plug_12a_5
           - zwave.neo_coolcam_power_plug_12a_6
+          - zwave.unknown_node_30
           - zwave.neo_coolcam_battery_powered_pir_sensor
+          - zwave.fibaro_system_fgms001zw5_motion_sensor
       - type: vertical-stack
         cards:
         - type: entities
@@ -334,7 +347,13 @@ views:
 
       - type: entities
         title: Sensore di Movimento
-        show_header_toggle: true
+        show_header_toggle: False
         entities:
           - binary_sensor.sensor
           - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
+          - type: divider
+          - binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor
+          - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance
+          - sensor.fibaro_system_fgms001zw5_motion_sensor_seismic_intensity
+          - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar
+          - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature

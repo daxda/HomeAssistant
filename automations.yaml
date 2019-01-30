@@ -1,5 +1,6 @@
 ############ WEBHOOK ##########
-  - alias: Webhook_cancello
+  - alias: webhook_cancello
+    initial_state: true
     trigger:
       platform: webhook
       webhook_id: cancello_pedonale
@@ -9,7 +10,7 @@
           entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
 
 ###### SONOS ######
-  - alias: Test Sonos
+  - alias: test sonos
     initial_state: False
     trigger:
       platform: state
@@ -22,14 +23,14 @@
           source: Lancia Flow
 
 
-
 ##### METEO #################
 
-  - alias: Pioggia
+  - alias: pioggia
+    initial_state: true
     trigger:
       platform: numeric_state
       entity_id: sensor.netatmo_regenmesser_sum_rain_1
-      above: 0.2
+      above: 0.1
     condition:
       condition: and
       conditions:
@@ -51,11 +52,13 @@
           message: "Piove...! Chiudo le finestre che posso chiudere, per le altre organizzati!"
       - service: script.pioggia
 
-########## ILLUMINAZIONE ###################
+####################################################
+################## ILLUMINAZIONE ###################
+####################################################
 
-
-#####Luce Camerina
-  - alias: Camerina out # dopo 5 minuti di assenza imposta la luminosità al minimo
+####################  Luce Camerina
+  - alias: camerina out # dopo 5 minuti di assenza imposta la luminosità al minimo
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.sensor
@@ -89,7 +92,8 @@
           brightness_pct: 50
       - service: automation.turn_off
         entity_id: automation.camerina_return
-  - alias: Camerina out out # se dopo 15 minuti non sono rientrato spengi la luce e disattiva la riaccensione automatica
+  - alias: camerina out out # se dopo 15 minuti non sono rientrato spengi la luce e disattiva la riaccensione automatica
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.sensor
@@ -109,7 +113,8 @@
           entity_id: light.level_2
       - service: automation.turn_off
         entity_id: automation.camerina_return
-  - alias: Camerina out day #di giorno spengi dopo 6 minuti
+  - alias: camerina out day #di giorno spengi dopo 6 minuti
+    initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.sensor
@@ -126,11 +131,12 @@
         entity_id: light.level_2
 
 ########## Luce studio
-  - alias: Bagno Sera
+  - alias: studio Sera
+    initial_state: true
     trigger:
-      platform: state
-      entity_id: light.studio
-      to: 'on'
+      - platform: state
+        entity_id: light.studio
+        to: 'on'
     condition:
       - condition: state
         entity_id: sun.sun
@@ -145,13 +151,36 @@
         brightness_pct: 10
         transition: 5
 
-########## Luce Bagno Grande
-  - alias: Bagno Sera
+########## Luce Bagno Grande ##############
+  - alias: bagno pir
+    initial_state: true
     trigger:
-      platform: state
-      entity_id: light.level
-      from: 'off'
-      to: 'on'
+      - platform: state
+        entity_id: binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor
+        to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: binary_sensor.sensor
+          state: 'off'
+          for: # solo se è stato spento nell'ultimo minuto il sensore dela camerina
+            minutes: 1
+        - condition: state
+          entity_id: sun.sun
+          state: "below_horizon"
+    action:
+      service: light.turn_on
+      data:
+        entity_id: light.level
+
+  - alias: bagno sera
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: light.level
+        from: 'off'
+        to: 'on'
     condition:
       - condition: state
         entity_id: sun.sun
@@ -163,9 +192,10 @@
       service: light.turn_on
       data:
         entity_id: light.level
-        brightness_pct: 15
+        brightness_pct: 10
 
-  - alias: Bagno Notte
+  - alias: bagno notte
+    initial_state: true
     trigger:
       platform: state
       entity_id: light.level
@@ -184,9 +214,22 @@
         entity_id: light.level
         brightness_pct: 3
 
+  - alias: bagno energy #di giorno spengi dopo 6 minuti
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor
+      to: 'off'
+      for:
+        minutes: 3
+    action:
+      service: light.turn_off
+      data:
+        entity_id: light.level
 
-########## Luce Philips
-  - alias: Guardo la TV
+########## Luce Philips ######
+  - alias: guardo la tv
+    initial_state: true
     trigger:
       platform: state
       entity_id: media_player.lg_tv_remote
@@ -199,9 +242,10 @@
       service: switch.turn_on
       entity_id: switch.switch_15
   - alias: Philips Energy
+    initial_state: true
     trigger:
       platform: time
-      at:  '1:40:00'
+      at:  '1:00:00'
     condition:
       - condition: state
         entity_id: switch.switch_15
@@ -213,27 +257,54 @@
       service: switch.turn_off
       entity_id: switch.switch_15
 
-#  - alias: Pulsante Philips
-#    trigger:
-#      platform: state
-#      entity_id: zwave.neo_coolcam_power_plug_12a_5
-#      to: ''
-#    action:
-#      service: switch.toggle
-#      entity_id: switch.switch_15
+############ Tutte le Luci #######
 
-############## AUTOMAZIONI DI SERVIZIO #################
-
-  - alias: Start HomeKit
+  - alias: risparmio energetico giorno
+    initial_state: true
     trigger:
-      - platform: event
-        event_type: zwave.network_ready
+      platform: state
+      entity_id: group.persone  # di default quando un membro del gruppo è a casa, il gruppo è a casa
+      from: 'home'
+      to: 'not_home'
+      for:
+        minutes: 10
+    condition:
+      - condition: state
+        entity_id: sun.sun
+        state: "above_horizon"
     action:
-      - delay: '00:01:00'
-      - service: homekit.start
+      service: homeassistant.turn_off
+      entity_id: group.luci
+
+############ Simulatore presenza  ######################
+  - alias: assente
+    initial_state: true
+    trigger:
+      platform: sun
+      event: sunset
+      offset: '-00:25:00'
+    condition:
+      - condition: template
+        value_template: '{{ not is_state("device_tracker.davides_iphone", "home") and not is_state("device_tracker.iphone_di_muriel", "home") }}'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+
+########################################################
+############## AUTOMAZIONI DI SERVIZIO #################
+########################################################
+#  - alias: Start HomeKit
+#    initial_state: true
+#    trigger:
+#      - platform: event
+#        event_type: zwave.network_ready
+#    action:
+#      - delay: '00:01:00'
+#      - service: homekit.start
 
 
-  - alias: Backup Automatico
+  - alias: backup automatico
+    initial_state: true
     trigger:
       platform: time
       at: '3:00:00'
@@ -252,7 +323,8 @@
             command: upload
 
 ########### NOTIFICHE ##########
-  - alias: Attiva Notifica lavatrice
+  - alias: attiva notifica lavatrice
+    initial_state: true
     trigger:
     - platform: numeric_state
       entity_id: sensor.neo_coolcam_power_plug_12a_power_8
@@ -261,8 +333,8 @@
       - service: automation.turn_on
         entity_id: automation.notifica_fine_lavaggio
 
-  - alias: Notifica fine lavaggio
-    initial_state: False
+  - alias: notifica fine lavaggio
+    initial_state: false
     trigger:
     - platform: numeric_state
       entity_id: sensor.neo_coolcam_power_plug_12a_power_8
@@ -282,7 +354,8 @@
       - service: automation.turn_off
         entity_id: automation.notifica_fine_lavaggio
 
-  - alias: Notifica aggiornamento
+  - alias: notifica aggiornamento
+    initial_state: true
     trigger:
     - platform: state
       entity_id: updater.updater
@@ -291,8 +364,34 @@
       data_template:
         message: "È disponibile Home Assistant {{ states.updater.updater.state }}."
 
+  - alias: arrivabetty
+    initial_state: True
+    trigger:
+      platform: state
+      entity_id: device_tracker.suocera
+      to: 'home'
+    condition:
+      - condition: template   # Solo una volta ogni 24 ore
+        value_template: >
+          {% if states.automation.arrivabetty.last_triggered is not none %}
+          {% if as_timestamp(now()) | int - as_timestamp(states.automation.arrivabetty.attributes.last_triggered) | int > 86400 %} true {% else %} false
+          {% endif %}
+          {% else %}
+          false
+          {% endif %}
+    action:
+      - service: notify.ios_davides_iphone
+        data:
+          message: " La vecchia pazza è alla porta.... SCAPPA ! "
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Chiudete a chiave il mobile dei liquori, nascondete gli oggetti che si rompono... salvate il salvabile. E buona fortuna la vecchia è arrivata '
+          language: 'it'
 
-  - alias: Spazio Libero
+
+  - alias: spazio libero
+    initial_state: true
     trigger:
       platform: numeric_state
       entity_id: sensor.disk_use_percent_
@@ -309,7 +408,8 @@
         data:
           message: "Backup Automatico disattivato"
 
-  - alias: Toner
+  - alias: toner
+    initial_state: true
     trigger:
       platform: numeric_state
       entity_id: sensor.samsung_m2020_series_1921681137_toner_black
@@ -320,7 +420,7 @@
           message: "È quasi finito il toner della stampante Samsung M2020, ricordati di comprarlo"
 
 
-  - alias: Test Notifica
+  - alias: test notifica
     initial_state: False
     trigger:
       platform: state
@@ -334,3 +434,8 @@
       - service: notify.ios_davides_iphone
         data:
           message: "Test Notifica iOS"
+
+##################-----CONTROLLO CARICHI----##################################
+#
+#  alla fine l'ho messo in un packages per conto suo
+#

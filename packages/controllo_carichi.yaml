@@ -1,0 +1,187 @@
+#################################################################################
+#### SISTEMA (PER ORA) RUDIMENTALE DI CONTROLLO CARICHI                     #####
+#### Versione 0.2 ######    @ daxda  ###### https://github.com/daxda ############
+#################################################################################
+
+homeassistant:
+
+
+###### Sensore che somma tutti i dati sui consumi
+#sensor:
+#  - platform: template
+#    sensors:
+#      consumototale:
+#        entity_id: sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8, sensor.neo_coolcam_power_plug_12a_power, sensor.neo_coolcam_power_plug_12a_power_2, sensor.neo_coolcam_power_plug_12a_power_10, sensor.neo_coolcam_power_plug_12a_power_11, sensor.neo_coolcam_power_plug_12a_power_8, sensor.neo_coolcam_power_plug_12a_power_3, sensor.fibaro_system_fgd212_dimmer_2_power_2, sensor.neo_coolcam_power_plug_12a_power_7, sensor.fibaro_system_fgd212_dimmer_2_power_4, sensor.fibaro_system_fgd212_dimmer_2_power, sensor.fibaro_system_fgd212_dimmer_2_power_3
+#        friendly_name: "Cosumi Quasi Generali"
+#        icon_template: mdi:chart-bar
+#        unit_of_measurement: 'W'
+#        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int + states.sensor.neo_coolcam_power_plug_12a_power.state | int + states.sensor.neo_coolcam_power_plug_12a_power_2.state | int + states.sensor.neo_coolcam_power_plug_12a_power_10.state | int + states.sensor.neo_coolcam_power_plug_12a_power_11.state | int + states.sensor.neo_coolcam_power_plug_12a_power_8.state | int + states.sensor.neo_coolcam_power_plug_12a_power_3.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_2.state | int + states.sensor.neo_coolcam_power_plug_12a_power_7.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_4.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_3.state | int }} "
+
+
+########################################## AUTOMAZIONI ##############################################
+##  QUESTA AUTOMAZIONE VERIFICA SE IL CONSUMO TOTALE SUPERA DETERINATE SOGLIE ED ATTIVA LO SCRIPT  ##
+##  RELATIVO ALL'ELETTRODOMESTICO MENO IMPORTANTE SECONDO UN ORDINE CHE HO SCELTO                  ##
+#####################################################################################################
+automation:
+  - alias: controllocarichi
+    initial_state: true
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.consumototale
+        above: 3900
+      - platform: numeric_state
+        entity_id: sensor.consumototale
+        above: 3200
+        below: 3899
+        for: '00:48:00'
+    action:
+      - service: script.turn_on
+        data_template:   # l'ordine di priorità per non avere responsabiltà devono sceglierlo le mogli
+          entity_id: >
+            {% if states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3100 %}
+              script.carichi_lavastoviglie
+            {% elif states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_8.state | int < 3100 %}
+              script.carichi_lavatrice
+            {% elif states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3100 %}
+              script.carichi_lavalava
+            {% elif states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_11.state | int < 3100 %}
+              script.carichi_asciugatrice
+            {% else %}
+              script.carichi_fine
+            {% endif %}
+
+      - service: notify.telefoni
+        data_template:
+          message: "Hai rischiato un Blackout alle ore {{ now().strftime('%H:%M') }}"
+
+      - service: persistent_notification.create
+        data_template:
+          notification_id: Rischiato Blackout {{ now().strftime('D%dH%H%S') }}
+          title: Rischiato il blackout
+          message: >
+            Hai rischiato un Blackout alle ore {{ now().strftime('%H:%M') }} di {{ now().strftime('%A %d %B %Y') }}.
+
+########################################## SCRIPT ###################################################
+##  PER OGNI ELETTRODEMESTICO ABBIAMO UNO SCRIPT CHE LO SPENGE , INVIA UNA NOTIFICA VOCALE         ##
+##  ED ASPETTA CHE IL CONSUMO GENERALE + L'ULTIMO CONSUMO RILEVATO RIENTRINO NEI KWH DISPONIBILI   ##
+##  A QUEL PUNTO RIACCENDE L'ELLETRODOMESTICO ED AVVISA .                                          ##
+#####################################################################################################
+####### LAVASTOVIGLIE ########## LAVATRICE ######## ASCIUGATRICE ########## FORNO ###################
+#####################################################################################################
+
+script:
+  carichi_lavastoviglie:
+    alias: Lavastoviglie stop
+    sequence:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.switch_7    ##########################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Stava per saltare la corrente. Ho spento la Lavastoviglie'
+          language: 'it'
+      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3100 }}"
+#          timeout: '00:01:00'
+#          continue_on_timeout: 'true'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_7      ###############################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Ho riacceso la Lavastoviglie'
+          language: 'it'
+
+
+  carichi_lavatrice:
+    alias: Lavatrice stop
+    sequence:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.switch_16    ##########################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Stava per saltare la corrente. Ho spento la Lavatrice'
+          language: 'it'
+      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3100 }}"         ##############################   sensor.neo_coolcam_power_plug_12a_previous_reading_6 lavastoviglie
+#          timeout: '00:01:00'
+#          continue_on_timeout: 'true'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_16      ###############################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Ho riacceso la Lavatrice, per sicurezza controlla che sia ripartita'
+          language: 'it'
+
+  carichi_lavalava:
+    alias: Lavatrice e Lavastoviglie stop
+    sequence:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.switch_16, switch.switch_7     ##########################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Stava per saltare la corrente. Ho spento Lavastoviglie e Lavatrice'
+          language: 'it'
+      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3100 }}"
+#          timeout: '00:01:00'
+#          continue_on_timeout: 'true'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_7      ###############################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Ho riacceso la Lavastoviglie'
+          language: 'it'
+      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3100 }}"         ##############################   sensor.neo_coolcam_power_plug_12a_previous_reading_6 lavastoviglie
+#          timeout: '00:01:00'
+#          continue_on_timeout: 'true'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_16      ###############################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Ho riacceso la Lavatrice, per sicurezza controlla che sia ripartita'
+          language: 'it'
+
+  carichi_asciugatrice:
+    alias: Asciugatrice stop
+    sequence:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.neo_coolcam_power_plug_12a_switch_2    ##########################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Stava per saltare la corrente. Asciugatrice spenta'
+          language: 'it'
+      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_39.state | int < 3100 }}"         ##############################   sensor.neo_coolcam_power_plug_12a_previous_reading_6 lavastoviglie
+#          timeout: '00:01:00'
+#          continue_on_timeout: 'true'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.neo_coolcam_power_plug_12a_switch_2      ###############################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Ho riacceso asciugatrice, ricordati che per ripartire ha bisogno del tuo intervento'
+          language: 'it'
+
+  carichi_fine:
+    alias: Attenzione consumi eccessivi
+    sequence:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.neo_coolcam_power_plug_12a_switch_2, switch.switch_16, switch.switch_7, switch.switch_6, switch.neo_coolcam_power_plug_12a_switch,      ###############################
+      - service: tts.google_say
+        entity_id: media_player.living
+        data:
+          message: 'Attenzione consumi eccessivi. Non trovo una soluzione,  avrei voluto evitarlo, ma ho dovuto spengere tutto quello che potevo controllare... È necessario il tuo intervento'
+          language: 'it'

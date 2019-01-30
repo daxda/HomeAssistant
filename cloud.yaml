@@ -8,8 +8,10 @@
         - switch.switch_8
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
         - switch.switch_15 # luce colorata philips
+        - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
         - switch.switch_14
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+        - switch.shellypensili
   #piano superiore
         - light.level # fibaro dim bagno
         - light.level_2 # fibaro dim camerina
@@ -54,11 +56,15 @@
         display_categories: LIGHT
       switch.switch_15:
         display_categories: LIGHT
+      switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6:
+        display_categories: LIGHT
       switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2:
         display_categories: LIGHT
       switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3:
         display_categories: LIGHT
       switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4:
+        display_categories: LIGHT
+      switch.shellypensili:
         display_categories: LIGHT
       media_player.salotto:
         display_categories: SPEAKER
@@ -77,8 +83,10 @@
         - switch.switch_8
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
         - switch.switch_15 # luce colorata philips
+        - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
         - switch.switch_14
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+        - switch.shellypensili
   #piano superiore
         - light.level # fibaro dim bagno
         - light.level_2 # fibaro dim camerina

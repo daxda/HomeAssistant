@@ -3,58 +3,22 @@
     view: yes
     icon: mdi:home
     entities:
-    - device_tracker.davides_iphone
-    - device_tracker.iphone_di_muriel
+    - group.persone
+    - group.luci
     - group.giardino
     - group.living
-    - group.luci
     - group.finestre
     - group.prese
-    - group.consumi
-    - media_player.salotto
+    - group.zwave
+    - group.utility
 
-
- meteo:
-    name: meteo
-    view: yes
-    icon: mdi:umbrella-outline
-    entities:
-      - group.meteo_card
-
- multimedia:
-    name: multimedia
-    view: yes
-    icon: mdi:movie
-    entities:
-      - media_player.salotto
-      - media_player.camere
-      - media_player.living
-      - media_player.lg_tv_remote
-      - media_player.aftt
-
-
- automation:
-    name: automazioni
-    view: yes
-    icon: mdi:auto-fix
-    entities:
-      - group.scene
-      - group.automazioni
-      - group.automazioni_camerina
-      - group.automazioni_sistema
-
- settings:
-    name: Utility
-    view: yes
-    icon: mdi:settings
-    entities:
-      - group.utility
-      - group.raspberry
-      - group.movimento
-      # - group.inutility
-      - group.zwave
 
 ########################################
+ persone:  #### di default quando un membro del gruppo è a casa, il gruppo è a casa 
+    name: Family
+    entities:
+    - device_tracker.davides_iphone
+    - device_tracker.iphone_di_muriel
 
  prese:
     name: Power
@@ -68,38 +32,17 @@
     #- switch.dlink_smart_plug_w215   #Dlink
     - switch.switch_16   #Lavatrice
 
-
- consumi:
-    name: Consumi
-    view: no
-    entities:
-    - sensor.neo_coolcam_power_plug_12a_power  #Forno
-    - sensor.neo_coolcam_power_plug_12a_power_2  #Lavastoviglie
-    - sensor.neo_coolcam_power_plug_12a_power_10 # cantina portavino
-    - sensor.neo_coolcam_power_plug_12a_power_8    #Lavatrice
-    #- sensor.dlink_consumo   #Dlink
-    - sensor.neo_coolcam_power_plug_12a_power_3   #iMac
-
-    #Finestre
-    - sensor.consumo_finestre
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7
-    #- sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8
-
  luci:
     name: Luci
     view: no
     entities:
     - switch.switch_9
+    - switch.shellypensili
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
     - switch.switch_8
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
     - switch.switch_15 # luce colorata philips
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
     - switch.switch_14
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
     #piano superiore
@@ -139,80 +82,11 @@
     view: no
     control: hidden
     entities:
-    #- sensor.dark_sky_summary
     - sun.sun
     - sensor.fasilunari
-    - sensor.dark_sky_cloud_coverage
-    - sensor.netatmo_regenmesser_rain # pioggia prevista
-    - sensor.netatmo_regenmesser_sum_rain_1 # pioggia ultima ora
-#    - sensor.netatmo_regenmesser_sum_rain_24
-    - sensor.netatmo_outdoor_temperature
-    - sensor.netatmo_outdoor_humidity
-    - sensor.dark_sky_apparent_temperature
-    - sensor.dark_sky_wind_speed
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
     - switch.switch #apricancello auto
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch #apricancello
-
- scene:
-    name: Scene
-    view: no
-    control: hidden
-    entities:
-    - script.buongiorno
-    - script.buonanotte
-    - script.spengitv
-    - script.dolcedivano
-    - script.pioggia
-
- automazioni:
-    name: Automazioni
-    view: no
-    control: hidden
-    entities:
-    - automation.pioggia
-    - automation.guardo_la_tv
-    - automation.philips_energy
-    - automation.bagno_sera
-    - automation.bagno_notte
-    - automation.notifica_fine_lavaggio
-    - automation.toner
-    - automation.test_sonos
-
- automazioni_sistema:
-    name: Automazioni di Sistema
-    view: no
-    control: hidden
-    entities:
-    - automation.backup_automatico
-    - automation.spazio_libero
-    - automation.notifica_aggiornamento
-    - automation.test_notifica
-    # - automation.start_homekit
-
- automazioni_camerina:
-    name: Energy Saver
-    view: no
-    control: hidden
-    entities:
-    - automation.camerina_out_day
-    - automation.camerina_out
-    - automation.camerina_out_out
-    - automation.camerina_return
-
- movimento:
-    name: Sensore di Movimento
-    view: no
-    entities:
-    - binary_sensor.sensor
-    - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
-
- meteo_card:
-    name: Meteo
-    view: no
-    entities:
-    - weather.meteo
-
 
  utility:
     name: Utility
@@ -233,44 +107,6 @@
     - sensor.netatmo_indoor_wifi
     - sensor.samsung_m2020_series_1921681137_toner_black
     - sensor.sala_filter_life
-
-
- raspberry:
-    name: Raspberry
-    view: no
-    entities:
-    - sensor.processor_use
-    - sensor.disk_use_percent_
-    - sensor.memory_free
-    - sensor.network_in_eth0
-    - sensor.network_out_eth0
-    - sensor.memory_use_percent
-    - sensor.since_last_boot
-
-
- inutility:
-    name: Inutility
-    view: no
-    entities:
-    - sensor.fibaro_system_fgd212_dimmer_2_power_2 # WATT Luce Bagno
-    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown
-    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_2
-    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_3
-    - sensor.fibaro_system_fgrm222_roller_shutter_controller_2_unknown_4
-    - sensor.neo_coolcam_power_plug_12a_current #Ampere Forno
-    - sensor.neo_coolcam_power_plug_12a_current_2 #Ampere Lavastoviglie
-    - sensor.neo_coolcam_power_plug_12a_current_3 #Ampere iMac
-    - sensor.neo_coolcam_power_plug_12a_current_4 #Ampere Lavatrice
-    - sensor.neo_coolcam_power_plug_12a_voltage
-    - sensor.neo_coolcam_power_plug_12a_voltage_2
-    - sensor.neo_coolcam_power_plug_12a_voltage_3
-    - sensor.neo_coolcam_power_plug_12a_voltage_4
-    - sensor.unknown                            # kwh Forno
-    - sensor.unknown_2                             # kwh Lavastoviglie
-    - sensor.unknown_3                              # kwh iMac
-    - sensor.unknown_4                               #kwh Lavatrice
-    - sensor.unknown_8 #kwh luce bagno
-
 
 
  zwave:

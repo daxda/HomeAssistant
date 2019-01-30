@@ -1,7 +1,29 @@
-  - platform: wake_on_lan
-    name: Desktop Switch
-    mac_address: "b8:ca:3a:8e:92:61"
-    host: 192.168.1.6
-    turn_off:
-      service: shell_command.desktop
 
+  - platform: mqtt
+    name: shellypensili
+    icon: mdi:lightbulb
+    state_topic: "shellies/shelly1-1D9B92/relay/0"
+    command_topic: "shellies/shelly1-1D9B92/relay/0/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false
+
+  - platform: mqtt
+    name: shelly
+    state_topic: "shellies/shelly1-1D91F6/relay/0"
+    command_topic: "shellies/shelly1-1D91F6/relay/0/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false
+
+  - platform: wake_on_lan
+    name: WOL iMac
+    mac_address: !secret wol_imac
+
+  - platform: tplink
+    host: 192.168.1.115
+    name: christmas_light

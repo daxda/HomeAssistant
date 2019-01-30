@@ -7,19 +7,19 @@ homeassistant:
 # ALTRIMENTI AD OGNI RIAVVIO SI PERDERANNO LE IMPOSTAZIONI
 
 input_datetime:
-  accendi_natale:
+  accendi_switch:
     name: Accendi alle
     has_date: false
     has_time: true
 
-  spengi_natale:
+  spengi_switch:
     name: Spengi alle
     has_date: false
     has_time: true
 
 # Boleano Tramonto , se attivo esclude accendi alle...
 input_boolean:
-  tramonto_natale:
+  tramonto_switch:
     name: Accendi al tramonto
     initial: on
     icon: mdi:weather-sunset
@@ -30,73 +30,74 @@ input_boolean:
     icon: mdi:music
 
 ###### Sensore mancano X giorni a natale
-sensor:
-  - platform: template
-    sensors:
-      giornianatale:
-        friendly_name: 'Giorni al Natale'
-        value_template: '{{ (( as_timestamp(strptime("25.12."+ now().strftime("%Y"), "%d.%m.%Y")) - as_timestamp(strptime(now().strftime("%d")+"."+now().strftime("%m")+"."+now().strftime("%Y"), "%d.%m.%Y"))) / 86400 ) | round(0) }}' #'{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
-        unit_of_measurement: "Giorni"
-        entity_id: sensor.date
-        icon_template: mdi:calendar
-
+#sensor:
+#  - platform: template
+#    sensors:
+#      giornianatale:
+#        friendly_name: 'Giorni al Natale'
+#        value_template: '{{ (( as_timestamp(strptime("25.12."+ now().strftime("%Y"), "%d.%m.%Y")) - as_timestamp(strptime(now().strftime("%d")+"."+now().strftime("%m")+"."+now().strftime("%Y"), "%d.%m.%Y"))) / 86400 ) | round(0) }}' #'{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
+#        unit_of_measurement: "Giorni"
+#        entity_id: sensor.date
+#        icon_template: mdi:calendar
+#
 ############ AUTOMAZIONI #######################################################
 automation:
-  - alias: Aggiorna Giorni Natale
-    trigger:
-      - platform: time
-        at: '00:00:05'
-    action:
-      - service: homeassistant.update_entity
-        entity_id: sensor.giornianatale
 
-  - alias: Accendi il Natale 1
-    initial_state: True
+#  - alias: Aggiorna Giorni Natale ######## USARE SOLO SE NON SI è ATTIVATO IL SENSORE DAY TIME
+#    trigger:
+#      - platform: time
+#        at: '00:00:05'
+#    action:
+#      - service: homeassistant.update_entity
+#        entity_id: sensor.giornianatale
+
+  - alias: accendi switch 1
+    initial_state: false
     trigger:
-      platform: time
+      platform: time_pattern
       minutes: '/1'
       seconds: 0
     condition:
       - condition: state
-        entity_id: input_boolean.tramonto_natale
+        entity_id: input_boolean.tramonto_switch
         state: 'off'
       - condition: template
-        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.accendi_natale.state }}'
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.accendi_switch.state }}'
     action:
       - service: switch.turn_on
         data:
           entity_id: switch.christmas_light   # lo switch delle mie luci di natale
 
-  - alias: Accendi il Natale 2
-    initial_state: true
+  - alias: accendi switch 2
+    initial_state: false
     trigger:
       platform: sun
       event: sunset
 #      offset: '-00:45:00'
     condition:
       - condition: state
-        entity_id: input_boolean.tramonto_natale
+        entity_id: input_boolean.tramonto_switch
         state: 'on'
     action:
       - service: switch.turn_on
         data:
           entity_id: switch.christmas_light   # lo switch delle mie luci di natale
 
-  - alias: Spengi il Natale
-    initial_state: True
+  - alias: spengi switch
+    initial_state: true
     trigger:
-      platform: time
+      platform: time_pattern
       minutes: '/1'
       seconds: 0
     condition:
       - condition: template
-        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.spengi_natale.state }}'
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.spengi_switch.state }}'
     action:
       - service: switch.turn_off
         data:
           entity_id: switch.christmas_light   # lo switch delle mie luci di natale
 
-  - alias: Atmosfera_Natale
+  - alias: atmosfera_natale
     initial_state: True
     trigger:
       platform: state
@@ -118,7 +119,7 @@ automation:
 
 
 ########## La Notifica  dell'avvento è opera di Alberto https://github.com/JohnnyZeta/hassio
-  - alias: Messaggio Giorno HAvvento
+  - alias: messaggio giorno havvento
     trigger:
       - platform: time
         at: '12:00:00'
@@ -175,10 +176,9 @@ automation:
             {% endif %}
 
 group:
-  automazioni_natale:
+  automazioni_pack_switch:
     name: Attiva Timer
-    icon: mdi:gift
+    icon: mdi:progress-clock
     entities:
-      - automation.accendi_il_natale_1
-      - automation.accendi_il_natale_2
-      - automation.spengi_il_natale
+      - automation.accendi_switch_1
+      - automation.accendi_switch_2

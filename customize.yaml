@@ -22,6 +22,11 @@
     device_class: light
     homebridge_visible: true
 
+ switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6:
+    icon: mdi:lightbulb
+    device_class: lighting
+    homebridge_visible: true
+
  switch.switch_15:
     friendly_name: Luce Colorata
     icon: mdi:bowling
@@ -70,6 +75,11 @@
    frendly_name: Sonoff 1
    homebridge_visible: true
 
+ switch.shellypensili:
+     friendly_name: Luce Pensili
+     device_class: light
+     homebridge_visible: true
+
 ####### Finestre e apricancello
  switch.switch:
     friendly_name: Cancello Auto
@@ -95,7 +105,7 @@
  cover.level:
     friendly_name: Finestra Sala
     device_class: cover
-    homebridge_cover_type: rollershutter
+    homebridge_cover_type: rollrshutter
     homebridge_visible: true
 
 
@@ -144,6 +154,10 @@
  switch.switch_16:
     friendly_name: Lavatrice
     icon: mdi:washing-machine
+
+ switch.neo_coolcam_power_plug_12a_switch_2:
+    friendly_name: Asciugatrice
+    icon: mdi:tumble-dryer
 
  switch.switch_10:
     friendly_name: iMac
@@ -208,15 +222,15 @@
 
 ########## sensori Movimento
  binary_sensor.sensor:
-#   friendly_name: Movimento Camerina
+   icon: mdi:walk
+ binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor:
    icon: mdi:walk
  sensor.neo_coolcam_battery_powered_pir_sensor_luminance:
-#   friendly_name: Luminosità Camerina
    icon: mdi:brightness-5
- sensor.neo_coolcam_battery_powered_pir_sensor_burglar:
-#   friendly_name: Battery Motion Sensor Camerina
-   icon: mdi:battery-50
-
+ sensor.fibaro_system_fgms001zw5_motion_sensor_luminance:
+   icon: mdi:brightness-5
+ sensor.fibaro_system_fgms001zw5_motion_sensor_seismic_intensity:
+   icon: mdi:zodiac-aquarius
 ####### sensori giardino
 
  sensor.dark_sky_wind_speed:
@@ -242,8 +256,8 @@
    friendly_name: Pioggia ultima ora
  sensor.netatmo_regenmesser_sum_rain_24: #Rainfall in mm from 00:00am - 23:59pm.
    friendly_name: Pioggia ultime 24 H
-###### sensori consumi
 
+###### sensori consumi
  sensor.neo_coolcam_power_plug_12a_power:
    icon: mdi:chart-bar
  sensor.neo_coolcam_power_plug_12a_power_2:
@@ -256,6 +270,5 @@
    icon: mdi:chart-bar
  sensor.neo_coolcam_power_plug_12a_power_5:
    icon: mdi:chart-bar
- sensor.dlink_consumo:
+ sensor.neo_coolcam_power_plug_12a_power_11:
    icon: mdi:chart-bar
-   friendly_name: Consumo Dlink
