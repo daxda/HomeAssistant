@@ -93,7 +93,6 @@ script:
           message: 'Ho riacceso la Lavastoviglie'
           language: 'it'
 
-
   carichi_lavatrice:
     alias: Lavatrice stop
     sequence:

@@ -214,14 +214,14 @@
         entity_id: light.level
         brightness_pct: 3
 
-  - alias: bagno energy #di giorno spengi dopo 6 minuti
+  - alias: bagno energy
     initial_state: true
     trigger:
       platform: state
       entity_id: binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor
       to: 'off'
       for:
-        minutes: 3
+        minutes: 1
     action:
       service: light.turn_off
       data:
@@ -280,12 +280,20 @@
   - alias: assente
     initial_state: true
     trigger:
-      platform: sun
-      event: sunset
-      offset: '-00:25:00'
+      platform: time_pattern
+      minutes: '/1'
+      seconds: 0
     condition:
-      - condition: template
-        value_template: '{{ not is_state("device_tracker.davides_iphone", "home") and not is_state("device_tracker.iphone_di_muriel", "home") }}'
+      condition: and
+      conditions:
+        - condition: template
+          value_template: '{{ not is_state("device_tracker.davides_iphone", "home") and not is_state("device_tracker.iphone_di_muriel", "home") }}'
+        - condition: sun
+          after: sunset
+          after_offset: "-00:25:00"
+        - condition: state
+          entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+          state: 'off'
     action:
       - service: homeassistant.turn_on
         entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
@@ -293,14 +301,20 @@
 ########################################################
 ############## AUTOMAZIONI DI SERVIZIO #################
 ########################################################
-#  - alias: Start HomeKit
-#    initial_state: true
-#    trigger:
-#      - platform: event
-#        event_type: zwave.network_ready
-#    action:
-#      - delay: '00:01:00'
-#      - service: homekit.start
+  - alias: start homekit
+    initial_state: true
+    trigger:
+      - platform: event
+        event_type: zwave.network_ready
+      - platform: event
+        event_type: zwave.network_complete
+      - platform: event
+        event_type: zwave.network_complete_some_dead
+#      - platform: homeassistant
+#        event: start
+    action:
+      - delay: '00:01:00'
+      - service: homekit.start
 
 
   - alias: backup automatico
@@ -383,6 +397,10 @@
       - service: notify.ios_davides_iphone
         data:
           message: " La vecchia pazza è alla porta.... SCAPPA ! "
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.living
+          volume_level: 0.60
       - service: tts.google_say
         entity_id: media_player.living
         data:
@@ -394,7 +412,7 @@
     initial_state: true
     trigger:
       platform: numeric_state
-      entity_id: sensor.disk_use_percent_
+      entity_id: sensor.disk_use_percent
       above: 85
       below: 90
     action:

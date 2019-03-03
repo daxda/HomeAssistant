@@ -2,17 +2,11 @@ homeassistant:
   name: Dari's Home Assistant
   latitude: !secret latitude_home
   longitude: !secret longitude_home
-  elevation: 38    # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 38
   unit_system: metric
   time_zone: Europe/Rome
   customize: !include customize.yaml
   packages: !include_dir_named packages
-netatmo:
-  api_key: !secret netatmo_api_key
-  secret_key: !secret netatmo_secret_key
-  username: !secret netatmo_username
-  password:  !secret netatmo_password
-
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
@@ -21,21 +15,33 @@ cover: !include cover.yaml
 sensor: !include sensor.yaml
 switch: !include switch.yaml
 light: !include light.yaml
+camera: !include camera.yaml
 plant: !include plant.yaml
 scene: !include scene.yaml
 input_boolean: !include boolean.yaml
 cloud: !include cloud.yaml
-#homekit: !include homekit.yaml
+homekit: !include homekit.yaml
 
 lovelace:
   mode: yaml
 
 wake_on_lan:
 
-#tuya:
-#  username: !secret TUYA_USERNAME
-#  password: !secret TUYA_PASSWORD
-#  country_code: !secret TUYA_COUNTRYCODE
+netatmo:
+  api_key: !secret netatmo_api_key
+  secret_key: !secret netatmo_secret_key
+  username: !secret netatmo_username
+  password:  !secret netatmo_password
+
+system_health:
+
+speedtestdotnet:
+  scan_interval:
+    hours: 6
+  monitored_conditions:
+    - ping
+    - download
+    - upload
 
 #sonoff:
 #  username: !secret sonoff_username
@@ -47,11 +53,13 @@ wake_on_lan:
 zwave:
     usb_path: /dev/ttyACM0
 
-media_player:
-  - platform: sonos
+sonos:
+  media_player:
     hosts:
-    - 192.168.1.82 #sala
-    - 192.168.1.66 #camera
+      - 192.168.1.82 #sala
+      - 192.168.1.182 #camera
+
+media_player:
   - platform: lg_netcast
     host: 192.168.1.89
     access_token: 577887
@@ -66,18 +74,18 @@ frontend:
 config:
 
 http:
-  api_password: !secret http_password
   base_url: !secret dns_url
-  ssl_certificate: /ssl/fullchain.pem
-  ssl_key: /ssl/privkey.pem
-  trusted_networks:
-    - 127.0.0.1
-    - 192.168.1.0/24
-    - 172.17.0.0/16 # Example Docker bridge
-    - 172.30.32.0/23 # Example Docker hassio
-  ssl_profile: modern
+#  ssl_certificate: /ssl/fullchain.pem
+#  ssl_key: /ssl/privkey.pem
+#  trusted_networks:
+#    - 127.0.0.1
+#    - 192.168.1.0/24
+#    - 172.17.0.0/16 # Example Docker bridge
+#    - 172.30.32.0/23 # Example Docker hassio
+#  ssl_profile: modern
 #  ip_ban_enabled: true
 #  login_attempts_threshold: 5
+#  api_password: !secret http_password
 
 updater:
 discovery:
@@ -85,62 +93,6 @@ discovery:
     - yeelight
     - sonos
     - plex_mediaserver
-
-# Enables support for tracking state changes over time
-history:
-  use_include_order: True
-  include:
-    domains:
-      - light
-      - switch
-    entities:
-      - device_tracker.davides_iphone
-      - device_tracker.iphone_di_muriel
-      - media_player.lg_tv_remote
-      - sensor.neo_coolcam_power_plug_12a_power
-      - sensor.neo_coolcam_power_plug_12a_power_2
-      - sensor.neo_coolcam_power_plug_12a_power_8
-      - sensor.neo_coolcam_power_plug_12a_power_10
-      - sensor.neo_coolcam_power_plug_12a_power_11
-      - sensor.consumototale
-      - sensor.netatmo_regenmesser_rain
-      - sensor.cpu_temperature
-      - sensor.processor_use
-      - device_tracker.suocera
-  exclude:
-    entities:
-      - light.fibaro_system_fgd212_dimmer_2_level_2
-      - light.fibaro_system_fgd212_dimmer_2_level
-recorder:
-  purge_keep_days: 2
-  exclude:
-    domains:
-      - sensor
-      - device_tracker
-  include:
-    domains:
-      - light
-      - switch
-      - input_datetime
-    entities:
-      - sensor.neo_coolcam_power_plug_12a_power
-      - sensor.neo_coolcam_power_plug_12a_power_2
-      - sensor.neo_coolcam_power_plug_12a_power_3
-      - sensor.neo_coolcam_power_plug_12a_power_8
-      - sensor.neo_coolcam_power_plug_12a_power_10
-      - sensor.neo_coolcam_power_plug_12a_power_11
-      - sensor.consumototale
-      - sensor.netatmo_regenmesser_rain
-      - sensor.cpu_temperature
-      - sensor.processor_use
-      - device_tracker.davides_iphone
-      - device_tracker.iphone_di_muriel
-      - device_tracker.suocera
-
-#logbook:
-#  include:
-#    domains:
-#      - switch
 
 dyson:
   username: !secret dyson_username
@@ -171,11 +123,6 @@ notify:
     services:
       - service: ios_davides_iphone
       - service: ios_iphone_di_muriel
-  - name: firetv
-    platform: nfandroidtv
-    host: 192.168.1.124
-    position: top-right
-    duration: 2
 
 device_tracker:
   - platform: unifi_direct
@@ -184,3 +131,79 @@ device_tracker:
     password: !secret unifi_password
 
 panel_iframe:
+  ide:
+    title: IDE
+    icon: mdi:code-braces
+    url: !secret cloud9_url
+###################### History e Log
+history:
+  use_include_order: True
+  include:
+    domains:
+      - light
+      - switch
+      - binary_sensor
+    entities:
+      - device_tracker.davides_iphone
+      - device_tracker.iphone_di_muriel
+      - media_player.lg_tv_remote
+      - sensor.neo_coolcam_power_plug_12a_power
+      - sensor.neo_coolcam_power_plug_12a_power_2
+      - sensor.neo_coolcam_power_plug_12a_power_8
+      - sensor.neo_coolcam_power_plug_12a_power_10
+      - sensor.neo_coolcam_power_plug_12a_power_11
+      - sensor.consumototale
+      - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance
+      - sensor.netatmo_regenmesser_rain
+      - sensor.processor_use
+      - device_tracker.suocera
+      - media_player.lg_tv_remote
+  exclude:
+    entities:
+      - light.fibaro_system_fgd212_dimmer_2_level_2
+      - light.fibaro_system_fgd212_dimmer_2_level
+recorder:
+  purge_keep_days: 3
+  exclude:
+    domains:
+      - sensor
+      - device_tracker
+  include:
+    domains:
+      - light
+      - switch
+      - input_datetime
+      - input_boolean
+      - automation
+      - binary_sensor
+    entities:
+      - sensor.neo_coolcam_power_plug_12a_power
+      - sensor.neo_coolcam_power_plug_12a_power_2
+      - sensor.neo_coolcam_power_plug_12a_power_3
+      - sensor.neo_coolcam_power_plug_12a_power_8
+      - sensor.neo_coolcam_power_plug_12a_power_10
+      - sensor.neo_coolcam_power_plug_12a_power_11
+      - sensor.consumototale
+      - sensor.netatmo_regenmesser_rain
+      - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance
+      - sensor.processor_use
+      - device_tracker.davides_iphone
+      - device_tracker.iphone_di_muriel
+      - device_tracker.suocera
+      - sensor.neo_coolcam_power_plug_12a_previous_reading_6
+      - sensor.neo_coolcam_power_plug_12a_previous_reading_32
+      - sensor.neo_coolcam_power_plug_12a_previous_reading_39
+      - media_player.lg_tv_remote
+logbook:
+  include:
+    domains:
+      - switch
+      - binary_sensor
+      - light
+      - automation
+    entities:
+      - device_tracker.davides_iphone
+      - device_tracker.iphone_di_muriel
+      - device_tracker.suocera

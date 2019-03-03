@@ -29,30 +29,11 @@ input_boolean:
     initial: off
     icon: mdi:music
 
-###### Sensore mancano X giorni a natale
-#sensor:
-#  - platform: template
-#    sensors:
-#      giornianatale:
-#        friendly_name: 'Giorni al Natale'
-#        value_template: '{{ (( as_timestamp(strptime("25.12."+ now().strftime("%Y"), "%d.%m.%Y")) - as_timestamp(strptime(now().strftime("%d")+"."+now().strftime("%m")+"."+now().strftime("%Y"), "%d.%m.%Y"))) / 86400 ) | round(0) }}' #'{{ (( as_timestamp(now()) - as_timestamp(strptime("25.12."+now().strftime("%Y"), "%d.%m.%Y")) ) / 86400 ) | round(0) }}'
-#        unit_of_measurement: "Giorni"
-#        entity_id: sensor.date
-#        icon_template: mdi:calendar
-#
 ############ AUTOMAZIONI #######################################################
 automation:
 
-#  - alias: Aggiorna Giorni Natale ######## USARE SOLO SE NON SI è ATTIVATO IL SENSORE DAY TIME
-#    trigger:
-#      - platform: time
-#        at: '00:00:05'
-#    action:
-#      - service: homeassistant.update_entity
-#        entity_id: sensor.giornianatale
-
   - alias: accendi switch 1
-    initial_state: false
+#    initial_state: false
     trigger:
       platform: time_pattern
       minutes: '/1'
@@ -69,7 +50,7 @@ automation:
           entity_id: switch.christmas_light   # lo switch delle mie luci di natale
 
   - alias: accendi switch 2
-    initial_state: false
+#    initial_state: false
     trigger:
       platform: sun
       event: sunset

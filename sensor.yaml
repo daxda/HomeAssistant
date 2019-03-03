@@ -25,13 +25,6 @@
         - sum_rain_1
         - sum_rain_24
 
-  - platform: speedtest
-    minute: 10
-    hour: 19
-    monitored_conditions:
-      - ping
-      - download
-      - upload
   - platform: pi_hole
     host: !secret pihole_localhost
     monitored_conditions:
@@ -47,15 +40,11 @@
     - type: memory_use_percent
     - type: processor_use
     - type: last_boot
-    - type: network_in
-      arg: eth0
-    - type: network_out
-      arg: eth0
-  - platform: command_line
-    name: CPU Temperature
-    command: cat /sys/class/thermal/thermal_zone0/temp
-    unit_of_measurement: °C
-    value_template: '{{ value | multiply(0.001) | round(1) }}'
+#  - platform: command_line
+#    name: CPU Temperature
+#    command: cat /sys/class/thermal/thermal_zone0/temp
+#    unit_of_measurement: °C
+#    value_template: '{{ value | multiply(0.001) | round(1) }}'
   - platform: cert_expiry
     host: !secret domain
   - platform: moon
