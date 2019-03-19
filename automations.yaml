@@ -346,7 +346,6 @@
     action:
       - service: automation.turn_on
         entity_id: automation.notifica_fine_lavaggio
-
   - alias: notifica fine lavaggio
     initial_state: false
     trigger:
@@ -367,6 +366,30 @@
           message: "Vedi che il marito NERD può essere utile ?!! La LAVATRICE è Pronta"
       - service: automation.turn_off
         entity_id: automation.notifica_fine_lavaggio
+
+  - alias: attiva notifica asciugatrice
+    initial_state: true
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.neo_coolcam_power_plug_12a_power_11
+      above: '50'
+    action:
+      - service: automation.turn_on
+        entity_id: automation.notifica_asciugatrice
+  - alias:  notifica asciugatrice
+    initial_state: false
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.neo_coolcam_power_plug_12a_power_11
+      below: '3'
+      for:
+        minutes: 8
+    action:
+      - service: notify.telefoni
+        data:
+          message: "Asciugatrice pronta: vediamo di non farci marcire i vestiti dentro ... "
+      - service: automation.turn_off
+        entity_id: automation.notifica_asciugatrice
 
   - alias: notifica aggiornamento
     initial_state: true

@@ -147,6 +147,8 @@ history:
       - device_tracker.davides_iphone
       - device_tracker.iphone_di_muriel
       - media_player.lg_tv_remote
+      - sensor.widom_ume304_energy_driven_switch_power
+      - sensor.widom_ume304_energy_driven_switch_energy
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_8
@@ -178,6 +180,8 @@ recorder:
       - automation
       - binary_sensor
     entities:
+      - sensor.widom_ume304_energy_driven_switch_power
+      - sensor.widom_ume304_energy_driven_switch_energy
       - sensor.neo_coolcam_power_plug_12a_power
       - sensor.neo_coolcam_power_plug_12a_power_2
       - sensor.neo_coolcam_power_plug_12a_power_3

@@ -14,7 +14,7 @@
 
 
 ########################################
- persone:  #### di default quando un membro del gruppo è a casa, il gruppo è a casa 
+ persone:  #### di default quando un membro del gruppo è a casa, il gruppo è a casa
     name: Family
     entities:
     - device_tracker.davides_iphone
@@ -108,6 +108,21 @@
     - sensor.samsung_m2020_series_1921681137_toner_black
     - sensor.sala_filter_life
 
+
+ lavatrice:
+    name: Notifiche Lavatrice
+    view: no
+    entities:
+      - automation.attiva_notifica_lavatrice
+      - automation.notifica_fine_lavaggio
+      - sensor.neo_coolcam_power_plug_12a_power_8
+ asciugatrice:
+    name: Notifiche Asciugatrice
+    view: no
+    entities:
+      - automation.attiva_notifica_lavatrice
+      - automation.notifica_asciugatrice
+      - sensor.neo_coolcam_power_plug_12a_power_11
 
  zwave:
     name: Zwave

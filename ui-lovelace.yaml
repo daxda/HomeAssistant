@@ -85,7 +85,7 @@ views:
           - sensor.sala_aqi
           - sensor.netatmo_indoor_co2
           - sensor.sala_dust
-          - sensor.netatmo_indoor_noise 
+          - sensor.netatmo_indoor_noise
         camera_image:  camera.camliving
 
       - type: entities
@@ -122,6 +122,9 @@ views:
 ############################################################################
   - title: Power
     icon: mdi:chart-line-stacked
+    badges:
+      - sensor.widom_ume304_energy_driven_switch_power
+      - sensor.widom_ume304_energy_driven_switch_energy
     cards:
       - type: vertical-stack
         cards:
@@ -139,6 +142,7 @@ views:
             - sensor.neo_coolcam_power_plug_12a_power_3
             - type: divider
             - sensor.consumototale
+            - sensor.widom_ume304_energy_driven_switch_power
         - type: entities
           title: Power
           show_header_toggle: false
@@ -150,6 +154,57 @@ views:
             - switch.neo_coolcam_power_plug_12a_switch_2 #Asciugatrice
             - switch.switch_16 # Lavatrice
 
+      - type: vertical-stack
+        cards:
+        - type: markdown
+          content: >
+            ## Consumi e costi
+        - type: entities
+          title: Consumi e costi oggi
+          show_header_toggle: false
+          entities:
+          - entity: sensor.consumo_giornaliero_f1
+            name: Consumo Fascia 1
+          - entity: sensor.costo_consumo_oggi_f1
+            name: Costo Fascia 1
+          - entity: sensor.consumo_giornaliero_f2
+            name: Consumo Fascia 2
+          - entity: sensor.costo_consumo_oggi_f2
+            name: Costo Fascia 2
+          - entity: sensor.consumo_totale_oggi
+            name: Consumo Totale
+          - entity: sensor.costo_consumo_oggi_totale
+            name: Costo Totale
+        - type: entities
+          title: Consumi e costi mensile
+          show_header_toggle: false
+          entities:
+          - entity: sensor.consumo_mensile_f1
+            name: Consumo Fascia 1
+          - entity: sensor.costo_consumo_mensile_f1
+            name: Costo Fascia 1
+          - entity: sensor.consumo_mensile_f2
+            name: Consumo Fascia 2
+          - entity: sensor.costo_consumo_mensile_f2
+            name: Costo Fascia 2
+          - entity: sensor.consumo_totale_mensile
+            name: Consumo Totale
+          - entity: sensor.costo_consumo_mensile_totale
+            name: Costo Totale
+        - type: entities
+          title: Parametri
+          show_header_toggle: false
+          entities:
+          - entity: input_datetime.f1_ora_inizio
+            name: Orario Fascia 1
+          - entity: input_number.costo_f1
+            name: Costo KWh Fascia 1
+          - entity: input_datetime.f2_ora_inizio
+            name: Orario Fascia 2
+          - entity: input_number.costo_f2
+            name: Costo KWh Fascia 2
+          - entity: input_boolean.tariffa_weekend
+            name: Attiva F2 e Tariffa Week end
 #################
   - title: automazioni
     icon: mdi:auto-fix
@@ -219,7 +274,8 @@ views:
         show_header_toggle: false
         entities:
           - automation.pioggia
-          - automation.notifica_fine_lavaggio
+          - group.lavatrice
+          - group.asciugatrice
           - automation.arrivabetty
           - script.sonosflow
       - type: entities
@@ -331,10 +387,11 @@ views:
           - zwave.unknown_node_30
           - zwave.neo_coolcam_battery_powered_pir_sensor
           - zwave.fibaro_system_fgms001zw5_motion_sensor
+          - zwave.widom_ume304_energy_driven_switch
       - type: vertical-stack
         cards:
         - type: entities
-          title: Raspberry
+          title: NUC
           show_header_toggle: false
           entities:
             - sensor.processor_use

@@ -2,12 +2,13 @@
 
 ## Home
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_1.png)
-## Meteo
+## Controllo consumi
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_2.png)
-## Multimedia
+## Automazioni e scene
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_3.png)
-## Automazioni
+## Meteo
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_4.png)
-## Utilità 
+## Mediaplayer
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_5.png)
-
+## Utility
+![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_6.png)

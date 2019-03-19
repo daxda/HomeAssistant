@@ -258,6 +258,8 @@
    friendly_name: Pioggia ultime 24 H
 
 ###### sensori consumi
+ sensor.widom_ume304_energy_driven_switch_power:
+   icon: mdi:chart-bar
  sensor.neo_coolcam_power_plug_12a_power:
    icon: mdi:chart-bar
  sensor.neo_coolcam_power_plug_12a_power_2:

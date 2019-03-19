@@ -1,21 +1,9 @@
 #################################################################################
 #### SISTEMA (PER ORA) RUDIMENTALE DI CONTROLLO CARICHI                     #####
-#### Versione 0.2 ######    @ daxda  ###### https://github.com/daxda ############
+#### Versione 0.3 ######    @ daxda  ###### https://github.com/daxda ############
 #################################################################################
 
 homeassistant:
-
-
-###### Sensore che somma tutti i dati sui consumi
-#sensor:
-#  - platform: template
-#    sensors:
-#      consumototale:
-#        entity_id: sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7, sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8, sensor.neo_coolcam_power_plug_12a_power, sensor.neo_coolcam_power_plug_12a_power_2, sensor.neo_coolcam_power_plug_12a_power_10, sensor.neo_coolcam_power_plug_12a_power_11, sensor.neo_coolcam_power_plug_12a_power_8, sensor.neo_coolcam_power_plug_12a_power_3, sensor.fibaro_system_fgd212_dimmer_2_power_2, sensor.neo_coolcam_power_plug_12a_power_7, sensor.fibaro_system_fgd212_dimmer_2_power_4, sensor.fibaro_system_fgd212_dimmer_2_power, sensor.fibaro_system_fgd212_dimmer_2_power_3
-#        friendly_name: "Cosumi Quasi Generali"
-#        icon_template: mdi:chart-bar
-#        unit_of_measurement: 'W'
-#        value_template: "{{ states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_2.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_3.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_4.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_5.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_6.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_7.state | int + states.sensor.fibaro_system_fgrm222_roller_shutter_controller_2_power_8.state | int + states.sensor.neo_coolcam_power_plug_12a_power.state | int + states.sensor.neo_coolcam_power_plug_12a_power_2.state | int + states.sensor.neo_coolcam_power_plug_12a_power_10.state | int + states.sensor.neo_coolcam_power_plug_12a_power_11.state | int + states.sensor.neo_coolcam_power_plug_12a_power_8.state | int + states.sensor.neo_coolcam_power_plug_12a_power_3.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_2.state | int + states.sensor.neo_coolcam_power_plug_12a_power_7.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_4.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power.state | int + states.sensor.fibaro_system_fgd212_dimmer_2_power_3.state | int }} "
 
 
 ########################################## AUTOMAZIONI ##############################################
@@ -27,24 +15,24 @@ automation:
     initial_state: true
     trigger:
       - platform: numeric_state
-        entity_id: sensor.consumototale
-        above: 3900
-      - platform: numeric_state
-        entity_id: sensor.consumototale
-        above: 3200
-        below: 3899
-        for: '00:48:00'
+        entity_id: sensor.widom_ume304_energy_driven_switch_power
+        above: 4000
+#      - platform: numeric_state
+#        entity_id: sensor.widom_ume304_energy_driven_switch_power
+#        above: 3200
+#        below: 3999
+#        for: '00:60:00'
     action:
       - service: script.turn_on
         data_template:   # l'ordine di priorità per non avere responsabiltà devono sceglierlo le mogli
           entity_id: >
-            {% if states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3100 %}
+            {% if states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3900 %}
               script.carichi_lavastoviglie
-            {% elif states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_8.state | int < 3100 %}
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_8.state | int < 3900 %}
               script.carichi_lavatrice
-            {% elif states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3100 %}
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3900 %}
               script.carichi_lavalava
-            {% elif states.sensor.consumototale.state | int - states.sensor.neo_coolcam_power_plug_12a_power_11.state | int < 3100 %}
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_11.state | int < 3900 %}
               script.carichi_asciugatrice
             {% else %}
               script.carichi_fine
@@ -81,9 +69,8 @@ script:
         data:
           message: 'Stava per saltare la corrente. Ho spento la Lavastoviglie'
           language: 'it'
-      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3100 }}"
-#          timeout: '00:01:00'
-#          continue_on_timeout: 'true'
+      - delay: '00:10:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3600 }}"
       - service: switch.turn_on
         data:
           entity_id: switch.switch_7      ###############################
@@ -104,9 +91,8 @@ script:
         data:
           message: 'Stava per saltare la corrente. Ho spento la Lavatrice'
           language: 'it'
-      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3100 }}"         ##############################   sensor.neo_coolcam_power_plug_12a_previous_reading_6 lavastoviglie
-#          timeout: '00:01:00'
-#          continue_on_timeout: 'true'
+      - delay: '00:10:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3600 }}"
       - service: switch.turn_on
         data:
           entity_id: switch.switch_16      ###############################
@@ -127,9 +113,8 @@ script:
         data:
           message: 'Stava per saltare la corrente. Ho spento Lavastoviglie e Lavatrice'
           language: 'it'
-      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3100 }}"
-#          timeout: '00:01:00'
-#          continue_on_timeout: 'true'
+      - delay: '00:05:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3600 }}"
       - service: switch.turn_on
         data:
           entity_id: switch.switch_7      ###############################
@@ -138,9 +123,8 @@ script:
         data:
           message: 'Ho riacceso la Lavastoviglie'
           language: 'it'
-      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3100 }}"         ##############################   sensor.neo_coolcam_power_plug_12a_previous_reading_6 lavastoviglie
-#          timeout: '00:01:00'
-#          continue_on_timeout: 'true'
+      - delay: '00:05:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3600 }}"
       - service: switch.turn_on
         data:
           entity_id: switch.switch_16      ###############################
@@ -161,9 +145,8 @@ script:
         data:
           message: 'Stava per saltare la corrente. Asciugatrice spenta'
           language: 'it'
-      - wait_template: "{{ states.sensor.consumototale.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_39.state | int < 3100 }}"         ##############################   sensor.neo_coolcam_power_plug_12a_previous_reading_6 lavastoviglie
-#          timeout: '00:01:00'
-#          continue_on_timeout: 'true'
+      - delay: '00:05:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_39.state | int < 3600 }}"
       - service: switch.turn_on
         data:
           entity_id: switch.neo_coolcam_power_plug_12a_switch_2      ###############################

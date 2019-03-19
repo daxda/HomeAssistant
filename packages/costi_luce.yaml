@@ -1,0 +1,239 @@
+##############################################################################################################
+#### Diamo a cesare quel che è di cesare, questa non è farina del mio sacco                               ####
+#### il Package originale è stato scaricato da https://hassiohelp.eu/2019/03/02/controllo-consumi-costi/  ####
+#### le modifiche che ho fatto sono minime                                                                ####
+##############################################################################################################
+
+########## sensori monitor consumi ######
+utility_meter:
+  consumo_giornaliero:
+    source: sensor.widom_ume304_energy_driven_switch_energy
+    cycle: daily
+    tariffs:
+      - f1
+      - f2
+
+  consumo_mensile:
+    source: sensor.widom_ume304_energy_driven_switch_energy
+    cycle: monthly
+    tariffs:
+      - f1
+      - f2
+
+###### input number per costi ######
+
+input_number:
+  costo_f1:
+    name: Costo Energia elettrica Fascia 1
+    min: 0.001
+    max: 0.500
+    unit_of_measurement: '€'
+    initial: 0.068
+    mode: box
+    icon: mdi:currency-eur
+
+  costo_f2:
+    name: Costo Energia elettrica Fascia 2
+    min: 0.001
+    max: 0.500
+    unit_of_measurement: '€'
+    initial: 0.068
+    mode: box
+    icon: mdi:currency-eur
+
+########## input_boolean per tariffa weekend ######
+
+input_boolean:
+  tariffa_weekend:
+    name: Tariffa Week-end/festivi
+    icon: mdi:calendar-range
+
+########   orari inizio F1 ed F2  #########
+
+input_datetime:
+  f1_ora_inizio:
+    name: "Orario Inizio Fascia 1"
+    has_date: false
+    has_time: true
+    initial: '08:00'
+
+  f2_ora_inizio:
+    name: "Orario Inizio Fascia 2"
+    has_date: false
+    has_time: true
+    initial: '19:00'
+
+###### sensore per giorni feriali e festivi  #######
+
+binary_sensor:
+  - platform: workday
+    name: giorni fascia elettrica
+    country: IT
+
+######  sensori vari #####
+
+sensor:
+
+  - platform: template
+    sensors:
+      costo_consumo_oggi_f1:
+        friendly_name_template: "Costo Consumo Oggi fascia 1"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.consumo_giornaliero_f1.state | float) * (states.input_number.costo_f1.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+      costo_consumo_oggi_f2:
+        friendly_name_template: "Costo Consumo Oggi fascia 2"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.consumo_giornaliero_f2.state | float) * (states.input_number.costo_f2.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+      consumo_totale_oggi:
+        friendly_name_template: " Consumo Oggi "
+        icon_template: mdi:counter
+        value_template: "{{((states.sensor.consumo_giornaliero_f1.state | float) + (states.sensor.consumo_giornaliero_f2.state | float)) | round(3) }}"
+        unit_of_measurement: 'KWh'
+
+      costo_consumo_oggi_totale:
+        friendly_name_template: "Costo Consumo Oggi"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.costo_consumo_oggi_f1.state | float) + (states.sensor.costo_consumo_oggi_f2.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+      costo_consumo_mensile_f1:
+        friendly_name_template: "Costo Consumo mensile fascia 1"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.consumo_mensile_f1.state | float) * (states.input_number.costo_f1.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+      costo_consumo_mensile_f2:
+        friendly_name_template: "Costo Consumo mensile fascia 2"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.consumo_mensile_f2.state | float) * (states.input_number.costo_f2.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+      consumo_totale_mensile:
+        friendly_name_template: "Consumo mensile"
+        icon_template: mdi:counter
+        value_template: "{{((states.sensor.consumo_mensile_f1.state | float) + (states.sensor.consumo_mensile_f2.state | float)) | round(3) }}"
+        unit_of_measurement: 'KWh'
+
+      costo_consumo_mensile_totale:
+        friendly_name_template: "Costo Consumo mensile"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.costo_consumo_mensile_f1.state | float) + (states.sensor.costo_consumo_mensile_f2.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+
+####### automazioni cambio fascia  ##########
+
+automation:
+  - alias: Cambio Tariffa F1 con festivi
+    initial_state: on
+    trigger:
+      platform: template
+      value_template: >-
+        {{ states('sensor.time') == (states.input_datetime.f1_ora_inizio.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}
+    condition:
+      condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.giorni_fascia_elettrica
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.tariffa_weekend
+        state: 'on'
+    action:
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_giornaliero
+        tariff: f1
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_mensile
+        tariff: f1
+
+  - alias: Cambio Tariffa F2 con festivi
+    initial_state: on
+    trigger:
+      platform: template
+      value_template: >-
+        {{ states('sensor.time') == (states.input_datetime.f2_ora_inizio.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}
+    condition:
+      condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.giorni_fascia_elettrica
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.tariffa_weekend
+        state: 'on'
+    action:
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_giornaliero
+        tariff: f2
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_mensile
+        tariff: f2
+
+  - alias: cambio tariffa f2 giorni festivi
+    initial_state: 'on'
+    trigger:
+      platform: state
+      entity_id: binary_sensor.giorni_fascia_elettrica
+      to: 'off'
+    condition:
+    - condition: state
+      entity_id: input_boolean.tariffa_weekend
+      state: 'on'
+    action:
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_giornaliero
+        tariff: f2
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_mensile
+        tariff: f2
+
+  - alias: Cambio Tariffa F1 senza festivi
+    initial_state: on
+    trigger:
+      platform: template
+      value_template: >-
+        {{ states('sensor.time') == (states.input_datetime.f1_ora_inizio.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}
+    condition:
+    - condition: state
+      entity_id: input_boolean.tariffa_weekend
+      state: 'off'
+    action:
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_giornaliero
+        tariff: f1
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_mensile
+        tariff: f1
+
+  - alias: Cambio Tariffa F2 senza festivi
+    initial_state: on
+    trigger:
+      platform: template
+      value_template: >-
+        {{ states('sensor.time') == (states.input_datetime.f2_ora_inizio.attributes.timestamp | int | timestamp_custom('%H:%M', False)) }}
+    condition:
+    - condition: state
+      entity_id: input_boolean.tariffa_weekend
+      state: 'off'
+    action:
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_giornaliero
+        tariff: f2
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_mensile
+        tariff: f2
