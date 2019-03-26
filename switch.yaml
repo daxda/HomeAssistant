@@ -24,6 +24,6 @@
     name: WOL iMac
     mac_address: !secret wol_imac
 
-  - platform: tplink
-    host: 192.168.1.115
-    name: christmas_light
+#  - platform: tplink
+#    host: 192.168.1.115
+#    name: tplink_switch

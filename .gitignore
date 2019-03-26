@@ -6,7 +6,9 @@
 !.gitignore
 !screenshot
 !packages
+!packages/garden
 !www
+!www/lovelace
 !custom_components
 !custom_components/switch
 !custom_components/sonoff-debug

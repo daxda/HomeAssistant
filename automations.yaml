@@ -22,6 +22,26 @@
           entity_id: media_player.salotto
           source: Lancia Flow
 
+  - alias: atmosfera
+    initial_state: True
+    trigger:
+      platform: state
+      entity_id: input_boolean.atmosfera
+      to: 'on'
+    action:
+      - service: media_player.select_source
+        data:
+          entity_id: media_player.salotto
+          source: Tutte le belle canzoni di Natale
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.salotto
+          volume_level: 0.17
+      - delay: 0:01
+      - service: homeassistant.turn_off
+        data:
+          entity_id: input_boolean.atmosfera
+
 
 ##### METEO #################
 
@@ -430,7 +450,6 @@
           message: 'Chiudete a chiave il mobile dei liquori, nascondete gli oggetti che si rompono... salvate il salvabile. E buona fortuna la vecchia è arrivata '
           language: 'it'
 
-
   - alias: spazio libero
     initial_state: true
     trigger:
@@ -475,6 +494,64 @@
       - service: notify.ios_davides_iphone
         data:
           message: "Test Notifica iOS"
+
+
+  - alias: messaggio giorno havvento  # La Notifica  dell'avvento è opera di Alberto https://github.com/JohnnyZeta/hassio
+    trigger:
+      - platform: time
+        at: '12:00:00'
+    action:
+      - service: notify.telefoni
+        data_template:
+          title: >
+            {% if is_state("sensor.giornianatale", "21") %} *21 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "20") %} *20 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "19") %} *19 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "18") %} *18 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "17") %} *17 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "16") %} *16 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "15") %} *15 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "14") %} *14 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "13") %} *13 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "12") %} *12 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "11") %} *11 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "10") %} *10 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "9") %} *9 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "8") %} *8 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "7") %} *Una settimana a Natale!*
+            {% elif is_state("sensor.giornianatale", "6") %} *6 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "5") %} *5 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "4") %} *4 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "3") %} *3 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "2") %} *2 Giorni a Natale!*
+            {% elif is_state("sensor.giornianatale", "1") %} *Buona Vigilia di Natale!*
+            {% elif is_state("sensor.giornianatale", "0") %} *Buon Natale!*
+            {% endif %}
+          message: >
+            {% if is_state("sensor.giornianatale", "21") %} A me piace prendere il Natale un po’ alla volta, per tutto l’anno. E perciò mi lascio trasportare fino ad arrivare alle vacanze: lascio che mi colgano di sorpresa, svegliandomi un bel giorno e dicendo improvvisamente a me stesso: *Caspita, questo è il giorno di Natale!* _Ray Stannard Baker_
+            {% elif is_state("sensor.giornianatale", "20") %} Amo la neve per la stessa ragione per cui amo il Natale: *unisce le persone, mentre il tempo si ferma*. Le coppie che si tengono per mano serpeggiano pigramente per le strade e bambini tirano le slitte e si inseguono con le palle di neve. Nessuno sembra essere in corsa per sperimentare qualcosa di diverso dalla gloria del giorno. _Rachel Cohn_
+            {% elif is_state("sensor.giornianatale", "19") %} A suo dire l’umanità si divideva in due grandi gruppi nemici fra loro: i _presepisti_ e gli _alberisti_. \"È una suddivisione – diceva lo zio – così importante che dovrebbe comparire sui documenti di identità, né più né meno di come appare il sesso e il gruppo sanguigno. Altrimenti può accadere che un disgraziato scopre, solo a matrimonio avvenuto, di essersi unito ad un essere umano di *tendenze natalizie diverse*.\" _Luciano De Crescenzo_
+            {% elif is_state("sensor.giornianatale", "18") %} Alcuni suggerimenti per un regalo di Natale: *perdono* per un tuo nemico, *tolleranza* per un tuo avversario, il tuo *cuore* per un tuo amico, un *buon servizio* per un tuo cliente. *Carità* per tutti e *buon esempio* per i bambini. *Rispetto* per te stesso. _Oren Arnold_
+            {% elif is_state("sensor.giornianatale", "17") %} Disponiamoci al Natale con *animo indulgente, affettuoso*. I nostri denti, che troppo spesso stridono di rabbia, abbiano pace almeno in questi giorni. _Fruttero e Lucentini_
+            {% elif is_state("sensor.giornianatale", "16") %} È Natale da fine ottobre. Le lucette si accendono sempre prima, mentre le persone sono sempre più intermittenti. Io vorrei un dicembre a *luci spente* e con le *persone accese*. _Charles Bukowski_
+            {% elif is_state("sensor.giornianatale", "15") %} Felice, felice Natale, che possa *riscattarci* dalle delusioni dei nostri giorni d’infanzia; che possa *ricordare* al vecchio i piaceri della sua gioventù; che possa *trasportare* il marinaio e il viaggiatore migliaia di miglia lontano, di ritorno al caminetto della sua casa tranquilla! _Charles Dickens_
+            {% elif is_state("sensor.giornianatale", "14") %} Nel corso del nostro anno triste e razionale, sopravvive una sola festività tra le antiche e allegre ricorrenze un tempo diffuse in tutto il mondo. Il Natale continua a ricordarci le epoche, pagane o cristiane, in cui invece di *poche persone che scrivevano poesie*, ve ne erano *molte che le recitavano*. _Gilbert Keith Chesterton_
+            {% elif is_state("sensor.giornianatale", "13") %} Vorrei poter mettere lo spirito del Natale all’interno di un *barattolo* e poterlo tirare fuori mese per mese, poco alla volta. _Harland Miller_
+            {% elif is_state("sensor.giornianatale", "12") %} A Natale son tutti più buoni. E’ il *prima* e il *dopo* che mi preoccupa. _Lucy van Pelt (Peanuts)_
+            {% elif is_state("sensor.giornianatale", "11") %} Non preoccuparti della dimensione del tuo albero di Natale. Agli occhi di un bambino sono tutti alti *10 metri*. _Larry Wilde_
+            {% elif is_state("sensor.giornianatale", "10") %} Una volta mi limitavo a ringraziare Babbo Natale per pochi soldi e qualche biscotto. Ora, lo ringrazio per le *stelle* e le *facce in strada*, e il *vino* e il *grande mare*. _Gilbert Keith Chasterton_
+            {% elif is_state("sensor.giornianatale", "9") %} Caro Babbo Natale, io vorrei che quest'anno per Natale tutti diventassero più buoni e io più *figa* (questo lo chiedo ogni anno però...). Se pensi che, anche per te che sei babbo, esaudire questo desiderio sia proprio una mission impossible, calami pure giù dalla canna fumaria un assegno da *5.000 euro* che me lo faccio bastare. _Luciana Littizzetto_
+            {% elif is_state("sensor.giornianatale", "8") %} Il Natale dovrebbe essere legna che arde nel caminetto, *profumo* di pino e di vino, buone chiacchiere, bei ricordi e amicizie rinnovate. Ma se questo manca *basterà l’amore*. _Jesse O’Neill_
+            {% elif is_state("sensor.giornianatale", "7") %} Se il Natale non esistesse già, l’uomo dovrebbe inventarlo. Ci deve essere almeno un giorno all’anno a ricordarci che stiamo su questa terra per qualcos’altro oltre che per la nostra *generale ostinazione!* _Eric Sevareid_
+            {% elif is_state("sensor.giornianatale", "6") %} Eravamo così poveri che a Natale il mio vecchio usciva di casa, sparava un colpo di pistola in aria, poi rientrava in casa e diceva: spiacente ma Babbo Natale si è *suicidato*. _J. La Motta_
+            {% elif is_state("sensor.giornianatale", "5") %} I nostri bambini aspettano i regali di Natale come i politici i risultati delle *elezioni*; mancano ancora i dati del seggio elettorale dello zio Fred e del distretto della zia Ruth. _Marceline Cox_
+            {% elif is_state("sensor.giornianatale", "4") %} Per il settimo anno di seguito mia suocera è venuta da noi a Natale. Quest’anno abbiamo deciso di cambiare. *La faremo entrare*. _Les Dawson_
+            {% elif is_state("sensor.giornianatale", "3") %} Il Natale? Natale significa mangiare, e mangiare significa morte! La morte significa carneficina; il Natale è una *carneficina*. _L’Oca Ferdinand in Babe_
+            {% elif is_state("sensor.giornianatale", "2") %} Ho imparato che puoi capire molto di una persona dal modo il cui questa gestisce queste tre cose: *giornate piovose*, *bagaglio smarrito* e *luci di Natale ingarbugliate*. _Maya Angelou_
+            {% elif is_state("sensor.giornianatale", "1") %} È la vigilia di Natale. Se è passato il tempo in cui accadevano miracoli, ci è rimasto almeno un giorno magico in cui *tutto può succedere*. _Jostein Gaarder_
+            {% elif is_state("sensor.giornianatale", "0") %} Allora oggi è il *Santo Natale*, il gran varietà religioso comincerà alle ore 9 e 30. Il cappellano *Charlie* vi farà sapere come il mondo libero riuscirà a far fuori il comunismo. _Sergente Hartman (Full Metal Jacket)_
+            {% endif %}
+
 
 ##################-----CONTROLLO CARICHI----##################################
 #

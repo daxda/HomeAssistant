@@ -21,19 +21,26 @@ scene: !include scene.yaml
 input_boolean: !include boolean.yaml
 cloud: !include cloud.yaml
 homekit: !include homekit.yaml
+stream:
+wake_on_lan:
+system_health:
+map:
+ios:
+config:
+conversation:
+sun:
+updater:
 
 lovelace:
   mode: yaml
-
-wake_on_lan:
 
 netatmo:
   api_key: !secret netatmo_api_key
   secret_key: !secret netatmo_secret_key
   username: !secret netatmo_username
   password:  !secret netatmo_password
-
-system_health:
+climate:
+  - platform: netatmo
 
 speedtestdotnet:
   scan_interval:
@@ -42,6 +49,11 @@ speedtestdotnet:
     - ping
     - download
     - upload
+
+tplink:
+  discovery: false
+  switch:
+    - host: 192.168.1.115
 
 #sonoff:
 #  username: !secret sonoff_username
@@ -63,15 +75,13 @@ media_player:
   - platform: lg_netcast
     host: 192.168.1.89
     access_token: 577887
-  - platform: firetv
+  - platform: androidtv
     name: Fire TV
     host: 192.168.1.124
 
 # Enables the frontend
 frontend:
   themes: !include_dir_merge_named themes
-
-config:
 
 http:
   base_url: !secret dns_url
@@ -87,7 +97,6 @@ http:
 #  login_attempts_threshold: 5
 #  api_password: !secret http_password
 
-updater:
 discovery:
   ignore:
     - yeelight
@@ -102,7 +111,6 @@ dyson:
     - device_id: !secret dyson_device_id # eg: Pure Cool Link device
       device_ip: 192.168.1.70
 
-sun:
 weather:
   - platform: darksky
     name: Meteo
@@ -111,11 +119,6 @@ weather:
 tts:  # Text to speech
   platform: google
   language: 'it'
-conversation:
-
-map:
-
-ios:
 
 notify:
   - name: telefoni
@@ -135,7 +138,8 @@ panel_iframe:
     title: IDE
     icon: mdi:code-braces
     url: !secret cloud9_url
-###################### History e Log
+
+###################### History e Log ##############################
 history:
   use_include_order: True
   include:

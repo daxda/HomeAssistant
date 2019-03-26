@@ -46,7 +46,7 @@
 #    unit_of_measurement: °C
 #    value_template: '{{ value | multiply(0.001) | round(1) }}'
   - platform: cert_expiry
-    host: !secret domain
+    host: !secret ddomain
   - platform: moon
 
   - platform: darksky

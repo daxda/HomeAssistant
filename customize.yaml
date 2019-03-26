@@ -168,17 +168,13 @@
 
 
 ###### Altri dispositivi IOT
- climate.termostatod:
+ climate.netatmo_piano_terra:
     friendly_name: Termostato
     homebridge_visible: true
 
  fan.sala:
     friendly_name: Dyson Sala
-    homebridge_visible: true
     device_class: fan
-    homebridge_name: "Dyson Sala"
-    homebridge_mfg: "daxda"
-    homebridge_model: "Dyson Air Purifier "
 
  device_tracker.davides_iphone:
     friendly_name: Davide
@@ -187,12 +183,12 @@
  device_tracker.iphone_di_muriel:
     friendly_name: Muriel
 
-
  device_tracker.ipad_di_muriel:
     friendly_name: iPad
 
  sensor.samsung_m2020_series_1921681137_toner_black:
     friendly_name: Toner Samsung M2020
+
  ########## sensori Living
  sensor.netatmo_indoor_humidity:
    friendly_name: Umidità Zona Pranzo

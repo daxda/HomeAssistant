@@ -1,0 +1,83 @@
+
+homeassistant:
+
+# ORARIO ACCENSIONE SPEGNIMENTO
+
+# ATTENZIONE RICORDARSI DI INCLUDERE I DUE INPUT NEL RECORDER
+# ALTRIMENTI AD OGNI RIAVVIO SI PERDERANNO LE IMPOSTAZIONI
+
+input_datetime:
+  accendi_switch:
+    name: Accendi alle
+    has_date: false
+    has_time: true
+
+  spengi_switch:
+    name: Spengi alle
+    has_date: false
+    has_time: true
+
+# Boleano Tramonto , se attivo esclude accendi alle...
+input_boolean:
+  tramonto_switch:
+    name: Accendi al tramonto
+    initial: on
+    icon: mdi:weather-sunset
+
+
+############ AUTOMAZIONI #######################################################
+automation:
+
+  - alias: accendi switch 1
+#    initial_state: false
+    trigger:
+      platform: time_pattern
+      minutes: '/1'
+      seconds: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.tramonto_switch
+        state: 'off'
+      - condition: template
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.accendi_switch.state }}'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch1   # lo switch
+
+  - alias: accendi switch 2
+#    initial_state: false
+    trigger:
+      platform: sun
+      event: sunset
+#      offset: '-00:45:00'
+    condition:
+      - condition: state
+        entity_id: input_boolean.tramonto_switch
+        state: 'on'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch1  # lo switch delle mie luci di natale
+
+  - alias: spengi switch
+    initial_state: true
+    trigger:
+      platform: time_pattern
+      minutes: '/1'
+      seconds: 0
+    condition:
+      - condition: template
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.spengi_switch.state }}'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.switch1  # lo switch delle mie luci di natale
+
+group:
+  automazioni_pack_switch:
+    name: Attiva Timer
+    icon: mdi:progress-clock
+    entities:
+      - automation.accendi_switch_1
+      - automation.accendi_switch_2

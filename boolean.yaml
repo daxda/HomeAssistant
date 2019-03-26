@@ -8,3 +8,7 @@
     icon: mdi:puzzle
     initial: off
 #
+  atmosfera:
+    name: Facciamo un pò d'atmosfera
+    initial: off
+    icon: mdi:music

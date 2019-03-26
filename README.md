@@ -1,5 +1,7 @@
 # HomeAssGit
 
+
+
 ## Home
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_1.png)
 ## Controllo consumi
@@ -10,5 +12,9 @@
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_4.png)
 ## Mediaplayer
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_5.png)
-## Utility
+## Garden
+Questa scheda non è farina del mio sacco, ma è un riadattamento del pakages che trovate su questo Git ** https://github.com/kloggy/Home-Assistant **
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_6.png)
+
+## Utility
+![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_7.png)

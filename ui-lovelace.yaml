@@ -2,10 +2,18 @@
 resources:
   - url: /local/slider-entity-row.js
     type: js
-
+  - url: /local/lovelace/card-tools.js
+    type: js
+#Mini Graph
+# https://github.com/kalkih/mini-graph-card
+#  - url: /local/lovelace/mini-graph-card-bundle.js
+#    type: js
+  - url: /local/lovelace/card-modder.js
+    type: js
+  - url: /local/lovelace/fold-entity-row.js
+    type: js
 
 title: Dari's Home Assistant
-
 
 views:
   - title: default_view  #pagina
@@ -67,7 +75,7 @@ views:
         title: Confort Living
         show_header_toggle: false
         entities:
-          - climate.termostatod
+          - climate.netatmo_piano_terra
           - fan.sala
           - type: divider
           - sensor.netatmo_indoor_temperature
@@ -261,7 +269,7 @@ views:
         title: Timer
         show_header_toggle: false
         entities:
-          - entity: switch.christmas_light
+          - entity: switch.switch1
             name: Luce Terrario
             icon: mdi:tortoise
           - type: divider
@@ -323,7 +331,7 @@ views:
         - type: weather-forecast
           entity: weather.meteo
         - type: thermostat
-          entity: climate.termostatod
+          entity: climate.netatmo_piano_terra
 
   - title: multimedia
     icon: mdi:movie
@@ -342,6 +350,9 @@ views:
           entity: media_player.lg_tv_remote
 ########################################################
 
+  - !include lovelace/garden.yaml
+
+#########################################################
   - title: Utility
     icon: mdi:settings
     cards:
@@ -361,6 +372,7 @@ views:
           - sensor.netatmo_indoor_wifi
           - sensor.samsung_m2020_series_1921681137_toner_black
           - sensor.sala_filter_life
+          - sensor.last_boot
       - type: entities
         title: Zwave
         show_header_toggle: false
@@ -388,17 +400,19 @@ views:
           - zwave.neo_coolcam_battery_powered_pir_sensor
           - zwave.fibaro_system_fgms001zw5_motion_sensor
           - zwave.widom_ume304_energy_driven_switch
+
       - type: vertical-stack
         cards:
-        - type: entities
-          title: NUC
-          show_header_toggle: false
+        - type: glance
+          title: NUC System Monitor
           entities:
-            - sensor.processor_use
-            - sensor.disk_use_percent
-            - sensor.memory_free
-            - sensor.memory_use_percent
-            - sensor.last_boot
+            - entity: sensor.processor_use
+              name: CPU Load
+            - entity: sensor.disk_use_percent
+              name: Disco
+            - entity: sensor.memory_use_percent
+              name: Ram
+            - entity: sensor.last_boot
         - type: history-graph
           entities:
             - sensor.processor_use
