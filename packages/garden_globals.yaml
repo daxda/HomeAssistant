@@ -1,3 +1,4 @@
+homeassistant:
 #===========
 #=== Groups
 #===========
@@ -72,6 +73,7 @@ input_select:
     options:
       - 'Daily'
       - 'Alternate'
+      - 'Economy'
       - 'Once'
     icon: mdi:calendar
 
@@ -80,6 +82,7 @@ input_select:
     options:
       - 'Daily'
       - 'Alternate'
+      - 'Economy'
       - 'Once'
     icon: mdi:calendar
 
@@ -213,7 +216,6 @@ timer:
   cycle2_zone_duration:
     name: Time remaining
 
-
 #============
 #=== Sensors
 #============
@@ -280,7 +282,7 @@ sensor:
       last_irrigated_time:
         friendly_name: "Last irrigation cycle ended"
         value_template: >
-          {{ (as_timestamp(states.input_datetime.last_irrigated_time.state)) | timestamp_custom("%a %d %h at %H:%M") }}
+          {{ (as_timestamp(states.input_datetime.last_irrigated_time.state)) | timestamp_custom("%a %d %h at %H:%M", true) }}
 
       # Zone Times - templated on history_stats sensors
       zone1_time_today:
@@ -308,6 +310,7 @@ sensor:
         value_template: "{{ states('input_number.adjusted_cycle1_zone2_duration') | int }}"
         unit_of_measurement: mins
 
+
       cycle2_zone1_duration_adjusted:
         friendly_name: "Zone 1 adjusted duration"
         value_template: "{{ states('input_number.adjusted_cycle2_zone1_duration') | int }}"
@@ -317,7 +320,6 @@ sensor:
         friendly_name: "Zone 2 adjusted duration"
         value_template: "{{ states('input_number.adjusted_cycle2_zone2_duration') | int }}"
         unit_of_measurement: mins
-
 
   # History sensors
   # Zone Times

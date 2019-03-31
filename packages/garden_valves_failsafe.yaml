@@ -1,10 +1,10 @@
 #============================================================================
 #=== Not that I don't trust my programming but...
-#===   1. Turn off valves and schedules when master control switch is off
-#===   2. Turn off all valves when HA starts
-#===   3. Don't allow more than one valve on at one time
-#===   4. Turn off valve 1 to 4 if it is on for longer than 30 minutes
-#===      Turn off valve 5 if it is on for longer than 59 minutes
+#===   1. Disattivare valvole e programmi quando l'interruttore di controllo principale è disattivato
+#===   2. Spegnere tutte le valvole quando HA si avvia
+#===   3. Non consentire più di una valvola alla volta
+#===   4. Disattiva le valvole da se una di queste è attiva per più di 30 minuti
+#===
 #=== Better safe than sorry!
 #============================================================================
 

@@ -14,11 +14,15 @@ zone: !include zones.yaml
 cover: !include cover.yaml
 sensor: !include sensor.yaml
 switch: !include switch.yaml
+timer: !include timer.yaml
 light: !include light.yaml
 camera: !include camera.yaml
 plant: !include plant.yaml
 scene: !include scene.yaml
 input_boolean: !include boolean.yaml
+input_text:
+input_select:
+input_number:
 cloud: !include cloud.yaml
 homekit: !include homekit.yaml
 stream:
@@ -181,8 +185,13 @@ recorder:
       - switch
       - input_datetime
       - input_boolean
+      - input_select
+      - input_number
+      - input_text
       - automation
+      - script
       - binary_sensor
+      - timer
     entities:
       - sensor.widom_ume304_energy_driven_switch_power
       - sensor.widom_ume304_energy_driven_switch_energy
@@ -194,6 +203,10 @@ recorder:
       - sensor.neo_coolcam_power_plug_12a_power_11
       - sensor.consumototale
       - sensor.netatmo_regenmesser_rain
+      - sensor.netatmo_regenmesser_sum_rain_24
+      - sensor.rainfall_today
+      - sensor.netatmo_outdoor_temperature
+      - sensor.dark_sky_forecast_daytime_high_temperature_0
       - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
       - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance
       - sensor.processor_use
@@ -211,6 +224,7 @@ logbook:
       - binary_sensor
       - light
       - automation
+      - script
     entities:
       - device_tracker.davides_iphone
       - device_tracker.iphone_di_muriel

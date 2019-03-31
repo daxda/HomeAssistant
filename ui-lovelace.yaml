@@ -4,10 +4,8 @@ resources:
     type: js
   - url: /local/lovelace/card-tools.js
     type: js
-#Mini Graph
-# https://github.com/kalkih/mini-graph-card
-#  - url: /local/lovelace/mini-graph-card-bundle.js
-#    type: js
+  - url: /local/lovelace/mini-graph-card-bundle.js  # https://github.com/kalkih/mini-graph-card
+    type: js
   - url: /local/lovelace/card-modder.js
     type: js
   - url: /local/lovelace/fold-entity-row.js
@@ -105,6 +103,7 @@ views:
           - sensor.dark_sky_cloud_coverage
           - sensor.netatmo_regenmesser_rain
           - sensor.netatmo_regenmesser_sum_rain_1
+          - sensor.smartweather_rain_today
           - sensor.netatmo_outdoor_temperature
           - sensor.netatmo_outdoor_humidity
           - sensor.dark_sky_apparent_temperature
@@ -115,7 +114,7 @@ views:
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
       - type: entities
         title: Finestre
-        show_header_toggle: true
+        show_header_toggle: false
         entities:
           - cover.level
           - cover.level_4
@@ -149,8 +148,13 @@ views:
             - sensor.neo_coolcam_power_plug_12a_power_11
             - sensor.neo_coolcam_power_plug_12a_power_3
             - type: divider
-            - sensor.consumototale
             - sensor.widom_ume304_energy_driven_switch_power
+        - type: custom:mini-graph-card
+          entities:
+            - entity: sensor.widom_ume304_energy_driven_switch_power
+          name: Consumo Energetico
+          show:
+            graph: bar
         - type: entities
           title: Power
           show_header_toggle: false
@@ -167,6 +171,23 @@ views:
         - type: markdown
           content: >
             ## Consumi e costi
+
+        - type: custom:fold-entity-row
+          head:
+            type: section
+            label: Impostazioni Consumi
+          items:
+            - entity: input_datetime.f1_ora_inizio
+              name: Orario Fascia 1
+            - entity: input_number.costo_f1
+              name: Costo KWh Fascia 1
+            - entity: input_datetime.f2_ora_inizio
+              name: Orario Fascia 2
+            - entity: input_number.costo_f2
+              name: Costo KWh Fascia 2
+            - entity: input_boolean.tariffa_weekend
+              name: Attiva F2 e Tariffa Week end
+
         - type: entities
           title: Consumi e costi oggi
           show_header_toggle: false
@@ -199,20 +220,6 @@ views:
             name: Consumo Totale
           - entity: sensor.costo_consumo_mensile_totale
             name: Costo Totale
-        - type: entities
-          title: Parametri
-          show_header_toggle: false
-          entities:
-          - entity: input_datetime.f1_ora_inizio
-            name: Orario Fascia 1
-          - entity: input_number.costo_f1
-            name: Costo KWh Fascia 1
-          - entity: input_datetime.f2_ora_inizio
-            name: Orario Fascia 2
-          - entity: input_number.costo_f2
-            name: Costo KWh Fascia 2
-          - entity: input_boolean.tariffa_weekend
-            name: Attiva F2 e Tariffa Week end
 #################
   - title: automazioni
     icon: mdi:auto-fix
@@ -262,21 +269,28 @@ views:
               entity_id: script.pioggia
           entity: script.pioggia
           icon: mdi:weather-pouring
-      - type: plant-status
-        name: Chamadorea
-        entity: plant.chamadorea
-      - type: entities
-        title: Timer
-        show_header_toggle: false
-        entities:
-          - entity: switch.switch1
-            name: Luce Terrario
-            icon: mdi:tortoise
-          - type: divider
-          - group.automazioni_pack_switch
-          - input_datetime.accendi_switch
-          - input_boolean.tramonto_switch
-          - input_datetime.spengi_switch
+
+      - type: vertical-stack
+        cards:
+        - type: plant-status
+          name: Chamadorea
+          entity: plant.chamadorea
+        - type: custom:fold-entity-row
+          head:
+            type: section
+            label: Impostazioni Timer Terrario
+          items:
+            - entity: group.automazioni_pack_switch
+            - entity: input_datetime.accendi_switch
+            - entity: input_boolean.tramonto_switch
+            - entity: input_datetime.spengi_switch
+        - type: entities
+          title: Terrario
+          show_header_toggle: false
+          entities:
+            - entity: switch.switch1
+              name: Luce Terrario
+              icon: mdi:tortoise
       - type: entities
         title: Automazioni
         show_header_toggle: false
@@ -352,6 +366,7 @@ views:
 
   - !include lovelace/garden.yaml
 
+
 #########################################################
   - title: Utility
     icon: mdi:settings
@@ -390,6 +405,7 @@ views:
           - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_3
           - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_4
           - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_6
+          - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_7
           - zwave.neo_coolcam_power_plug_12a
           - zwave.neo_coolcam_power_plug_12a_2
           - zwave.neo_coolcam_power_plug_12a_3
@@ -413,7 +429,7 @@ views:
             - entity: sensor.memory_use_percent
               name: Ram
             - entity: sensor.last_boot
-        - type: history-graph
+        - type: custom:mini-graph-card
           entities:
             - sensor.processor_use
         - type: entities

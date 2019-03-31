@@ -4,17 +4,17 @@
 automation:
 
   #====================================================================
-  #=== Master Control switch 
+  #=== Interruttore di controllo principale
   #===
-  #=== This turns on or off,
-  #===   All the Irrigation automations.
-  #===   All the automations related to Weather used in Irrigation.
+  #=== Questo Accende o spegne:
+  #===   Tutte le automazioni per l'irrigazione.
+  #===   Tutte le automazioni relative al Meteo utilizzate in Irrigazione.
   #===
-  #===   i.e. all automations with a name beginning with either
+  #===   Ad esempio tutte le automazioni con un nome che inizia con entrambi
   #===        'Irrigation - ' or
   #===        'Weather Irrigation - '
   #===
-  #=== Also checks when HA starts.
+  #=== Controllando anche quando HA si avvia.
   #====================================================================
   - alias: Irrigation Master Control Switch
     initial_state: 'on'

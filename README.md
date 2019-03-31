@@ -13,7 +13,7 @@
 ## Mediaplayer
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_5.png)
 ## Garden
-Questa scheda non è farina del mio sacco, ma è un riadattamento del pakages che trovate su questo Git ** https://github.com/kloggy/Home-Assistant **
+Questa scheda non è farina del mio sacco, ma è un riadattamento del pakages che trovate su questo Git ** https://github.com/kloggy/Home-Assistant ** ( thank you very much to @klogg for his gigantic work, and for his availability)
 ![SchedaHome](https://github.com/daxda/HomeAssistante/raw/master/screenshot/page_6.png)
 
 ## Utility
