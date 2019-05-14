@@ -9,6 +9,16 @@
         data:
           entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
 
+  - alias: webhook_cancelloauto
+    initial_state: true
+    trigger:
+      platform: webhook
+      webhook_id: cancello_auto
+    action:
+      - service: switch.toggle
+        data:
+          entity_id:  switch.switch
+
 ###### SONOS ######
   - alias: test sonos
     initial_state: False
@@ -42,14 +52,42 @@
         data:
           entity_id: input_boolean.atmosfera
 
+####################################################
+################## FINESTRE ###################
+####################################################
 
-##### METEO #################
+  - alias: Sveglia di luce
+    initial_state: True
+    trigger:
+      platform: time_pattern
+      minutes: '/1'
+      seconds: 0
+    condition:
+      condition: template
+      value_template: >
+        {% if is_state('binary_sensor.workday_sensor', 'on') and now().strftime("%H:%M:00") == states.input_datetime.fenestre_feriali.state %}
+        true
+        {% elif is_state('binary_sensor.workday_sensor', 'off') and now().strftime("%H:%M:00") == states.input_datetime.finestre_festivi.state %}
+        true
+        {% else %}
+        false
+        {% endif %}
+    action:
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_3 #camera
+          position: 60
+      - delay: '00:09:00'
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_3 #camera
+          position: 80
 
   - alias: pioggia
     initial_state: true
     trigger:
       platform: numeric_state
-      entity_id: sensor.netatmo_regenmesser_sum_rain_1
+      entity_id: sensor.smartweather_rain_today   # sensore netatmo rinominato
       above: 0.1
     condition:
       condition: and
@@ -67,10 +105,10 @@
         - condition: template
           value_template: '{{ (states.cover.level_2.attributes.current_position > 20) and (states.cover.level_3.attributes.current_position > 20) }}'
     action:
+      - service: script.pioggia
       - service: notify.telefoni
         data:
           message: "Piove...! Chiudo le finestre che posso chiudere, per le altre organizzati!"
-      - service: script.pioggia
 
 ####################################################
 ################## ILLUMINAZIONE ###################
@@ -277,6 +315,38 @@
       service: switch.turn_off
       entity_id: switch.switch_15
 
+########## Luce pensili ##############
+  - alias: pensili pir
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.dafangindoor_motion_sensor
+        to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: time
+          after: '21:45:01'
+          before: '06:00:00'
+        - condition: template
+          value_template: >
+            {% if states.automation.pensili_pir.last_triggered is not none %}
+              {% if as_timestamp(now()) | int - as_timestamp(states.automation.pensili_pir.attributes.last_triggered) | int > 180 %} true {% else %} false
+              {% endif %}
+            {% else %}
+            false
+            {% endif %}
+        - condition: state
+          entity_id: sun.sun
+          state: "below_horizon"
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.shellypensili
+      - delay: '00:03:00'
+      - service: switch.turn_off
+        data:
+          entity_id: switch.shellypensili
 ############ Tutte le Luci #######
 
   - alias: risparmio energetico giorno
@@ -360,9 +430,13 @@
   - alias: attiva notifica lavatrice
     initial_state: true
     trigger:
-    - platform: numeric_state
-      entity_id: sensor.neo_coolcam_power_plug_12a_power_8
-      above: '50'
+      - platform: numeric_state
+        entity_id: sensor.neo_coolcam_power_plug_12a_power_8
+        above: '50'
+    condition:
+      - condition: state
+        entity_id: automation.attiva_notifica_lavatrice
+        state: 'off'
     action:
       - service: automation.turn_on
         entity_id: automation.notifica_fine_lavaggio
@@ -376,9 +450,6 @@
         minutes: 8
     action:
       - service: notify.ios_davides_iphone
-        data:
-          message: "La lavatrice ha completato il lavaggio"
-      - service: notify.firetv
         data:
           message: "La lavatrice ha completato il lavaggio"
       - service: notify.ios_iphone_di_muriel
@@ -437,9 +508,6 @@
           false
           {% endif %}
     action:
-      - service: notify.ios_davides_iphone
-        data:
-          message: " La vecchia pazza è alla porta.... SCAPPA ! "
       - service: media_player.volume_set
         data:
           entity_id: media_player.living
@@ -449,6 +517,9 @@
         data:
           message: 'Chiudete a chiave il mobile dei liquori, nascondete gli oggetti che si rompono... salvate il salvabile. E buona fortuna la vecchia è arrivata '
           language: 'it'
+      - service: notify.ios_davides_iphone
+        data:
+          message: " La vecchia pazza è alla porta.... SCAPPA ! "
 
   - alias: spazio libero
     initial_state: true
@@ -458,15 +529,12 @@
       above: 85
       below: 90
     action:
-      - service: notify.ios_davides_iphone
-        data:
-          message: "Spazio libero sulla SD in esaurimento!"
       - service: automation.turn_off
         data:
           entity_id: automation.backup_automatico
       - service: notify.ios_davides_iphone
         data:
-          message: "Backup Automatico disattivato"
+          message: "Backup Automatico disattivato... Spazio libero sulla SD in esaurimento!"
 
   - alias: toner
     initial_state: true
@@ -487,14 +555,12 @@
       entity_id: automation.test_notifica
       to: 'on'
     action:
-      - service: notify.firetv
-        data:
-          title: "TEST"
-          message: "Test Notifica"
       - service: notify.ios_davides_iphone
         data:
           message: "Test Notifica iOS"
-
+      - service: script.irrigation_run_a_cycle
+        data_template:
+          cycle: 1
 
   - alias: messaggio giorno havvento  # La Notifica  dell'avvento è opera di Alberto https://github.com/JohnnyZeta/hassio
     trigger:

@@ -1,0 +1,10 @@
+
+  fenestre_feriali:
+    name: Orario apertura Feriali
+    has_date: false
+    has_time: true
+
+  finestre_festivi:
+    name: Orario apertura Festivi
+    has_date: false
+    has_time: true

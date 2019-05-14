@@ -10,6 +10,8 @@ resources:
     type: js
   - url: /local/lovelace/fold-entity-row.js
     type: js
+  - url: /local/lovelace/toggle-lock-entity-row.js
+    type: js
 
 title: Dari's Home Assistant
 
@@ -19,6 +21,7 @@ views:
     badges:
       - device_tracker.davides_iphone
       - device_tracker.iphone_di_muriel
+      - binary_sensor.workday_sensor
     cards:               # card della pagina
       - type: horizontal-stack
         cards:
@@ -56,7 +59,6 @@ views:
           - switch.switch_15
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
           - type: divider
-#          - switch.christmas_light
           - switch.switch_14
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
           - type: section
@@ -87,11 +89,12 @@ views:
       - type: picture-glance
         title: Living
         entities: #[]
-          - sensor.netatmo_indoor_pressure
-          - sensor.sala_aqi
-          - sensor.netatmo_indoor_co2
-          - sensor.sala_dust
-          - sensor.netatmo_indoor_noise
+          - binary_sensor.dafangindoor_motion_sensor
+          - switch.switch_8
+          - switch.dafangindoor_night_mode_auto
+          - switch.dafangindoor_night_mode
+          - switch.dafangindoor_ir_filter
+          - switch.dafangindoor_ir_led
         camera_image:  camera.camliving
 
       - type: entities
@@ -102,8 +105,8 @@ views:
           - sensor.fasilunari
           - sensor.dark_sky_cloud_coverage
           - sensor.netatmo_regenmesser_rain
-          - sensor.netatmo_regenmesser_sum_rain_1
           - sensor.smartweather_rain_today
+          - sensor.smartweather_rain_yesterday
           - sensor.netatmo_outdoor_temperature
           - sensor.netatmo_outdoor_humidity
           - sensor.dark_sky_apparent_temperature
@@ -120,12 +123,24 @@ views:
           - cover.level_4
           - cover.level_2
           - cover.level_3
+          - input_datetime.fenestre_feriali
+          - input_datetime.finestre_festivi
+          - automation.sveglia_di_luce
 
       - type: entities
         title: Sonos
         entities:
           - media_player.salotto
           - media_player.camere
+############################################################################
+  - title: Allarme
+    icon: mdi:shield-lock-outline
+    cards:
+      - type: alarm-panel
+        entity: alarm_control_panel.mqtt_alarm
+        name: Allarme
+        states:
+          - arm_away
 ############################################################################
   - title: Power
     icon: mdi:chart-line-stacked
@@ -275,22 +290,22 @@ views:
         - type: plant-status
           name: Chamadorea
           entity: plant.chamadorea
-        - type: custom:fold-entity-row
-          head:
-            type: section
-            label: Impostazioni Timer Terrario
-          items:
-            - entity: group.automazioni_pack_switch
-            - entity: input_datetime.accendi_switch
-            - entity: input_boolean.tramonto_switch
-            - entity: input_datetime.spengi_switch
-        - type: entities
-          title: Terrario
-          show_header_toggle: false
-          entities:
-            - entity: switch.switch1
-              name: Luce Terrario
-              icon: mdi:tortoise
+#        - type: custom:fold-entity-row
+#          head:
+#            type: section
+#            label: Impostazioni Timer Terrario
+#          items:
+#            - entity: group.automazioni_pack_switch
+#            - entity: input_datetime.accendi_switch
+#            - entity: input_boolean.tramonto_switch
+#            - entity: input_datetime.spengi_switch
+#        - type: entities
+#          title: Terrario
+#          show_header_toggle: false
+#          entities:
+#            - entity: switch.switch1
+#              name: Luce Terrario
+#              icon: mdi:tortoise
       - type: entities
         title: Automazioni
         show_header_toggle: false
@@ -310,6 +325,7 @@ views:
           - automation.camerina_out_out
           - automation.camerina_return
           - automation.philips_energy
+          - automation.pensili_pir
           - automation.bagno_pir
           - automation.bagno_sera
           - automation.bagno_notte
@@ -362,10 +378,10 @@ views:
           entity: media_player.living
         - type: media-control
           entity: media_player.lg_tv_remote
-########################################################
+#
+#######################################################
 
   - !include lovelace/garden.yaml
-
 
 #########################################################
   - title: Utility
@@ -380,8 +396,8 @@ views:
           - sensor.iphone_di_muriel_battery_level
           - sensor.ipad_di_muriel_battery_level
           - type: divider
-          - sensor.netatmo_outdoor_battery
-          - sensor.netatmo_regenmesser_battery
+          - sensor.netatmo_outdoor_battery_percent
+          - sensor.netatmo_regenmesser_battery_percent
           - sensor.netatmo_outdoor_radio
           - sensor.netatmo_regenmesser_radio
           - sensor.netatmo_indoor_wifi
@@ -437,12 +453,36 @@ views:
           show_header_toggle: False
           entities:
           - sensor.ssl_certificate_expiry
+          - sensor.homeassistant_attivo_da
+          - sensor.last_boot
           - sensor.pi_hole_ads_blocked_today
           - sensor.pi_hole_dns_queries_today
           - sensor.pi_hole_dns_unique_clients
           - sensor.speedtest_download
           - sensor.speedtest_upload
           - sensor.speedtest_ping
+
+      - type: entities
+        title: Dafang Control
+        show_header_toggle: False
+        entities:
+          - cover.dafangindoor_move_left_right
+          - cover.dafangindoor_move_up_down
+          - switch.dafangindoor_night_mode_auto
+          - switch.dafangindoor_night_mode
+          - switch.dafangindoor_yellow_led
+          - switch.dafangindoor_blue_led
+          - switch.dafangindoor_h264_rtsp_server
+          - switch.dafangindoor_mjpeg_rtsp_server
+          - switch.dafangindoor_ir_filter
+          - switch.dafangindoor_ir_led
+          - sensor.dafangindoor_light_sensor
+          - type: divider
+          - binary_sensor.dafangindoor_motion_sensor
+          - switch.dafangindoor_motion_tracking
+          - switch.dafangindoor_motion_detection
+#          - switch.dafangindoor_motion_send_mail
+#          - switch.dafangindoor_motion_send_telegram
 
       - type: entities
         title: Sensore di Movimento

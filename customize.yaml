@@ -243,7 +243,7 @@
 
 
  sensor.netatmo_regenmesser_rain: #Estimated rainfall for today in mm.
-    friendly_name: Pioggia prevista
+    friendly_name: Pioggia
  sensor.netatmo_regenmesser_battery:
     friendly_name: Netatmo Pluviometro Battery
  sensor.netatmo_regenmesser_radio:

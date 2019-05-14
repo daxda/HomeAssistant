@@ -1,12 +1,12 @@
-  - platform: yeelight
-    devices:
-      192.168.1.87:
-        name: camera
-        transition: 1000
-        use_music_mode: False #(defaults to False)
-        save_on_change: False #(defaults to True)
-      192.168.1.72:
-        name: studio
-        transition: 1000
-        use_music_mode: False #(defaults to False)
-        save_on_change: False #(defaults to True)
+#  - platform: yeelight
+#    devices:
+#      192.168.1.87:
+#        name: camera
+#        transition: 1000
+#        use_music_mode: False #(defaults to False)
+#        save_on_change: False #(defaults to True)
+#      192.168.1.72:
+#        name: studio
+#        transition: 1000
+#        use_music_mode: False #(defaults to False)
+#        save_on_change: False #(defaults to True)

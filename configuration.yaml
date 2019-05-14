@@ -23,6 +23,7 @@ input_boolean: !include boolean.yaml
 input_text:
 input_select:
 input_number:
+input_datetime: !include datetime.yaml
 cloud: !include cloud.yaml
 homekit: !include homekit.yaml
 stream:
@@ -30,10 +31,34 @@ wake_on_lan:
 system_health:
 map:
 ios:
+mobile_app:
 config:
 conversation:
 sun:
 updater:
+# zeroconf:
+# person:
+
+binary_sensor:
+  - platform: workday
+    country: IT
+
+mqtt:
+  broker: !secret mqtt_broker
+  discovery: true
+  discovery_prefix: homeassistant
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+
+alarm_control_panel:
+  - platform: mqtt
+    code: !secret allarm_code
+    state_topic: "riscopanel/armstatus"
+    command_topic: "riscopanel/armstatus/SET"
+    payload_disarm: "disarmed"
+    payload_arm_home: "partially"
+    payload_arm_away: "armed"
 
 lovelace:
   mode: yaml
@@ -54,17 +79,32 @@ speedtestdotnet:
     - download
     - upload
 
-tplink:
-  discovery: false
-  switch:
-    - host: 192.168.1.115
+yeelight:
+  devices:
+    192.168.1.87:
+      name: camera
+      transition: 1000
+      use_music_mode: False #(defaults to False)
+      save_on_change: False #(defaults to True)
+      model: color2
+    192.168.1.72:
+      name: studio
+      transition: 1000
+      use_music_mode: False #(defaults to False)
+      save_on_change: False #(defaults to True)
+      model: mono1
 
-#sonoff:
+#sonoff:   # questo è un custom component è necessario il relativo file
 #  username: !secret sonoff_username
 #  password: !secret sonoff_password
 #  scan_interval: 60
 #  grace_period: 600
 #  api_region: 'eu'
+
+#tplink:
+#  discovery: false
+#  switch:
+#    - host: 192.168.1.115
 
 zwave:
     usb_path: /dev/ttyACM0
@@ -83,7 +123,6 @@ media_player:
     name: Fire TV
     host: 192.168.1.124
 
-# Enables the frontend
 frontend:
   themes: !include_dir_merge_named themes
 
@@ -96,7 +135,6 @@ http:
 #    - 192.168.1.0/24
 #    - 172.17.0.0/16 # Example Docker bridge
 #    - 172.30.32.0/23 # Example Docker hassio
-#  ssl_profile: modern
 #  ip_ban_enabled: true
 #  login_attempts_threshold: 5
 #  api_password: !secret http_password
@@ -121,8 +159,8 @@ weather:
     api_key: !secret darksky_apikey
 
 tts:  # Text to speech
-  platform: google
-  language: 'it'
+  - platform: google_translate
+    language: 'it'
 
 notify:
   - name: telefoni
@@ -130,6 +168,7 @@ notify:
     services:
       - service: ios_davides_iphone
       - service: ios_iphone_di_muriel
+      - service: ios_ipad_di_muriel
 
 device_tracker:
   - platform: unifi_direct
@@ -138,10 +177,6 @@ device_tracker:
     password: !secret unifi_password
 
 panel_iframe:
-  ide:
-    title: IDE
-    icon: mdi:code-braces
-    url: !secret cloud9_url
 
 ###################### History e Log ##############################
 history:
@@ -169,6 +204,7 @@ history:
       - sensor.processor_use
       - device_tracker.suocera
       - media_player.lg_tv_remote
+      - alarm_control_panel.mqtt_alarm
   exclude:
     entities:
       - light.fibaro_system_fgd212_dimmer_2_level_2
@@ -189,7 +225,7 @@ recorder:
       - input_number
       - input_text
       - automation
-      - script
+#      - script
       - binary_sensor
       - timer
     entities:
@@ -217,6 +253,7 @@ recorder:
       - sensor.neo_coolcam_power_plug_12a_previous_reading_32
       - sensor.neo_coolcam_power_plug_12a_previous_reading_39
       - media_player.lg_tv_remote
+      - alarm_control_panel.mqtt_alarm
 logbook:
   include:
     domains:
@@ -224,7 +261,7 @@ logbook:
       - binary_sensor
       - light
       - automation
-      - script
+#      - script
     entities:
       - device_tracker.davides_iphone
       - device_tracker.iphone_di_muriel

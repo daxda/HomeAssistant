@@ -142,7 +142,7 @@ sensor:
 
       rain_minus0:
         friendly_name: Rain today
-        value_template: "{{ states('sensor.smartweather_rain_today') }}"
+        value_template: "{{ states('sensor.smartweather_rain_today') }}"   # sensore netatmo pioggia ultima ora
         unit_of_measurement: "mm"
 
       rain_minus1:
@@ -291,7 +291,7 @@ script:
       # Passed {{ loop_count}} which is the number relating to the highest entity
       # e.g. input_number.rain_minus3
 
-      # Now using sensor.smartweather_rain_yesterday
+      # Now using sensor.smartweather_rain_yesterday  OR  ---- Pluviometro netatmo sensore ultime 24 Ore ---
       # Make todays rain zero
 
       - service: input_number.set_value

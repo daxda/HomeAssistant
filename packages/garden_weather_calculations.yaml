@@ -18,9 +18,7 @@ automation:
         entity_id:
           - input_number.cycle1_zone1_duration
           - input_number.cycle1_zone2_duration
-          - input_number.cycle1_zone3_duration
-          - input_number.cycle1_zone4_duration
-          - input_number.cycle1_zone5_duration
+
 
     action:
       - wait_template: "{{ is_state('script.adjust_cycle1_durations', 'off') }}"
@@ -36,9 +34,7 @@ automation:
         entity_id:
           - input_number.cycle2_zone1_duration
           - input_number.cycle2_zone2_duration
-          - input_number.cycle2_zone3_duration
-          - input_number.cycle2_zone4_duration
-          - input_number.cycle2_zone5_duration
+
     action:
       - wait_template: "{{ is_state('script.adjust_cycle2_durations', 'off') }}"
 
@@ -117,8 +113,8 @@ script:
         data_template:
           entity_id: input_number.temp_minus0
           value: >
-            {% if states.input_number.temp_minus0.state | float < states.sensor.dark_sky_daytime_high_temperature_0.state | float %}
-              {{ states('sensor.dark_sky_daytime_high_temperature_0') }}
+            {% if states.input_number.temp_minus0.state | float < states.sensor.dark_sky_daytime_high_temperature_0d.state | float %}
+              {{ states('sensor.dark_sky_daytime_high_temperature_0d') }}
             {% else %}
               {{ states('input_number.temp_minus0') }}
             {% endif %}
@@ -200,23 +196,6 @@ script:
           zone: '2'
       - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
 
-      - service: script.calculate_adjusted_zone_durations
-        data:
-          cycle: '1'
-          zone: '3'
-      - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
-
-      - service: script.calculate_adjusted_zone_durations
-        data:
-          cycle: '1'
-          zone: '4'
-      - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
-
-      - service: script.calculate_adjusted_zone_durations
-        data:
-          cycle: '1'
-          zone: '5'
-      - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
 
 
   #=========================================
@@ -234,24 +213,6 @@ script:
         data:
           cycle: '2'
           zone: '2'
-      - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
-
-      - service: script.calculate_adjusted_zone_durations
-        data:
-          cycle: '2'
-          zone: '3'
-      - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
-
-      - service: script.calculate_adjusted_zone_durations
-        data:
-          cycle: '2'
-          zone: '4'
-      - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
-
-      - service: script.calculate_adjusted_zone_durations
-        data:
-          cycle: '2'
-          zone: '5'
       - wait_template: "{{ is_state('script.calculate_adjusted_zone_durations', 'off') }}"
 
 
@@ -302,10 +263,8 @@ script:
           value: >
             {% if states('input_number.adjusted_cycle' + cycle + '_zone' + zone + '_duration') | float < 0 %}
               0
+            {% elif states('input_number.adjusted_cycle' + cycle + '_zone' + zone + '_duration') | float > 30 %}
+              30
             {% else %}
               {{ states('input_number.adjusted_cycle' + cycle + '_zone' + zone + '_duration') }}
             {% endif %}
-
-#            This elif was removed when zone 5 was allowed to go to 59 minutes
-#            {% elif states('input_number.adjusted_cycle' + cycle + '_zone' + zone + '_duration') | float > 30 %}
-#              30

@@ -51,3 +51,10 @@ automation:
             {% for item in states['automation'] if item.name.startswith('Irrigation Weather - ') -%}
               {% if not loop.first %},{% endif %}{{ item.entity_id }}
             {%- endfor %}
+
+      #=== Stop both cycles
+      - service: input_boolean.turn_off
+        data:
+          entity_id:
+            - input_boolean.cycle1_manual_run
+            - input_boolean.cycle2_manual_run
