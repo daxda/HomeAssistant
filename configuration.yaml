@@ -7,49 +7,46 @@ homeassistant:
   time_zone: Europe/Rome
   customize: !include customize.yaml
   packages: !include_dir_named packages
-group: !include groups.yaml
 automation: !include automations.yaml
-script: !include scripts.yaml
-zone: !include zones.yaml
-cover: !include cover.yaml
-sensor: !include sensor.yaml
-switch: !include switch.yaml
-timer: !include timer.yaml
-light: !include light.yaml
 camera: !include camera.yaml
-plant: !include plant.yaml
-scene: !include scene.yaml
+cloud: !include cloud.yaml
+cover: !include cover.yaml
+config:
+conversation:
+group: !include groups.yaml
+homekit: !include homekit.yaml
 input_boolean: !include boolean.yaml
 input_text:
 input_select:
-input_number:
+input_number: !include input_number.yaml
 input_datetime: !include datetime.yaml
-cloud: !include cloud.yaml
-homekit: !include homekit.yaml
-stream:
-wake_on_lan:
-system_health:
-map:
 ios:
+light: !include light.yaml
+map:
 mobile_app:
-config:
-conversation:
+person:
+pi_hole:
+  host: !secret pihole_url
+plant: !include plant.yaml
+scene: !include scene.yaml
+script: !include scripts.yaml
+sensor: !include sensor.yaml
+stream:
 sun:
+switch: !include switch.yaml
+system_health:
+timer: !include timer.yaml
 updater:
-# zeroconf:
-# person:
+wake_on_lan:
+#zeroconf:
+zone: !include zones.yaml
 
 binary_sensor:
   - platform: workday
     country: IT
 
-mqtt:
-  broker: !secret mqtt_broker
-  discovery: true
-  discovery_prefix: homeassistant
-  port: 1883
-  username: !secret mqtt_username
-  password: !secret mqtt_password
+lovelace:
+  mode: yaml
 
 alarm_control_panel:
   - platform: mqtt
@@ -60,14 +57,12 @@ alarm_control_panel:
     payload_arm_home: "partially"
     payload_arm_away: "armed"
 
-lovelace:
-  mode: yaml
-
 netatmo:
   api_key: !secret netatmo_api_key
   secret_key: !secret netatmo_secret_key
   username: !secret netatmo_username
   password:  !secret netatmo_password
+  discovery: false
 climate:
   - platform: netatmo
 
@@ -81,30 +76,24 @@ speedtestdotnet:
 
 yeelight:
   devices:
-    192.168.1.87:
+    192.168.10.95:
       name: camera
       transition: 1000
       use_music_mode: False #(defaults to False)
       save_on_change: False #(defaults to True)
       model: color2
-    192.168.1.72:
+    192.168.10.96:
       name: studio
       transition: 1000
       use_music_mode: False #(defaults to False)
       save_on_change: False #(defaults to True)
       model: mono1
-
-#sonoff:   # questo è un custom component è necessario il relativo file
-#  username: !secret sonoff_username
-#  password: !secret sonoff_password
-#  scan_interval: 60
-#  grace_period: 600
-#  api_region: 'eu'
-
-#tplink:
-#  discovery: false
-#  switch:
-#    - host: 192.168.1.115
+    192.168.10.97:
+      name: sala
+      transition: 1000
+      use_music_mode: False #(defaults to False)
+      save_on_change: False #(defaults to True)
+      model: color2
 
 zwave:
     usb_path: /dev/ttyACM0
@@ -112,38 +101,32 @@ zwave:
 sonos:
   media_player:
     hosts:
-      - 192.168.1.82 #sala
-      - 192.168.1.182 #camera
+      - 192.168.10.51 #sala
+      - 192.168.10.50 #camera
 
 media_player:
-  - platform: lg_netcast
-    host: 192.168.1.89
-    access_token: 577887
-  - platform: androidtv
-    name: Fire TV
-    host: 192.168.1.124
+  - platform: philips_android_tv
+    name: philips_tv
+    host: 192.168.10.59
+    mac: !secret philips_mac
+    username: !secret philips_user
+    password: !secret philips_password
+#  - platform: philips_js
+#    host: 192.168.10.59
+
 
 frontend:
   themes: !include_dir_merge_named themes
 
 http:
   base_url: !secret dns_url
-#  ssl_certificate: /ssl/fullchain.pem
-#  ssl_key: /ssl/privkey.pem
-#  trusted_networks:
-#    - 127.0.0.1
-#    - 192.168.1.0/24
-#    - 172.17.0.0/16 # Example Docker bridge
-#    - 172.30.32.0/23 # Example Docker hassio
-#  ip_ban_enabled: true
-#  login_attempts_threshold: 5
-#  api_password: !secret http_password
 
 discovery:
   ignore:
     - yeelight
     - sonos
     - plex_mediaserver
+    - homekit
 
 dyson:
   username: !secret dyson_username
@@ -151,7 +134,7 @@ dyson:
   language: IT
   devices:
     - device_id: !secret dyson_device_id # eg: Pure Cool Link device
-      device_ip: 192.168.1.70
+      device_ip: 192.168.10.70
 
 weather:
   - platform: darksky
@@ -162,6 +145,13 @@ tts:  # Text to speech
   - platform: google_translate
     language: 'it'
 
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api
+    allowed_chat_ids:
+      - !secret telegram_id_davide
+      - !secret telegram_id_muriel
+
 notify:
   - name: telefoni
     platform: group
@@ -169,6 +159,32 @@ notify:
       - service: ios_davides_iphone
       - service: ios_iphone_di_muriel
       - service: ios_ipad_di_muriel
+  - name: davide
+    platform: telegram
+    chat_id: !secret telegram_id_davide
+  - name: muriel
+    platform: telegram
+    chat_id: !secret telegram_id_muriel
+  - name: telegram_all
+    platform: group
+    services:
+      - service: davide
+      - service: muriel
+  - name: lametric
+    platform: lametric
+    lifetime: 20
+    icon: a7956
+    cycle: 1
+  - name: tv
+    platform: nfandroidtv
+    host: 192.168.10.59
+#custom component alexa
+  - platform: alexa_media
+    name: alexa_media
+
+lametric:
+  client_id: !secret lametric_id
+  client_secret: !secret lametric_secret
 
 device_tracker:
   - platform: unifi_direct
@@ -178,7 +194,9 @@ device_tracker:
 
 panel_iframe:
 
-###################### History e Log ##############################
+###################################################################
+###################### HISTORY e LOG ##############################
+###################################################################
 history:
   use_include_order: True
   include:
@@ -186,10 +204,12 @@ history:
       - light
       - switch
       - binary_sensor
+      - person
+      - alarm_control_panel
     entities:
       - device_tracker.davides_iphone
       - device_tracker.iphone_di_muriel
-      - media_player.lg_tv_remote
+      - media_player.philips_tv
       - sensor.widom_ume304_energy_driven_switch_power
       - sensor.widom_ume304_energy_driven_switch_energy
       - sensor.neo_coolcam_power_plug_12a_power
@@ -217,8 +237,10 @@ recorder:
       - device_tracker
   include:
     domains:
+      - person
       - light
       - switch
+      - cover
       - input_datetime
       - input_boolean
       - input_select
@@ -228,7 +250,15 @@ recorder:
 #      - script
       - binary_sensor
       - timer
+      - alarm_control_panel
+      - zwave
     entities:
+      - sensor.asciugatrice_energy_power
+      - sensor.lavatrice_energy_power
+      - sensor.consumo_presa_bagno
+      - sensor.consumo_presa_pranzo
+      - sensor.consumo_presa_ingresso
+      - sensor.consumo_presa_corridoio
       - sensor.widom_ume304_energy_driven_switch_power
       - sensor.widom_ume304_energy_driven_switch_energy
       - sensor.neo_coolcam_power_plug_12a_power
@@ -252,8 +282,11 @@ recorder:
       - sensor.neo_coolcam_power_plug_12a_previous_reading_6
       - sensor.neo_coolcam_power_plug_12a_previous_reading_32
       - sensor.neo_coolcam_power_plug_12a_previous_reading_39
-      - media_player.lg_tv_remote
+      - media_player.philips_tv
       - alarm_control_panel.mqtt_alarm
+      - sensor.hastudio_broadlink_sensor_temperature
+      - sensor.memory_use_percent
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature
 logbook:
   include:
     domains:
@@ -261,8 +294,28 @@ logbook:
       - binary_sensor
       - light
       - automation
+      - person
 #      - script
     entities:
-      - device_tracker.davides_iphone
-      - device_tracker.iphone_di_muriel
       - device_tracker.suocera
+
+########################################################
+#####             CUSTOM COMPONENTS                #####
+########################################################
+# abilita lo store di componenti
+hacs:
+  token: !secret hacs_token
+#componente custom per comandare un homeassistant remoto
+remote_homeassistant:
+  instances:
+  - host: !secret remote_homeassistant_studio
+    port: !secret remote_homeassistant_port
+    secure: false
+    access_token: !secret access_token_studio
+    entity_prefix: "hastudio_"
+# componente non ufficiale per Alexa
+alexa_media:
+  accounts:
+    - email: !secret amazon_user
+      password: !secret amazon_password
+      url: amazon.it

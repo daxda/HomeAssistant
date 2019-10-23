@@ -19,18 +19,27 @@
         data:
           entity_id:  switch.switch
 
-###### SONOS ######
-  - alias: test sonos
-    initial_state: False
+  - alias: webhook_allarme
+    initial_state: true
     trigger:
-      platform: state
-      entity_id: automation.test_sonos
-      to: 'on'
+      platform: webhook
+      webhook_id: allarme
     action:
-      - service: media_player.select_source
+      - service: script.toggle_allarm
+      - delay: 00:00:05
+#      - wait_template: '{{ states.alarm_control_panel.last_updated }}'
+      - condition: state
+        entity_id: alarm_control_panel.mqtt_alarm
+        state: disarmed
+      - service: switch.toggle
         data:
-          entity_id: media_player.salotto
-          source: Lancia Flow
+          entity_id: switch.shelly
+      - delay: 00:00:01
+      - service: switch.toggle
+        data:
+          entity_id: switch.shelly
+
+###### SONOS ######
 
   - alias: atmosfera
     initial_state: True
@@ -52,9 +61,14 @@
         data:
           entity_id: input_boolean.atmosfera
 
-####################################################
-################## FINESTRE ###################
-####################################################
+########################################################################################
+#  ███████╗██╗███╗   ██╗███████╗███████╗████████╗██████╗ ███████╗
+#  ██╔════╝██║████╗  ██║██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔════╝
+#  █████╗  ██║██╔██╗ ██║█████╗  ███████╗   ██║   ██████╔╝█████╗
+#  ██╔══╝  ██║██║╚██╗██║██╔══╝  ╚════██║   ██║   ██╔══██╗██╔══╝
+#  ██║     ██║██║ ╚████║███████╗███████║   ██║   ██║  ██║███████╗
+#  ╚═╝     ╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
+########################################################################################
 
   - alias: Sveglia di luce
     initial_state: True
@@ -82,6 +96,28 @@
         data:
           entity_id: cover.level_3 #camera
           position: 80
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_2 #scale
+          position: 75
+  - alias: Chiusura Automatica
+    initial_state: True
+    trigger:
+      platform: time_pattern
+      minutes: '/1'
+      seconds: 0
+    condition:
+      - condition: template
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.finestre_chiuse.state }}'
+    action:
+      - service: cover.set_cover_position
+        data_template:
+          entity_id: cover.level_3 #camera
+          position: "{{ states('input_number.set_camera_notte') | int }}"
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_2 #scale
+          position: 0
 
   - alias: pioggia
     initial_state: true
@@ -109,12 +145,30 @@
       - service: notify.telefoni
         data:
           message: "Piove...! Chiudo le finestre che posso chiudere, per le altre organizzati!"
+      - service: notify.lametric
+        data:
+          message: "Piove finestre in chiusura"
+          data:
+            sound: 'notification'
+            icon: '72'
+            cycles: 4
+            priority: 'info'
+      - service: notify.tv
+        data:
+          message: "Sto chiudendo le finestre per te..."
+          title: "Home Assistant"
 
-####################################################
-################## ILLUMINAZIONE ###################
-####################################################
+########################################################################################
+#  ██╗██╗     ██╗     ██╗   ██╗███╗   ███╗██╗███╗   ██╗ █████╗ ███████╗██╗ ██████╗ ███╗   ██╗███████╗
+#  ██║██║     ██║     ██║   ██║████╗ ████║██║████╗  ██║██╔══██╗╚══███╔╝██║██╔═══██╗████╗  ██║██╔════╝
+#  ██║██║     ██║     ██║   ██║██╔████╔██║██║██╔██╗ ██║███████║  ███╔╝ ██║██║   ██║██╔██╗ ██║█████╗
+#  ██║██║     ██║     ██║   ██║██║╚██╔╝██║██║██║╚██╗██║██╔══██║ ███╔╝  ██║██║   ██║██║╚██╗██║██╔══╝
+#  ██║███████╗███████╗╚██████╔╝██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗██║╚██████╔╝██║ ╚████║███████╗
+#  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+########################################################################################
 
-####################  Luce Camerina
+####################  Luce Camerina ##################
+
   - alias: camerina out # dopo 5 minuti di assenza imposta la luminosità al minimo
     initial_state: true
     trigger:
@@ -188,7 +242,7 @@
       data:
         entity_id: light.level_2
 
-########## Luce studio
+############################ Luce studio  ####################################
   - alias: studio Sera
     initial_state: true
     trigger:
@@ -209,7 +263,7 @@
         brightness_pct: 10
         transition: 5
 
-########## Luce Bagno Grande ##############
+############################ Luce Bagno Grande ################################
   - alias: bagno pir
     initial_state: true
     trigger:
@@ -285,7 +339,7 @@
       data:
         entity_id: light.level
 
-########## Luce Philips ######
+############################ Piantana Sala  ########################
   - alias: guardo la tv
     initial_state: true
     trigger:
@@ -297,27 +351,28 @@
       entity_id: sun.sun
       state: "below_horizon"
     action:
-      service: switch.turn_on
-      entity_id: switch.switch_15
-  - alias: Philips Energy
+      service: light.turn_on
+      data:
+        entity_id: light.sala
+        brightness: 10
+  - alias: Piantana Energy
     initial_state: true
     trigger:
       platform: time
       at:  '1:00:00'
     condition:
       - condition: state
-        entity_id: switch.switch_15
+        entity_id: light.sala
         state: 'on'
       - condition: state
         entity_id: media_player.lg_tv_remote
         state: 'off'
     action:
       service: switch.turn_off
-      entity_id: switch.switch_15
+      entity_id: light.sala
 
-########## Luce pensili ##############
+############################ Luce pensili ################################
   - alias: pensili pir
-    initial_state: true
     trigger:
       - platform: state
         entity_id: binary_sensor.dafangindoor_motion_sensor
@@ -339,6 +394,8 @@
         - condition: state
           entity_id: sun.sun
           state: "below_horizon"
+        - condition: template
+          value_template: '{{ not is_state("media_player.lg_tv_remote", "playing") }}'
     action:
       - service: switch.turn_on
         data:
@@ -347,8 +404,8 @@
       - service: switch.turn_off
         data:
           entity_id: switch.shellypensili
-############ Tutte le Luci #######
 
+############################## TUTTE LE LUCI #########################
   - alias: risparmio energetico giorno
     initial_state: true
     trigger:
@@ -366,6 +423,36 @@
       service: homeassistant.turn_off
       entity_id: group.luci
 
+  - alias: Spegni tutte le luci PT da pulsante
+    trigger:
+      - platform: state
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
+        to: 'on'
+      - platform: state
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
+        to: 'off'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.prova1
+      - delay: "00:00:01"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.prova1
+  - alias: Spegni tutte le luci PT da pulsante test condizione
+    trigger:
+      - platform: state
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
+        to: 'on'
+      - platform: state
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
+        to: 'off'
+    condition:
+    - condition: state
+      entity_id: input_boolean.prova1
+      state: 'on'
+    action:
+      service: homeassistant.turn_off
+      entity_id: group.luci_pt
+
 ############ Simulatore presenza  ######################
   - alias: assente
     initial_state: true
@@ -377,61 +464,40 @@
       condition: and
       conditions:
         - condition: template
-          value_template: '{{ not is_state("device_tracker.davides_iphone", "home") and not is_state("device_tracker.iphone_di_muriel", "home") }}'
+          value_template: '{{ not is_state("person.davide", "home") and not is_state("person.muriel", "home") }}'
         - condition: sun
           after: sunset
           after_offset: "-00:25:00"
         - condition: state
           entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
           state: 'off'
+        - condition: time
+          after: '17:00:00'
+          before: '22:30:00'
     action:
       - service: homeassistant.turn_on
         entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
-
-########################################################
-############## AUTOMAZIONI DI SERVIZIO #################
-########################################################
-  - alias: start homekit
-    initial_state: true
-    trigger:
-      - platform: event
-        event_type: zwave.network_ready
-      - platform: event
-        event_type: zwave.network_complete
-      - platform: event
-        event_type: zwave.network_complete_some_dead
-#      - platform: homeassistant
-#        event: start
-    action:
-      - delay: '00:01:00'
-      - service: homekit.start
+      - wait_template: '{{ now().strftime("%H:%M:00") == ("22:32:00") }}'
+      - condition: template
+        value_template: '{{ not is_state("person.davide", "home") and not is_state("person.muriel", "home") }}'
+      - service: homeassistant.turn_off
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
 
 
-  - alias: backup automatico
-    initial_state: true
-    trigger:
-      platform: time
-      at: '3:00:00'
-    condition:
-      - condition: time
-        weekday:
-          - mon
-    action:
-      - service: hassio.snapshot_full
-        data_template:
-          name: Automated Backup {{ now().strftime('%Y-%m-%d') }}
-      - service: hassio.addon_stdin
-        data:
-          addon: 7be23ff5_dropbox_sync
-          input:
-            command: upload
-
-########### NOTIFICHE ##########
-  - alias: attiva notifica lavatrice
+################################################################################################
+#  ███╗   ██╗ ██████╗ ████████╗██╗███████╗██╗ ██████╗██╗  ██╗███████╗
+#  ████╗  ██║██╔═══██╗╚══██╔══╝██║██╔════╝██║██╔════╝██║  ██║██╔════╝
+#  ██╔██╗ ██║██║   ██║   ██║   ██║█████╗  ██║██║     ███████║█████╗
+#  ██║╚██╗██║██║   ██║   ██║   ██║██╔══╝  ██║██║     ██╔══██║██╔══╝
+#  ██║ ╚████║╚██████╔╝   ██║   ██║██║     ██║╚██████╗██║  ██║███████╗
+#  ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚═╝╚═╝     ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
+#
+################################################################################################
+  - alias: notifica lavatrice ON
     initial_state: true
     trigger:
       - platform: numeric_state
-        entity_id: sensor.neo_coolcam_power_plug_12a_power_8
+        entity_id: sensor.lavatrice_energy_power
         above: '50'
     condition:
       - condition: state
@@ -439,13 +505,13 @@
         state: 'off'
     action:
       - service: automation.turn_on
-        entity_id: automation.notifica_fine_lavaggio
-  - alias: notifica fine lavaggio
+        entity_id: automation.notifica_lavatrice_fine
+  - alias: notifica lavatrice FINE
     initial_state: false
     trigger:
     - platform: numeric_state
-      entity_id: sensor.neo_coolcam_power_plug_12a_power_8
-      below: '3'
+      entity_id: sensor.lavatrice_energy_power
+      below: '5'
       for:
         minutes: 8
     action:
@@ -455,24 +521,28 @@
       - service: notify.ios_iphone_di_muriel
         data:
           message: "Vedi che il marito NERD può essere utile ?!! La LAVATRICE è Pronta"
+      - service: notify.tv
+        data:
+          message: "La lavatrice è pronta."
+          title: "Home Assistant"
       - service: automation.turn_off
-        entity_id: automation.notifica_fine_lavaggio
+        entity_id: automation.notifica_lavatrice_fine
 
-  - alias: attiva notifica asciugatrice
+  - alias: notifica asciugatrice ON
     initial_state: true
     trigger:
     - platform: numeric_state
-      entity_id: sensor.neo_coolcam_power_plug_12a_power_11
-      above: '50'
+      entity_id: sensor.asciugatrice_energy_power
+      above: '800'
     action:
       - service: automation.turn_on
-        entity_id: automation.notifica_asciugatrice
-  - alias:  notifica asciugatrice
+        entity_id: automation.notifica_asciugatrice_fine
+  - alias:  notifica asciugatrice FINE
     initial_state: false
     trigger:
     - platform: numeric_state
-      entity_id: sensor.neo_coolcam_power_plug_12a_power_11
-      below: '3'
+      entity_id: sensor.asciugatrice_energy_power
+      below: '5'
       for:
         minutes: 8
     action:
@@ -480,7 +550,11 @@
         data:
           message: "Asciugatrice pronta: vediamo di non farci marcire i vestiti dentro ... "
       - service: automation.turn_off
-        entity_id: automation.notifica_asciugatrice
+        entity_id: automation.notifica_asciugatrice_fine
+      - service: notify.tv
+        data:
+          message: "L'asciugatrice è pronta, non approfittare dell'antipiega, che consuma..."
+          title: "Home Assistant"
 
   - alias: notifica aggiornamento
     initial_state: true
@@ -510,17 +584,28 @@
     action:
       - service: media_player.volume_set
         data:
-          entity_id: media_player.living
-          volume_level: 0.60
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: media_player.dot_living
+          volume_level: 0.75
+      - delay: 00:00:03
+      - service: notify.alexa_media_dot_living
         data:
-          message: 'Chiudete a chiave il mobile dei liquori, nascondete gli oggetti che si rompono... salvate il salvabile. E buona fortuna la vecchia è arrivata '
-          language: 'it'
+          message: "  , Chiudete a chiave il mobile dei liquori, nascondete gli oggetti che si rompono... salvate il salvabile. E buona fortuna la vecchia è arrivata "
+          data:
+            type: tts
       - service: notify.ios_davides_iphone
         data:
           message: " La vecchia pazza è alla porta.... SCAPPA ! "
-
+      - service: notify.lametric
+        data:
+          message: "Vecchia in casa"
+          data:
+            icon: '19622'
+            cycles: 5
+            priority: 'critical'
+      - service: notify.tv
+        data:
+          message: "Aiuto... ci sono ospiti !"
+          title: "Home Assistant"
   - alias: spazio libero
     initial_state: true
     trigger:
@@ -548,26 +633,12 @@
           message: "È quasi finito il toner della stampante Samsung M2020, ricordati di comprarlo"
 
 
-  - alias: test notifica
-    initial_state: False
-    trigger:
-      platform: state
-      entity_id: automation.test_notifica
-      to: 'on'
-    action:
-      - service: notify.ios_davides_iphone
-        data:
-          message: "Test Notifica iOS"
-      - service: script.irrigation_run_a_cycle
-        data_template:
-          cycle: 1
-
   - alias: messaggio giorno havvento  # La Notifica  dell'avvento è opera di Alberto https://github.com/JohnnyZeta/hassio
     trigger:
       - platform: time
         at: '12:00:00'
     action:
-      - service: notify.telefoni
+      - service: notify.telegram_all
         data_template:
           title: >
             {% if is_state("sensor.giornianatale", "21") %} *21 Giorni a Natale!*
@@ -619,7 +690,99 @@
             {% endif %}
 
 
+########################################################################################################################
+#  ███████╗███████╗██████╗ ██╗   ██╗██╗███████╗██╗ ██████╗
+#  ██╔════╝██╔════╝██╔══██╗██║   ██║██║╚══███╔╝██║██╔═══██╗
+#  ███████╗█████╗  ██████╔╝██║   ██║██║  ███╔╝ ██║██║   ██║
+#  ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║ ███╔╝  ██║██║   ██║
+#  ███████║███████╗██║  ██║ ╚████╔╝ ██║███████╗██║╚██████╔╝
+#  ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚══════╝╚═╝ ╚═════╝
+########################################################################################################################
+  - alias: start homekit
+    initial_state: true
+    trigger:
+      - platform: event
+        event_type: zwave.network_ready
+      - platform: event
+        event_type: zwave.network_complete
+      - platform: event
+        event_type: zwave.network_complete_some_dead
+#      - platform: homeassistant
+#        event: start
+    action:
+      - delay: '00:01:00'
+      - service: homekit.start
+
+  - alias: backup automatico
+    initial_state: true
+    trigger:
+      platform: time
+      at: '3:00:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+    action:
+      - service: hassio.snapshot_full
+        data_template:
+          name: Automated Backup {{ now().strftime('%Y-%m-%d') }}
+      - service: hassio.addon_stdin
+        data:
+          addon: 7be23ff5_dropbox_sync
+          input:
+            command: upload
+
+
+  - alias: elimina notifica persistente nuovo dispositivo
+    initial_state: true
+    trigger:
+      - platform: event
+        event_type: call_service
+        event_data:
+          domain: persistent_notification
+          service: create
+    action:
+      - service_template: >
+          {% set message = trigger.event.data.service_data.message %}
+          {% if 'discovered new' in message or 'new devices' in message %}
+            persistent_notification.dismiss
+          {% else %}
+          {% endif %}
+        data:
+          notification_id: config_entry_discovery
+#      - service: notify.davide
+#        data_template:
+#          message: >-
+#            {% set message = trigger.event.data.service_data.message %}
+#            {% if 'invalid authentication' in message or 'login attempts' in message %}
+#              {{ message }}: http://www.ip-tracker.org/locator/ip-lookup.php?ip={{ message.split('from ')[1] }}
+#            {% else %}
+#              {{ message }}
+#            {% endif %}
+
 ##################-----CONTROLLO CARICHI----##################################
 #
 #  alla fine l'ho messo in un packages per conto suo
-#
+#############################################################################
+
+############################################################################
+###############  CONDIZIONATORE STUDIO #####################################
+############################################################################
+#  - alias: spengni condizionatore
+#    initial_state: true
+#    trigger:
+#      platform: time_pattern
+#      minutes: '/1'
+#      seconds: 0
+#    condition:
+#      condition: and
+#      conditions:
+#        - condition: template
+#          value_template: '{{ not is_state("person.davide", "lavoro") }}'
+#        - condition: state
+
+
+
+#    action:
+#      - service: homeassistant.turn_off
+#        entity_id: switch.hastudio_condizionatore_studio

@@ -1,16 +1,18 @@
 
 resources:
-  - url: /local/slider-entity-row.js
+  - url: /community_plugin/lovelace-slider-entity-row/slider-entity-row.js #  - url: /local/slider-entity-row.js
     type: js
-  - url: /local/lovelace/card-tools.js
+  - url: /community_plugin/lovelace-card-tools/card-tools.js #  - url: /local/lovelace/card-tools.js
     type: js
-  - url: /local/lovelace/mini-graph-card-bundle.js  # https://github.com/kalkih/mini-graph-card
+  - url: /community_plugin/mini-graph-card/mini-graph-card-bundle.js #  - url: /local/lovelace/mini-graph-card-bundle.js
+    type: module
+  - url: /community_plugin/lovelace-card-mod/card-mod.js #  - url: /local/lovelace/card-modder.js
     type: js
-  - url: /local/lovelace/card-modder.js
+  - url: /community_plugin/lovelace-fold-entity-row/fold-entity-row.js #  - url: /local/lovelace/fold-entity-row.js
     type: js
-  - url: /local/lovelace/fold-entity-row.js
+  - url: /community_plugin/lovelace-toggle-lock-entity-row/toggle-lock-entity-row.js #  - url: /local/lovelace/toggle-lock-entity-row.js
     type: js
-  - url: /local/lovelace/toggle-lock-entity-row.js
+  - url: /community_plugin/lovelace-multiple-entity-row/multiple-entity-row.js
     type: js
 
 title: Dari's Home Assistant
@@ -19,8 +21,8 @@ views:
   - title: default_view  #pagina
     icon: mdi:home
     badges:
-      - device_tracker.davides_iphone
-      - device_tracker.iphone_di_muriel
+      - person.davide
+      - person.muriel
       - binary_sensor.workday_sensor
     cards:               # card della pagina
       - type: horizontal-stack
@@ -35,6 +37,35 @@ views:
             action: toggle
           name: PEDONALE
           entity: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+#        - type: entity-button
+#          tap_action:
+#            action: call-service
+#            service: script.turn_on
+#            service_data:
+#              entity_id: script.spengitv
+#          entity: script.spengitv
+#          name: TV OFF
+#          icon: mdi:power
+      - type: horizontal-stack
+        cards:
+        - type: entity-button
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.buongiorno
+          entity: script.buongiorno
+          name: GIORNO
+          icon: mdi:alarm-check
+        - type: entity-button
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.buonanotte
+          name: NOTTE
+          entity: script.buonanotte
+          icon: mdi:hotel
         - type: entity-button
           tap_action:
             action: call-service
@@ -43,7 +74,24 @@ views:
               entity_id: script.spengitv
           entity: script.spengitv
           name: TV OFF
-          icon: mdi:power
+          icon: mdi:television-classic-off
+        - type: entity-button
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.dolcedivano
+          entity: script.dolcedivano
+          icon: mdi:sofa
+        - type: entity-button
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.pioggia
+          entity: script.pioggia
+          icon: mdi:weather-pouring
+
 
       - type: entities
         title: Luci
@@ -56,10 +104,13 @@ views:
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
           - switch.switch_8
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
-          - switch.switch_15
+#          - switch.switch_15
+          - type: custom:slider-entity-row
+            entity: light.sala
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
           - type: divider
           - switch.switch_14
+          - switch.shelly
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
           - type: section
             label: Piano Primo
@@ -86,16 +137,16 @@ views:
           - sensor.netatmo_indoor_co2
           - sensor.sala_dust
           - sensor.netatmo_indoor_noise
-      - type: picture-glance
-        title: Living
-        entities: #[]
-          - binary_sensor.dafangindoor_motion_sensor
-          - switch.switch_8
-          - switch.dafangindoor_night_mode_auto
-          - switch.dafangindoor_night_mode
-          - switch.dafangindoor_ir_filter
-          - switch.dafangindoor_ir_led
-        camera_image:  camera.camliving
+#      - type: picture-glance
+#        title: Living
+#        entities: #[]
+#          - binary_sensor.dafangindoor_motion_sensor
+#          - switch.switch_8
+#          - switch.dafangindoor_night_mode_auto
+#          - switch.dafangindoor_night_mode
+#          - switch.dafangindoor_ir_filter
+#          - switch.dafangindoor_ir_led
+#        camera_image:  camera.camliving
 
       - type: entities
         title: Giardino
@@ -115,6 +166,20 @@ views:
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
           - switch.switch
           - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+
+      - type: vertical-stack
+        cards:
+        - type: custom:fold-entity-row
+          head:
+            type: section
+            label: Impostazioni Finestre
+          items:
+            - entity: input_datetime.fenestre_feriali
+            - entity: input_datetime.finestre_festivi
+            - entity: automation.sveglia_di_luce
+            - entity: input_datetime.finestre_chiuse
+            - entity: input_number.set_camera_notte
+            - entity: automation.chiusura_automatica
       - type: entities
         title: Finestre
         show_header_toggle: false
@@ -123,25 +188,12 @@ views:
           - cover.level_4
           - cover.level_2
           - cover.level_3
-          - input_datetime.fenestre_feriali
-          - input_datetime.finestre_festivi
-          - automation.sveglia_di_luce
-
       - type: entities
         title: Sonos
         entities:
           - media_player.salotto
           - media_player.camere
-############################################################################
-  - title: Allarme
-    icon: mdi:shield-lock-outline
-    cards:
-      - type: alarm-panel
-        entity: alarm_control_panel.mqtt_alarm
-        name: Allarme
-        states:
-          - arm_away
-############################################################################
+##########################################################
   - title: Power
     icon: mdi:chart-line-stacked
     badges:
@@ -150,18 +202,71 @@ views:
     cards:
       - type: vertical-stack
         cards:
-
         - type: entities
           title: Consumi
           show_header_toggle: false
           entities:
-            - automation.controllocarichi
-            - sensor.neo_coolcam_power_plug_12a_power
-            - sensor.neo_coolcam_power_plug_12a_power_2
-            - sensor.neo_coolcam_power_plug_12a_power_10
-            - sensor.neo_coolcam_power_plug_12a_power_8
-            - sensor.neo_coolcam_power_plug_12a_power_11
-            - sensor.neo_coolcam_power_plug_12a_power_3
+            - entity: automation.controllocarichi
+            - entity: switch.switch_6
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.neo_coolcam_power_plug_12a_power
+                name: Consumo
+            - entity: switch.switch_7
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.neo_coolcam_power_plug_12a_power_2
+                name: Consumo
+            - entity: switch.neo_coolcam_power_plug_12a_switch
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.neo_coolcam_power_plug_12a_power_10
+                name: Consumo
+            - entity: switch.shenzhen_neo_electronics_co_ltd_power_plug_12a_switch
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.shenzhen_neo_electronics_co_ltd_power_plug_12a_power
+                name: Consumo
+            - entity: switch.asciugatrice
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.asciugatrice_energy_power
+                name: Consumo
+            - entity: switch.lavatrice
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.lavatrice_energy_power
+                name: Consumo
+            - entity: switch.presa_ingresso
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.consumo_presa_ingresso
+                name: Consumo
+            - entity: switch.presa_pranzo
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.consumo_presa_pranzo
+                name: Consumo
+            - entity: switch.presa_bagno
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.consumo_presa_bagno
+                name: Consumo
+            - entity: switch.presa_corridoio
+              type: custom:multiple-entity-row
+              toggle: true
+              primary:
+                entity: sensor.consumo_presa_corridoio
+                name: Consumo
             - type: divider
             - sensor.widom_ume304_energy_driven_switch_power
         - type: custom:mini-graph-card
@@ -170,16 +275,21 @@ views:
           name: Consumo Energetico
           show:
             graph: bar
+        - type: custom:fold-entity-row
+          head:
+            type: section
+            label: Impostazioni Luci Esterne
+          items:
+            - entity: group.automazioni_pack_switch
+            - entity: input_datetime.accendi_switch
+            - entity: input_boolean.tramonto_switch
+            - entity: input_datetime.spengi_switch
         - type: entities
-          title: Power
+          title: Luci Esterne
           show_header_toggle: false
           entities:
-            - entity: switch.switch_6 #Forno
-            - switch.switch_7 # Lavastoviglie
-            - switch.neo_coolcam_power_plug_12a_switch #cantina portavino
-            - switch.switch_10 # iMac
-            - switch.neo_coolcam_power_plug_12a_switch_2 #Asciugatrice
-            - switch.switch_16 # Lavatrice
+            - entity: switch.shelly
+
 
       - type: vertical-stack
         cards:
@@ -202,6 +312,8 @@ views:
               name: Costo KWh Fascia 2
             - entity: input_boolean.tariffa_weekend
               name: Attiva F2 e Tariffa Week end
+            - entity: script.reset_consumo_giornaliero
+            - entity: script.reset_consumo_mensile
 
         - type: entities
           title: Consumi e costi oggi
@@ -235,7 +347,11 @@ views:
             name: Consumo Totale
           - entity: sensor.costo_consumo_mensile_totale
             name: Costo Totale
-#################
+
+##################################################################################
+#####
+##################################################################################
+
   - title: automazioni
     icon: mdi:auto-fix
     cards:
@@ -285,27 +401,26 @@ views:
           entity: script.pioggia
           icon: mdi:weather-pouring
 
+      - type: entities
+        title: Hollydays
+        show_header_toggle: false
+        entities:
+          - sensor.giornianatale
+          - input_boolean.atmosfera
+          - switch.widom
+          - switch.sonoff_2
+          - type: divider
+          - group.automazioni_pack_switch_natale
+          - input_datetime.accendi_switch_natale
+          - input_boolean.tramonto_switch_natale
+          - input_datetime.spengi_switch_natale
+
       - type: vertical-stack
         cards:
         - type: plant-status
           name: Chamadorea
           entity: plant.chamadorea
-#        - type: custom:fold-entity-row
-#          head:
-#            type: section
-#            label: Impostazioni Timer Terrario
-#          items:
-#            - entity: group.automazioni_pack_switch
-#            - entity: input_datetime.accendi_switch
-#            - entity: input_boolean.tramonto_switch
-#            - entity: input_datetime.spengi_switch
-#        - type: entities
-#          title: Terrario
-#          show_header_toggle: false
-#          entities:
-#            - entity: switch.switch1
-#              name: Luce Terrario
-#              icon: mdi:tortoise
+
       - type: entities
         title: Automazioni
         show_header_toggle: false
@@ -314,7 +429,10 @@ views:
           - group.lavatrice
           - group.asciugatrice
           - automation.arrivabetty
+          - type: divider
           - script.sonosflow
+          - script.test_tts
+          - script.test_notifica
       - type: entities
         title: Automazioni Luci
         show_header_toggle: false
@@ -324,7 +442,7 @@ views:
           - automation.camerina_out
           - automation.camerina_out_out
           - automation.camerina_return
-          - automation.philips_energy
+          - automation.piantana_energy
           - automation.pensili_pir
           - automation.bagno_pir
           - automation.bagno_sera
@@ -332,20 +450,19 @@ views:
           - automation.bagno_energy
           - automation.risparmio_energetico_giorno
           - automation.assente
+          - automation.spegni_tutte_le_luci_pt_da_pulsante
+          - automation.spegni_tutte_le_luci_pt_da_pulsante_test_condizione
       - type: entities
         title: Automazioni di Sistema
         show_header_toggle: false
         entities:
-#          - automation.start_homekit
           - automation.controllocarichi
           - automation.backup_automatico
           - automation.spazio_libero
           - automation.notifica_aggiornamento
           - automation.toner
           - automation.start_homekit
-          - type: divider
-          - automation.test_notifica
-          - automation.test_sonos
+
 #########################################################################
 
   - title: meteo
@@ -363,6 +480,9 @@ views:
         - type: thermostat
           entity: climate.netatmo_piano_terra
 
+###########################################################################
+########                       MEDIAPLAYER                        #########
+###########################################################################
   - title: multimedia
     icon: mdi:movie
     cards:
@@ -375,15 +495,44 @@ views:
       - type: horizontal-stack
         cards:
         - type: media-control
-          entity: media_player.living
+          entity: media_player.dot_living
         - type: media-control
-          entity: media_player.lg_tv_remote
-#
-#######################################################
+          entity: media_player.philips_tv
+      - type: horizontal-stack
+        cards:
+        - type: media-control
+          entity: media_player.dot_bianco
+        - type: media-control
+          entity: media_player.bagno
+      - type: entities
+        title: Statistiche TV
+        show_header_toggle: False
+        entities:
+          - sensor.ore_alla_tv_oggi
+          - sensor.ore_alla_tv_settimana
+##################################################################
 
   - !include lovelace/garden.yaml
 
 #########################################################
+############################################################################
+  - title: Allarme
+    icon: mdi:shield-lock-outline
+    badges:
+      - person.davide
+      - person.muriel
+    cards:
+      - type: history-graph
+        entities:
+          - alarm_control_panel.mqtt_alarm
+      - type: alarm-panel
+        entity: alarm_control_panel.mqtt_alarm
+        name: Allarme
+        states:
+          - arm_away
+
+############################################################################
+
   - title: Utility
     icon: mdi:settings
     cards:
@@ -392,6 +541,7 @@ views:
         show_header_toggle: false
         entities:
           - switch.wol_imac
+          - switch.switch_15
           - sensor.iphone_battery_level
           - sensor.iphone_di_muriel_battery_level
           - sensor.ipad_di_muriel_battery_level
@@ -404,6 +554,15 @@ views:
           - sensor.samsung_m2020_series_1921681137_toner_black
           - sensor.sala_filter_life
           - sensor.last_boot
+      - type: entities
+        title: Aggiornamenti
+        show_header_toggle: false
+        entities:
+          - binary_sensor.remote_ui
+          - binary_sensor.updater
+          - binary_sensor.hastudio_updater
+          - sensor.hacs
+
       - type: entities
         title: Zwave
         show_header_toggle: false
@@ -424,7 +583,7 @@ views:
           - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_7
           - zwave.neo_coolcam_power_plug_12a
           - zwave.neo_coolcam_power_plug_12a_2
-          - zwave.neo_coolcam_power_plug_12a_3
+          - zwave.shenzhen_neo_electronics_co_ltd_power_plug_12a
           - zwave.neo_coolcam_power_plug_12a_4
           - zwave.neo_coolcam_power_plug_12a_5
           - zwave.neo_coolcam_power_plug_12a_6
@@ -462,25 +621,25 @@ views:
           - sensor.speedtest_upload
           - sensor.speedtest_ping
 
-      - type: entities
-        title: Dafang Control
-        show_header_toggle: False
-        entities:
-          - cover.dafangindoor_move_left_right
-          - cover.dafangindoor_move_up_down
-          - switch.dafangindoor_night_mode_auto
-          - switch.dafangindoor_night_mode
-          - switch.dafangindoor_yellow_led
-          - switch.dafangindoor_blue_led
-          - switch.dafangindoor_h264_rtsp_server
-          - switch.dafangindoor_mjpeg_rtsp_server
-          - switch.dafangindoor_ir_filter
-          - switch.dafangindoor_ir_led
-          - sensor.dafangindoor_light_sensor
-          - type: divider
-          - binary_sensor.dafangindoor_motion_sensor
-          - switch.dafangindoor_motion_tracking
-          - switch.dafangindoor_motion_detection
+#      - type: entities
+#        title: Dafang Control
+#        show_header_toggle: False
+#        entities:
+#          - cover.dafangindoor_move_left_right
+#          - cover.dafangindoor_move_up_down
+#          - switch.dafangindoor_night_mode_auto
+#          - switch.dafangindoor_night_mode
+#          - switch.dafangindoor_yellow_led
+#          - switch.dafangindoor_blue_led
+#          - switch.dafangindoor_h264_rtsp_server
+#          - switch.dafangindoor_mjpeg_rtsp_server
+#          - switch.dafangindoor_ir_filter
+#          - switch.dafangindoor_ir_led
+#          - sensor.dafangindoor_light_sensor
+#          - type: divider
+#          - binary_sensor.dafangindoor_motion_sensor
+#          - switch.dafangindoor_motion_tracking
+#          - switch.dafangindoor_motion_detection
 #          - switch.dafangindoor_motion_send_mail
 #          - switch.dafangindoor_motion_send_telegram
 
@@ -496,3 +655,54 @@ views:
           - sensor.fibaro_system_fgms001zw5_motion_sensor_seismic_intensity
           - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar
           - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature
+
+#########################################################
+  - title: Studio
+    icon: mdi:scale-balance
+    cards:
+      - type: glance
+        show_name: true
+        show_icon: true
+        show_state: true
+        entities:
+          - entity: binary_sensor.hastudio_door_sensor
+          - entity: binary_sensor.hastudio_window_sensor
+
+      - type: horizontal-stack
+        cards:
+        - type: light
+          entity: light.hastudio_studio_davide
+        - type: light
+          entity: light.hastudio_studiomonica
+          name: Studio Monica
+
+      - type: vertical-stack
+        cards:
+        - type: sensor
+          entity: sensor.hastudio_broadlink_sensor_temperature # sensor.hastudio_temperature_8
+          name: Temperatura Studio Davide
+          detail: 2
+          graph: line
+
+        - type: entities
+          entities:
+            - switch.hastudio_condizionatore_studio
+          show_header_toggle: false
+
+      - type: entities
+        show_header_toggle: false
+        title: Stato Raspberry Studio
+        entities:
+          - entity: sensor.hastudio_cpu_temperature
+          - entity: sensor.hastudio_last_boot
+          - entity: sensor.hastudio_disk_use_percent
+          - entity: sensor.hastudio_memory_use_percent
+          - entity: sensor.hastudio_processor_use
+          - entity: sensor.hastudio_speedtest_download
+          - entity: sensor.hastudio_speedtest_upload
+          - entity: sensor.hastudio_speedtest_ping
+          - type: section
+            label: PiHole Studio
+          - entity: sensor.hastudio_pi_hole_ads_blocked_today
+          - entity: sensor.hastudio_pi_hole_dns_queries_today
+          - entity: sensor.hastudio_pi_hole_dns_unique_clients

@@ -1,0 +1,7 @@
+
+  set_camera_notte:
+    name: Camera set night mode
+    initial: 30
+    min: 2
+    max: 80
+    step: 2

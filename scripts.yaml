@@ -10,21 +10,93 @@
     sequence:
       - service: media_player.turn_off
         data:
-          entity_id: media_player.lg_tv_remote
+          entity_id: media_player.philips_tv
+
+  toggle_allarm:
+    alias: "Toggle Allarm"
+    sequence:
+      service_template: >
+        {% if is_state('alarm_control_panel.mqtt_alarm', 'disarmed')%}
+          alarm_control_panel.alarm_arm_away
+        {% else %}
+          alarm_control_panel.alarm_disarm
+        {% endif %}
+      data:
+        entity_id: alarm_control_panel.mqtt_alarm
+        code: !secret allarm_code
 
   sonosflow:
-    alias: "Avvia Flow"
+    alias: "Avvia Musica"
     sequence:
      - service: media_player.select_source
        data:
          entity_id: media_player.salotto
-         source: Lancia Flow
+         source: Discover Weekly
      - service: media_player.volume_set
        data:
          entity_id: media_player.salotto
          volume_level: 0.17
 
+  test_tts:
+    alias: "Test Text to Speech"
+    sequence:
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.dot_living
+          volume_level: 0.40
+      - delay: 00:00:03
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "prova"
+
+  test_notifica:
+    alias: "Test Notificha"
+    sequence:
+      - service: notify.ios_davides_iphone
+        data:
+          message: "Test Notifica iOS"
+      - service: notify.lametric
+        data:
+          message: "TEST NOTIFICA"
+          data:
+            sound: 'notification'
+            icon: '72'
+            cycles: 4
+            priority: 'info'
+      - service: notify.telegram_all
+        data:
+          title: '*Test Telegram*'
+          message: "Ciao *sono la tua casa* sto provando ad usare Telegram per darti qualche informazione"
+      - service: notify.tv
+        data:
+          message: "Test notica sulla tv , se mi vedi funziono :-P"
+          title: "Home Assistant"
+##########################
+  reset_consumo_giornaliero:
+    alias: "Reset consumo giornaliero"
+    sequence:
+      - service: utility_meter.reset
+        entity_id: utility_meter.consumo_giornaliero
+  reset_consumo_mensile:
+    alias: "Reset consumo mensile"
+    sequence:
+      - service: utility_meter.reset
+        entity_id: utility_meter.consumo_mensile
+
 #######SCENE########
+  nottefinestra_camera:
+    alias: " Finestra camera notte"
+    sequence:
+      - service: cover.set_cover_position
+        data_template:
+          entity_id: cover.level_3 #camera
+          position: "{{ states('input_number.set_camera_notte') | int }}"
+
   buonanotte:
     alias: "Buonanotte"
     sequence:
@@ -41,9 +113,16 @@
           entity_id: cover.level_4 #bagno
           position: 13
       - service: cover.set_cover_position
-        data:
+        data_template:
           entity_id: cover.level_3 #camera
-          position: 35
+          position: "{{ states('input_number.set_camera_notte') | int }}"
+      - service: notify.lametric
+        data:
+          message: "Buona notte, chiudo tutti i rotolanti"
+          data:
+            icon: 'a13505'
+            cycles: 3
+            priority: 'info'
 
   buongiorno:
     alias: "Buongiorno"
@@ -64,9 +143,10 @@
   dolcedivano:
     alias: "Divano"
     sequence:
-      - service: homeassistant.turn_on
+      - service: light.turn_on
         data:
-          entity_id: switch.switch_15
+          entity_id: light.sala
+          brightness: 10
       - service: homeassistant.turn_off
         data:
           entity_id:

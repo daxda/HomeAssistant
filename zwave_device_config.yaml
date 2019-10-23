@@ -1,0 +1,33 @@
+sensor.neo_coolcam_power_plug_12a_voltage_8:
+  ignored: true
+  polling_intensity: 0
+sensor.alarm_level_9:
+  ignored: true
+  polling_intensity: 0
+sensor.alarm_type_9:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_exporting_8:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_interval_31:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_interval_32:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_interval_33:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_interval_30:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_previous_reading_31:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_previous_reading_33:
+  ignored: true
+  polling_intensity: 0
+sensor.neo_coolcam_power_plug_12a_previous_reading_30:
+  ignored: true
+  polling_intensity: 0

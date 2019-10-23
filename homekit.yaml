@@ -1,6 +1,6 @@
   auto_start: False
   name: HomeKit HomeAss
-  ip_address: 192.168.1.101
+  ip_address: 192.168.10.100
   filter:
       include_entities:
 #Luci
@@ -9,21 +9,26 @@
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
         - switch.switch_8
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
-        - switch.switch_15 # luce colorata philips
+#        - switch.switch_15 # luce colorata philips
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
         - switch.switch_14
         - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+        - switch.shelly
           #piano superiore
         - light.level # fibaro dim bagno
         - light.level_2 # fibaro dim camerina
         - light.camera #yeelight
         - light.studio # studio
+        - light.sala
+        - light.hastudio_studio_davide
 #Elettrodomestici
         - switch.switch_6 #Forno
         - switch.switch_7 #Lavastoviglie
         - switch.switch_10   #iMac
-        - switch.switch_16   #Lavatrice
-        - switch.neo_coolcam_power_plug_12a_switch_2 # asciugatrice
+        - switch.lavatrice   #Lavatrice
+        - switch.asciugatrice # asciugatrice
+        - switch.hastudio_condizionatore_studio
+
 #Rotolanti
         - cover.level #sala
         - cover.level_4 #bagno
@@ -45,3 +50,9 @@
         - script.spengitv
         - script.dolcedivano
         - script.pioggia
+# altro
+        - alarm_control_panel.mqtt_alarm
+
+  entity_config:
+    alarm_control_panel.home:
+      code: !secret allarm_code

@@ -8,3 +8,8 @@
     name: Orario apertura Festivi
     has_date: false
     has_time: true
+
+  finestre_chiuse:
+    name: Chiudo le finestre alle ...
+    has_date: false
+    has_time: true

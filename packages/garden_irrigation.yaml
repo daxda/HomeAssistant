@@ -387,6 +387,12 @@ script:
             {% endif %}
             {{ n != 0 }}
 
+      #=== Call the script to set the sonoff PULSETIME
+      - service: script.set_sonoff_pulsetime
+        data_template:
+          cycle: '{{ cycle }}'
+          zone: '{{ zone }}'
+
       #=== Wait 5 seconds for good measure to ensure previous zone is completly finished
       - delay: "00:00:05"
 
@@ -455,3 +461,28 @@ script:
             {% endif %}
           time: >
             {{ states('input_select.cycle' + cycle + '_schedule_time') }}
+
+
+  #========================================================================
+  #=== Set Sonoff PULSETIME to 30 seconds longer than the zone runtime
+  #=== is passed:
+  #===   {{ cycle }}
+  #===   {{ zone }}
+  #===
+  #=== This acts as a fail safe in the event of any communication failure
+  #=== between HA and the Sonoff. The Sonoff will switch off under its own
+  #=== control so closing the valve.
+  #===
+  #=== Note: From the Tasmota wiki, for a Pulsetime greater than 11 seconds
+  #===       it should be set to 100 + (minutes * 60)
+  #========================================================================
+  set_sonoff_pulsetime:
+    sequence:
+      - service: mqtt.publish
+        data_template:
+          topic: >
+            sonoffpro/cmnd/pulsetime{{ zone }}
+          payload: >
+            {% set payload = states('input_number.cycle' + cycle + '_zone' + zone + '_duration')  | int %}
+            {% set payload = 100 + (payload * 60) + 30 %}
+            {{ payload }}

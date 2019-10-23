@@ -1,24 +1,10 @@
 
- default_view:
-    view: yes
-    icon: mdi:home
-    entities:
-    - group.persone
-    - group.luci
-    - group.giardino
-    - group.living
-    - group.finestre
-    - group.prese
-    - group.zwave
-    - group.utility
 
-
-########################################
  persone:  #### di default quando un membro del gruppo è a casa, il gruppo è a casa
     name: Family
     entities:
-    - device_tracker.davides_iphone
-    - device_tracker.iphone_di_muriel
+    - person.davide
+    - person.muriel
 
  prese:
     name: Power
@@ -27,13 +13,17 @@
     entities:
     - switch.switch_6 #Forno
     - switch.switch_7 #Lavastoviglie
-    - switch.neo_coolcam_power_plug_12a_switch #cantina portavino
-    - switch.switch_10   #iMac
-    #- switch.dlink_smart_plug_w215   #Dlink
-    - switch.switch_16   #Lavatrice
+    - switch.lavatrice #Lavatrice
+    - switch.asciugatrice #asciugatrice
+    - switch.presa_ingresso
+    - switch.presa_pranzo
+    - switch.presa_bagno
+    - switch.presa_corridoio
+#    - switch.neo_coolcam_power_plug_12a_switch #cantina portavino
+#    - switch.switch_10   #iMac
 
  luci:
-    name: Luci
+    name: Luci Interne
     view: no
     entities:
     - switch.switch_9
@@ -41,16 +31,29 @@
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
     - switch.switch_8
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
-    - switch.switch_15 # luce colorata philips
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
     - switch.switch_14
     - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+    - light.sala
     #piano superiore
     - light.level # fibaro dim bagno
     - light.level_2 # fibaro dim camerina
     - light.camera #yeelight
     - light.studio # studio
 
+ luci_pt:
+    name: Luci Piano Terra
+    view: no
+    entities:
+    - switch.switch_9
+    - switch.shellypensili
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2
+    - switch.switch_8
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
+    - switch.switch_14
+    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
+    - light.sala
 
  finestre:
     name: Finestre
@@ -76,73 +79,18 @@
     - sensor.sala_dust
     - sensor.netatmo_indoor_noise
 
-
- giardino:
-    name: Giardino
-    view: no
-    control: hidden
-    entities:
-    - sun.sun
-    - sensor.fasilunari
-    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4
-    - switch.switch #apricancello auto
-    - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch #apricancello
-
- utility:
-    name: Utility
-    view: no
-    entities:
-    - switch.wol_imac
-    - sensor.davides_iphone_battery_level
-    - sensor.iphone_di_muriel_battery_level
-    - sensor.ipad_di_muriel_battery_level
-    - sensor.speedtest_download
-    - sensor.speedtest_upload
-    - sensor.speedtest_ping
-    - sensor.neo_coolcam_battery_powered_pir_sensor_burglar
-    - sensor.netatmo_outdoor_battery
-    - sensor.netatmo_regenmesser_battery
-    - sensor.netatmo_outdoor_radio
-    - sensor.netatmo_regenmesser_radio
-    - sensor.netatmo_indoor_wifi
-    - sensor.samsung_m2020_series_1921681137_toner_black
-    - sensor.sala_filter_life
-
-
  lavatrice:
     name: Notifiche Lavatrice
     view: no
     entities:
-      - automation.attiva_notifica_lavatrice
-      - automation.notifica_fine_lavaggio
-      - sensor.neo_coolcam_power_plug_12a_power_8
+      - automation.notifica_lavatrice_on
+      - automation.notifica_lavatrice_fine
+      - sensor.lavatrice_energy_power
+
  asciugatrice:
     name: Notifiche Asciugatrice
     view: no
     entities:
-      - automation.attiva_notifica_lavatrice
-      - automation.notifica_asciugatrice
-      - sensor.neo_coolcam_power_plug_12a_power_11
-
- zwave:
-    name: Zwave
-    view: no
-    entities:
-    - zwave.aeotec_zw090_zstick_gen5_eu
-    - zwave.aeotec_zw117_range_extender_6
-    - zwave.fibaro_system_fgd212_dimmer_2
-    - zwave.fibaro_system_fgd212_dimmer_2_2
-    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2
-    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_2
-    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_3
-    - zwave.fibaro_system_fgrm222_roller_shutter_controller_2_4
-    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw
-    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_2
-    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_3
-    - zwave.fibaro_system_fgs222_double_relay_switch_2x15kw_4
-    - zwave.neo_coolcam_power_plug_12a
-    - zwave.neo_coolcam_power_plug_12a_2
-    - zwave.neo_coolcam_power_plug_12a_3
-    - zwave.neo_coolcam_power_plug_12a_4
-    - zwave.neo_coolcam_power_plug_12a_5
-    - zwave.neo_coolcam_battery_powered_pir_sensor
+      - automation.notifica_asciugatrice_on
+      - automation.notifica_asciugatrice_fine
+      - sensor.asciugatrice_energy_power

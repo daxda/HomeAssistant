@@ -6,6 +6,53 @@
 homeassistant:
 
 
+#=======================#
+#==== Input_Numbers ====#
+#=======================#
+input_number:
+  last_power_ingresso:
+    name: Ultima lettura ingresso
+    min: 0
+    max: 4500
+    step: 1
+    icon: mdi:chart-bar
+    unit_of_measurement: W
+  last_power_pranzo:
+    name: Ultima lettura pranzo
+    min: 0
+    max: 4500
+    step: 1
+    icon: mdi:chart-bar
+    unit_of_measurement: W
+  last_power_bagno:
+    name: Ultima lettura bagno
+    min: 0
+    max: 4500
+    step: 1
+    icon: mdi:chart-bar
+    unit_of_measurement: W
+  last_power_corridoio:
+    name: Ultima lettura corridoio
+    min: 0
+    max: 4500
+    step: 1
+    icon: mdi:chart-bar
+    unit_of_measurement: W
+  last_power_lavatrice:
+    name: Ultima lettura lavatrice
+    min: 0
+    max: 4500
+    step: 1
+    icon: mdi:chart-bar
+    unit_of_measurement: W
+  last_power_asciugatrice:
+    name: Ultima lettura asciugatrice
+    min: 0
+    max: 4500
+    step: 1
+    icon: mdi:chart-bar
+    unit_of_measurement: W
+
 ########################################## AUTOMAZIONI ##############################################
 ##  QUESTA AUTOMAZIONE VERIFICA SE IL CONSUMO TOTALE SUPERA DETERINATE SOGLIE ED ATTIVA LO SCRIPT  ##
 ##  RELATIVO ALL'ELETTRODOMESTICO MENO IMPORTANTE SECONDO UN ORDINE CHE HO SCELTO                  ##
@@ -17,37 +64,77 @@ automation:
       - platform: numeric_state
         entity_id: sensor.widom_ume304_energy_driven_switch_power
         above: 4000
-#      - platform: numeric_state
-#        entity_id: sensor.widom_ume304_energy_driven_switch_power
-#        above: 3200
-#        below: 3999
-#        for: '00:60:00'
+    condition:
+        # questa condizione ho dovuto inserirla perchè il sensore widom ogni tanto mi da delle rilevazioni assurde e fa scattare lìautomazione
+      - condition: template
+        value_template: '{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int  < 6500 }}'
     action:
       - service: script.turn_on
-        data_template:   # l'ordine di priorità per non avere responsabiltà devono sceglierlo le mogli
+        data_template:
           entity_id: >
             {% if states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3900 %}
               script.carichi_lavastoviglie
-            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_8.state | int < 3900 %}
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.consumo_presa_ingresso.state | int < 3900 %}
+              script.carichi_ingresso
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.consumo_presa_pranzo.state | int < 3900 %}
+              script.carichi_pranzo
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.consumo_presa_corridoio.state | int < 3900 %}
+              script.carichi_corridoio
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.consumo_presa_bagno.state | int < 3900 %}
+              script.carichi_bagno
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.lavatrice_energy_power.state | int < 3900 %}
               script.carichi_lavatrice
-            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3900 %}
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int - states.sensor.lavatrice_energy_power.state | int < 3900 %}
               script.carichi_lavalava
-            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_11.state | int < 3900 %}
+            {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.asciugatrice_energy_power.state | int < 3900 %}
               script.carichi_asciugatrice
             {% else %}
               script.carichi_fine
             {% endif %}
-
       - service: notify.telefoni
         data_template:
           message: "Hai rischiato un Blackout alle ore {{ now().strftime('%H:%M') }}"
-
       - service: persistent_notification.create
         data_template:
           notification_id: Rischiato Blackout {{ now().strftime('D%dH%H%S') }}
           title: Rischiato il blackout
           message: >
             Hai rischiato un Blackout alle ore {{ now().strftime('%H:%M') }} di {{ now().strftime('%A %d %B %Y') }}.
+      - service: notify.davide
+        data:
+          title: '*Controllo Carichi*'
+          message: "Hai rischiato un Blackout alle ore {{ now().strftime('%H:%M') }} di {{ now().strftime('%A %d %B %Y') }}."
+      - service: notify.lametric
+        data:
+          message: "Controllo carichi in azione"
+          data:
+            sound: notification
+            icon: 21256
+            lifetime: 30
+            priority: critical
+
+  - alias: consumi eccessivi
+    initial_state: true
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.widom_ume304_energy_driven_switch_power
+        above: 3200
+        below: 3999
+        for: '02:30:00'
+    action:
+      - service: notify.davide
+        data:
+          title: '*Controllo Consumi eccessivi*'
+          message: "Stai evitando il Blackout, ma hai avuto consumi eccessivi per 2 ore e 30 . Ancora 30 minuti e salterà la corrente...  {{ now().strftime('%A %d %B %Y') }}."
+      - service: notify.lametric
+        data:
+          message: "Attenzione ridurre i consumi "
+          data:
+            sound: notification
+            icon: 21256
+            lifetime: 30
+            priority: critical
+
 
 ########################################## SCRIPT ###################################################
 ##  PER OGNI ELETTRODEMESTICO ABBIAMO UNO SCRIPT CHE LO SPENGE , INVIA UNA NOTIFICA VOCALE         ##
@@ -55,6 +142,8 @@ automation:
 ##  A QUEL PUNTO RIACCENDE L'ELLETRODOMESTICO ED AVVISA .                                          ##
 #####################################################################################################
 ####### LAVASTOVIGLIE ########## LAVATRICE ######## ASCIUGATRICE ########## FORNO ###################
+#########---------------------------------------------------------------------------------###########
+######### --------       Prese INGRESSO --- PRANZO --- CORRIDOIO --- BAGNO       ---------###########
 #####################################################################################################
 
 script:
@@ -63,107 +152,287 @@ script:
     sequence:
       - service: switch.turn_off
         data:
-          entity_id: switch.switch_7    ##########################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.switch_7
+      - service: notify.alexa_media
         data:
-          message: 'Stava per saltare la corrente. Ho spento la Lavastoviglie'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Stava per saltare la corrente. Ho spento la Lavastoviglie "
       - delay: '00:10:00'
-      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3600 }}"
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3500 }}"
       - service: switch.turn_on
         data:
-          entity_id: switch.switch_7      ###############################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.switch_7
+      - service: notify.alexa_media
         data:
-          message: 'Ho riacceso la Lavastoviglie'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso la Lavastoviglie"
+
+  carichi_ingresso:
+    alias: Ingresso stop
+    sequence:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.last_power_ingresso
+          value: "{{ states.sensor.consumo_presa_ingresso | float }}"
+      - service: switch.turn_off
+        data:
+          entity_id: switch.presa_ingresso
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Stava per saltare la corrente. Qualunque cosa tu stessi usando sulla presa dell' INGRESSO ho preferito spegnerla"
+      - delay: '00:02:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_ingresso.state | int < 3500 }}"
+      - service: switch.turn_on
+        data:
+          entity_id: switch.presa_ingresso
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso la prese nel INGRESSO "
+
+  carichi_pranzo:
+    alias: Pranzo stop
+    sequence:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.last_power_pranzo
+          value: "{{ states.sensor.consumo_presa_pranzo | float }}"
+      - service: switch.turn_off
+        data:
+          entity_id: switch.presa_pranzo
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Stava per saltare la corrente. Qualunque cosa tu stessi usando sulla presa della SALA DA PRANZO ho preferito spegnerla, non lamentarti, l'altrnativa era andare a riattaccare la corrente "
+      - delay: '00:01:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_pranzo.state | int < 3500 }}"
+      - service: switch.turn_on
+        data:
+          entity_id: switch.presa_ingresso
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso la presa della SALA DA PRANZO "
+
+  carichi_corridoio:
+    alias: Corridoio stop
+    sequence:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.last_power_corridoio
+          value: "{{ states.sensor.consumo_presa_corridoio | float }}"
+      - service: switch.turn_off
+        data:
+          entity_id: switch.presa_corridoio
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+            - media_player.bagno
+          data:
+            type: announce
+            method: spoken
+          message: "Stava per saltare la corrente. Qualunque cosa tu stessi usando sulla presa del CORRIDOIO ho preferito spegnerla, non lamentarti, l'altrnativa era andare a riattaccare la corrente "
+      - delay: '00:01:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_corridoio.state | int < 3500 }}"
+      - service: switch.turn_on
+        data:
+          entity_id: switch.presa_ingresso
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+            - media_player.bagno
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso la presa del Corridoio "
+
+  carichi_bagno:
+    alias: Pranzo stop
+    sequence:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.last_power_bagno
+          value: "{{ states.sensor.consumo_presa_bagno | float }}"
+      - service: switch.turn_off
+        data:
+          entity_id: switch.presa_bagno
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+            - media_player.bagno
+          data:
+            type: announce
+            method: spoken
+          message: " NIENTE PANICO. A quest'ora potevi essere al buio invece ti ho solo spento la stufa o l'asciuga capelli, basta che spengi qualcosa e tra un minuto riaccendo tutto, se vuoi puoi dirmi Alexa spegni il forno "
+      - delay: '00:01:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_bagno.state | int < 3900 }}"
+      - service: switch.turn_on
+        data:
+          entity_id: switch.presa_bagno
+      - service: notify.alexa_media
+        data:
+          target:
+            - media_player.dot_living
+            - media_player.bagno
+          data:
+            type: announce
+            method: spoken
+          message: "Tranquilli... Ho riacceso la presa del BAGNO "
+      - service: notify.davide
+        data:
+          title: '*Controllo Carichi*'
+          message: "Sono le ore {{ now().strftime('%H:%M') }} di {{ now().strftime('%A %d %B %Y') }} e stai rischiando la pelle, ho spento la presa del *bagno* se qulcosa va storto qunado torni sei fritto ... ."
+
 
   carichi_lavatrice:
     alias: Lavatrice stop
     sequence:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.last_power_lavatrice
+          value: "{{ states.sensor.lavatrice_energy_power | float }}"
       - service: switch.turn_off
         data:
-          entity_id: switch.switch_16    ##########################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.lavatrice
+      - service: notify.alexa_media
         data:
-          message: 'Stava per saltare la corrente. Ho spento la Lavatrice'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Stava per saltare la corrente. Ho spento la Lavatrice "
       - delay: '00:10:00'
-      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3600 }}"
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_lavatrice.state | int < 3500 }}"
       - service: switch.turn_on
         data:
-          entity_id: switch.switch_16      ###############################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.lavatrice
+      - service: notify.alexa_media
         data:
-          message: 'Ho riacceso la Lavatrice, per sicurezza controlla che sia ripartita'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso la Lavatrice, per sicurezza controlla che sia ripartita "
+
 
   carichi_lavalava:
     alias: Lavatrice e Lavastoviglie stop
     sequence:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.last_power_lavatrice
+          value: "{{ states.sensor.consumo_presa_bagno | float }}"
       - service: switch.turn_off
         data:
-          entity_id: switch.switch_16, switch.switch_7     ##########################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.lavatrice, switch.switch_7
+      - service: notify.alexa_media
         data:
-          message: 'Stava per saltare la corrente. Ho spento Lavastoviglie e Lavatrice'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Stava per saltare la corrente. Ho spento Lavatrice e Lavastoviglie"
       - delay: '00:05:00'
-      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3600 }}"
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3500 }}"
       - service: switch.turn_on
         data:
-          entity_id: switch.switch_7      ###############################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.switch_7
+      - service: notify.alexa_media
         data:
-          message: 'Ho riacceso la Lavastoviglie'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso la Lavastoviglie "
       - delay: '00:05:00'
-      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_32.state | int < 3600 }}"
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_lavatrice.state | int < 3500 }}"
       - service: switch.turn_on
         data:
-          entity_id: switch.switch_16      ###############################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.lavatrice
+      - service: notify.alexa_media
         data:
-          message: 'Ho riacceso la Lavatrice, per sicurezza controlla che sia ripartita'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso la Lavatrice, per sicurezza controlla che sia ripartita "
 
   carichi_asciugatrice:
     alias: Asciugatrice stop
     sequence:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.last_power_asciugatrice
+          value: "{{ states.sensor.asciugatrice_energy_power | float }}"
       - service: switch.turn_off
         data:
-          entity_id: switch.neo_coolcam_power_plug_12a_switch_2    ##########################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.asciugatrice
+      - service: notify.alexa_media
         data:
-          message: 'Stava per saltare la corrente. Asciugatrice spenta'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Stava per saltare la corrente. Asciugatrice spenta "
       - delay: '00:05:00'
-      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_39.state | int < 3600 }}"
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_asciugatrice.state | int < 3500 }}"
       - service: switch.turn_on
         data:
-          entity_id: switch.neo_coolcam_power_plug_12a_switch_2      ###############################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: switch.asciugatrice
+      - service: notify.alexa_media
         data:
-          message: 'Ho riacceso asciugatrice, ricordati che per ripartire ha bisogno del tuo intervento'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Ho riacceso asciugatrice, ricordati che per ripartire ha bisogno del tuo intervento"
 
   carichi_fine:
     alias: Attenzione consumi eccessivi
     sequence:
-      - service: switch.turn_off
+      - service: homeassistant.turn_off
         data:
-          entity_id: switch.neo_coolcam_power_plug_12a_switch_2, switch.switch_16, switch.switch_7, switch.switch_6, switch.neo_coolcam_power_plug_12a_switch,      ###############################
-      - service: tts.google_say
-        entity_id: media_player.living
+          entity_id: group.prese
+      - service: notify.alexa_media
         data:
-          message: 'Attenzione consumi eccessivi. Non trovo una soluzione,  avrei voluto evitarlo, ma ho dovuto spengere tutto quello che potevo controllare... È necessario il tuo intervento'
-          language: 'it'
+          target:
+            - media_player.dot_living
+          data:
+            type: announce
+            method: spoken
+          message: "Attenzione consumi eccessivi. Non trovo una soluzione,  avrei voluto evitarlo, ma ho dovuto spengere tutto quello che potevo controllare... È necessario il tuo intervento"

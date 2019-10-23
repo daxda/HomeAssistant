@@ -1,272 +1,245 @@
-########## Luci
- switch.switch_9:
-    friendly_name: Luce Cucina
-    icon: mdi:lightbulb
-    homebridge_visible: true
-
- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2:
-    friendly_name: Luce Tavolo
-    icon: mdi:lightbulb
-    device_class: light
-    homebridge_visible: true
-
- switch.switch_8:
-    friendly_name: Luce Pranzo
-    icon: mdi:lightbulb
-    device_class: light
-    homebridge_visible: true
-
- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3:
-    friendly_name: Luce Sala
-    icon: mdi:lightbulb
-    device_class: light
-    homebridge_visible: true
-
- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6:
-    icon: mdi:lightbulb
-    device_class: lighting
-    homebridge_visible: true
-
- switch.switch_15:
-    friendly_name: Luce Colorata
-    icon: mdi:bowling
-    device_class: light
-    homebridge_visible: true
-
- switch.switch_14:
-    friendly_name: Luce Terrazza
-    icon: mdi:lightbulb
-    device_class: light
-    homebridge_visible: true
-
- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4:
-    friendly_name: Faro Giardino
-    icon: mdi:white-balance-iridescent
-    device_class: light
-    homebridge_visible: true
-
-
- light.level:
-   friendly_name: Luce Bagno Grande
-   icon: mdi:lightbulb
-   homebridge_visible: true
-
- light.level_2:
-   friendly_name: Luce Camerina
-   icon: mdi:lightbulb
-   homebridge_visible: true
-
- light.camera:
-   friendly_name: Luce Camera
-   icon: mdi:lightbulb
-   homebridge_visible: true
-
- light.studio:
-   friendly_name: Luce studio
-   icon: mdi:lightbulb
-   homebridge_visible: true
-
- switch.christmas_light:
-   icon: mdi:candycane
-   homebridge_visible: true
-
- switch.sonoff_100009f6b1:
-   icon: mdi:power
-   frendly_name: Sonoff 1
-   homebridge_visible: true
-
- switch.shellypensili:
-     friendly_name: Luce Pensili
-     device_class: light
-     homebridge_visible: true
-
-####### Finestre e apricancello
- switch.switch:
-    friendly_name: Cancello Auto
-    homebridge_visible: true
-    icon: mdi:car-side
-
- cover.apricancello_auto:
-    friendly_name: Cancello Auto
-#    homebridge_visible: true
-    homebridge_cover_type: rollershutter
-    device_class: cover
-    homebridge_name: "Apricancello"
-    homebridge_mfg: "DAXDA"
-    homebridge_model: "Fibaro double "
-
- switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch:
-    friendly_name: Cancello 2
-    icon: mdi:logout
-    device_class: switch
-    homebridge_visible: true
-
-
- cover.level:
-    friendly_name: Finestra Sala
-    device_class: cover
-    homebridge_cover_type: rollrshutter
-    homebridge_visible: true
-
-
- cover.level_2:
-    friendly_name: Finestra Scale
-    device_class: cover
-    homebridge_cover_type: rollershutter
-    homebridge_visible: true
-
- cover.level_3:
-    friendly_name: Finestra Camera
-    device_class: cover
-    homebridge_cover_type: rollershutter
-    homebridge_visible: true
-
- cover.level_4:
-    friendly_name: Finestra Bagno
-    device_class: cover
-    homebridge_cover_type: rollershutter
-    homebridge_visible: true
-
-
-###### Plug Elettrodomestici
- switch.switch_6:
-    friendly_name: Forno
-    icon: mdi:cupcake
-    device_class: switch
-    homebridge_visible: true
-
- switch.switch_7:
-    friendly_name: Lavastoviglie
-    icon: mdi:stove
-    device_class: switch
-    homebridge_visible: true
-
- switch.neo_coolcam_power_plug_12a_switch: #cantinetta
-      icon: mdi:glass-wine
-      device_class: switch
-
- switch.dlink_smart_plug_w215:
-    friendly_name: Dlink switch
-    icon: mdi:gift
-    device_class: switch
-    homebridge_visible: true
-
- switch.switch_16:
-    friendly_name: Lavatrice
-    icon: mdi:washing-machine
-
- switch.neo_coolcam_power_plug_12a_switch_2:
-    friendly_name: Asciugatrice
-    icon: mdi:tumble-dryer
-
- switch.switch_10:
-    friendly_name: iMac
-    icon: mdi:monitor-dashboard
-    device_class: switch
-    homebridge_visible: true
-
-
-
-###### Altri dispositivi IOT
- climate.netatmo_piano_terra:
-    friendly_name: Termostato
-    homebridge_visible: true
-
- fan.sala:
-    friendly_name: Dyson Sala
-    device_class: fan
-
- device_tracker.davides_iphone:
-    friendly_name: Davide
-
-
- device_tracker.iphone_di_muriel:
-    friendly_name: Muriel
-
- device_tracker.ipad_di_muriel:
-    friendly_name: iPad
-
- sensor.samsung_m2020_series_1921681137_toner_black:
-    friendly_name: Toner Samsung M2020
-
- ########## sensori Living
- sensor.netatmo_indoor_humidity:
-   friendly_name: Umidità Zona Pranzo
-   icon: mdi:water-percent
-
- sensor.sala_humidity:
-   friendly_name: Umidità zona TV
-   icon: mdi:water-percent
-
- sensor.netatmo_indoor_temperature:
-   friendly_name: Temperatura Zona Pranzo
-
- sensor.netatmo_indoor_pressure:
-   friendly_name: Pressione interna
-
- sensor.sala_aqi:
-   friendly_name: Dyson Air Quality
-   icon: mdi:blur
-
- sensor.netatmo_indoor_co2:
-   friendly_name: Co2
-
- sensor.sala_dust:
-   friendly_name: Polveri
-   icon: mdi:chart-bubble
-
-
-########## sensori Movimento
- binary_sensor.sensor:
-   icon: mdi:walk
- binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor:
-   icon: mdi:walk
- sensor.neo_coolcam_battery_powered_pir_sensor_luminance:
-   icon: mdi:brightness-5
- sensor.fibaro_system_fgms001zw5_motion_sensor_luminance:
-   icon: mdi:brightness-5
- sensor.fibaro_system_fgms001zw5_motion_sensor_seismic_intensity:
-   icon: mdi:zodiac-aquarius
-####### sensori giardino
-
- sensor.dark_sky_wind_speed:
-   friendly_name: Vento
-
- sensor.dark_sky_apparent_temperature:
-   friendly_name: Temperatura Percepita
-
- sensor.netatmo_outdoor_temperature:
-   friendly_name: Temperatura Esterna
-
- sensor.netatmo_outdoor_humidity:
-   friendly_name: Umidità Esterna
-
-
- sensor.netatmo_regenmesser_rain: #Estimated rainfall for today in mm.
-    friendly_name: Pioggia
- sensor.netatmo_regenmesser_battery:
-    friendly_name: Netatmo Pluviometro Battery
- sensor.netatmo_regenmesser_radio:
-    friendly_name: Netatmo Pluviometro Radio
- sensor.netatmo_regenmesser_sum_rain_1: #Rainfall in the last hour in mm.
-   friendly_name: Pioggia ultima ora
- sensor.netatmo_regenmesser_sum_rain_24: #Rainfall in mm from 00:00am - 23:59pm.
-   friendly_name: Pioggia ultime 24 H
-
-###### sensori consumi
- sensor.widom_ume304_energy_driven_switch_power:
-   icon: mdi:chart-bar
- sensor.neo_coolcam_power_plug_12a_power:
-   icon: mdi:chart-bar
- sensor.neo_coolcam_power_plug_12a_power_2:
-   icon: mdi:chart-bar
- sensor.neo_coolcam_power_plug_12a_power_3:
-   icon: mdi:chart-bar
- sensor.neo_coolcam_power_plug_12a_power_8:
-   icon: mdi:chart-bar
- sensor.neo_coolcam_power_plug_12a_power_10:
-   icon: mdi:chart-bar
- sensor.neo_coolcam_power_plug_12a_power_5:
-   icon: mdi:chart-bar
- sensor.neo_coolcam_power_plug_12a_power_11:
-   icon: mdi:chart-bar
+person.davide:
+  entity_picture: /local/davide.jpeg
+person.muriel:
+  entity_picture: /local/muriel.png
+switch.switch_9:
+  friendly_name: Luce Cucina
+  icon: mdi:lightbulb
+  homebridge_visible: true
+switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_2:
+  friendly_name: Luce Tavolo
+  icon: mdi:lightbulb
+  device_class: light
+  homebridge_visible: true
+switch.switch_8:
+  friendly_name: Luce Pranzo
+  icon: mdi:lightbulb
+  device_class: light
+  homebridge_visible: true
+switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_3:
+  friendly_name: Luce Sala
+  icon: mdi:lightbulb
+  device_class: light
+  homebridge_visible: true
+switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6:
+  icon: mdi:lightbulb
+  device_class: lighting
+  homebridge_visible: true
+switch.switch_15:
+  friendly_name: Telefono
+  icon: mdi:phone-classic
+switch.switch_14:
+  friendly_name: Luce Terrazza
+  icon: mdi:lightbulb
+  device_class: light
+  homebridge_visible: true
+switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_4:
+  friendly_name: Faro Giardino
+  icon: mdi:white-balance-iridescent
+  device_class: light
+  homebridge_visible: true
+light.level:
+  friendly_name: Luce Bagno Grande
+  icon: mdi:lightbulb
+  homebridge_visible: true
+light.level_2:
+  friendly_name: Luce Camerina
+  icon: mdi:lightbulb
+  homebridge_visible: true
+light.camera:
+  friendly_name: Luce Camera
+  icon: mdi:lightbulb
+  homebridge_visible: true
+light.studio:
+  friendly_name: Luce studio
+  icon: mdi:lightbulb
+  homebridge_visible: true
+switch.christmas_light:
+  icon: mdi:candycane
+  homebridge_visible: true
+switch.sonoff_100009f6b1:
+  icon: mdi:power
+  frendly_name: Sonoff 1
+  homebridge_visible: true
+switch.shellypensili:
+  friendly_name: Luce Pensili
+  device_class: light
+  homebridge_visible: true
+switch.switch:
+  friendly_name: Cancello Auto
+  homebridge_visible: true
+  icon: mdi:car-side
+cover.apricancello_auto:
+  friendly_name: Cancello Auto
+  homebridge_cover_type: rollershutter
+  device_class: cover
+  homebridge_name: Apricancello
+  homebridge_mfg: DAXDA
+  homebridge_model: 'Fibaro double '
+switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch:
+  friendly_name: Cancello 2
+  icon: mdi:logout
+  device_class: switch
+  homebridge_visible: true
+cover.level:
+  friendly_name: Finestra Sala
+  device_class: cover
+  homebridge_cover_type: rollrshutter
+  homebridge_visible: true
+cover.level_2:
+  friendly_name: Finestra Scale
+  device_class: cover
+  homebridge_cover_type: rollershutter
+  homebridge_visible: true
+cover.level_3:
+  friendly_name: Finestra Camera
+  device_class: cover
+  homebridge_cover_type: rollershutter
+  homebridge_visible: true
+cover.level_4:
+  friendly_name: Finestra Bagno
+  device_class: cover
+  homebridge_cover_type: rollershutter
+  homebridge_visible: true
+switch.switch_6:
+  friendly_name: Forno
+  icon: mdi:cupcake
+  device_class: switch
+  homebridge_visible: true
+switch.switch_7:
+  friendly_name: Lavastoviglie
+  icon: mdi:stove
+  device_class: switch
+  homebridge_visible: true
+switch.neo_coolcam_power_plug_12a_switch:
+  icon: mdi:glass-wine
+  device_class: switch
+switch.dlink_smart_plug_w215:
+  friendly_name: Dlink switch
+  icon: mdi:power-socket-eu
+  device_class: switch
+  homebridge_visible: true
+switch.switch_16:
+  friendly_name: EX Lavatrice
+switch.neo_coolcam_power_plug_12a_switch_2:
+  friendly_name: EX Asciugatrice
+  icon: mdi:tumble-dryer
+switch.shenzhen_neo_electronics_co_ltd_power_plug_12a_switch:
+  friendly_name: iMac
+  icon: mdi:monitor-dashboard
+  device_class: switch
+  homebridge_visible: true
+switch.hastudio_condizionatore_studio:
+  friendly_name: Condizionatore
+  icon: mdi:air-conditioner
+  device_class: switch
+climate.netatmo_piano_terra:
+  friendly_name: Termostato
+  homebridge_visible: true
+fan.sala:
+  friendly_name: Dyson Sala
+  device_class: fan
+device_tracker.davides_iphone:
+  friendly_name: Davide
+device_tracker.iphone_di_muriel:
+  friendly_name: Muriel
+device_tracker.ipad_di_muriel:
+  friendly_name: iPad
+sensor.samsung_m2020_series_1921681137_toner_black:
+  friendly_name: Toner Samsung M2020
+sensor.netatmo_indoor_humidity:
+  friendly_name: Umidità Zona Pranzo
+  icon: mdi:water-percent
+sensor.sala_humidity:
+  friendly_name: Umidità zona TV
+  icon: mdi:water-percent
+sensor.netatmo_indoor_temperature:
+  friendly_name: Temperatura Zona Pranzo
+sensor.netatmo_indoor_pressure:
+  friendly_name: Pressione interna
+sensor.sala_aqi:
+  friendly_name: Dyson Air Quality
+  icon: mdi:blur
+sensor.netatmo_indoor_co2:
+  friendly_name: Co2
+sensor.sala_dust:
+  friendly_name: Polveri
+  icon: mdi:chart-bubble
+binary_sensor.sensor:
+  icon: mdi:walk
+binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor:
+  icon: mdi:walk
+sensor.neo_coolcam_battery_powered_pir_sensor_luminance:
+  icon: mdi:brightness-5
+sensor.fibaro_system_fgms001zw5_motion_sensor_luminance:
+  icon: mdi:brightness-5
+sensor.fibaro_system_fgms001zw5_motion_sensor_seismic_intensity:
+  icon: mdi:zodiac-aquarius
+sensor.dark_sky_wind_speed:
+  friendly_name: Vento
+sensor.dark_sky_apparent_temperature:
+  friendly_name: Temperatura Percepita
+sensor.netatmo_outdoor_temperature:
+  friendly_name: Temperatura Esterna
+sensor.netatmo_outdoor_humidity:
+  friendly_name: Umidità Esterna
+sensor.netatmo_regenmesser_rain:
+  friendly_name: Pioggia
+sensor.netatmo_regenmesser_battery:
+  friendly_name: Netatmo Pluviometro Battery
+sensor.netatmo_regenmesser_radio:
+  friendly_name: Netatmo Pluviometro Radio
+sensor.netatmo_regenmesser_sum_rain_1:
+  friendly_name: Pioggia ultima ora
+sensor.netatmo_regenmesser_sum_rain_24:
+  friendly_name: Pioggia ultime 24 H
+sensor.widom_ume304_energy_driven_switch_power:
+  icon: mdi:chart-bar
+sensor.neo_coolcam_power_plug_12a_power:
+  icon: mdi:chart-bar
+sensor.neo_coolcam_power_plug_12a_power_2:
+  icon: mdi:chart-bar
+sensor.neo_coolcam_power_plug_12a_power_3:
+  icon: mdi:chart-bar
+sensor.neo_coolcam_power_plug_12a_power_8:
+  icon: mdi:chart-bar
+sensor.neo_coolcam_power_plug_12a_power_10:
+  icon: mdi:chart-bar
+sensor.neo_coolcam_power_plug_12a_power_5:
+  icon: mdi:chart-bar
+sensor.neo_coolcam_power_plug_12a_power_11:
+  icon: mdi:chart-bar
+sensor.shenzhen_neo_electronics_co_ltd_power_plug_12a_power:
+  icon: mdi:chart-bar
+switch.shelly:
+  friendly_name: Luci Esterne
+  icon: mdi:lightbulb
+light.sala:
+  friendly_name: Plantana Sala
+  icon: mdi:floor-lamp
+  supported_features: 63
+group.automazioni_pack_switch:
+  assumed_state: true
+group.lavatrice: {}
+sensor.consumo_presa_bagno:
+  icon: mdi:chart-bar
+sensor.consumo_presa_corridoio:
+  icon: mdi:chart-bar
+sensor.consumo_presa_ingresso:
+  icon: mdi:chart-bar
+sensor.consumo_presa_pranzo:
+  icon: mdi:chart-bar
+binary_sensor.hastudio_updater:
+  friendly_name: Aggiornamenti HA Studio
+binary_sensor.updater:
+  friendly_name: Aggiornamento HA Casa
+input_boolean.prova1:
+  friendly_name: Spengi luci zona giorno
+switch.lavatrice:
+  icon: mdi:washing-machine
+sensor.asciugatrice_energy_power:
+  icon: mdi:chart-bar
+sensor.lavatrice_energy_power:
+  icon: mdi:chart-bar
+switch.asciugatrice:
+  icon: mdi:tumble-dryer

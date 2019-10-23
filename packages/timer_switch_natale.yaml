@@ -7,19 +7,19 @@ homeassistant:
 # ALTRIMENTI AD OGNI RIAVVIO SI PERDERANNO LE IMPOSTAZIONI
 
 input_datetime:
-  accendi_switch:
+  accendi_switch_natale:
     name: Accendi alle
     has_date: false
     has_time: true
 
-  spengi_switch:
+  spengi_switch_natale:
     name: Spengi alle
     has_date: false
     has_time: true
 
 # Boleano Tramonto , se attivo esclude accendi alle...
 input_boolean:
-  tramonto_switch:
+  tramonto_switch_natale:
     name: Accendi al tramonto
     initial: on
     icon: mdi:weather-sunset
@@ -28,7 +28,7 @@ input_boolean:
 ############ AUTOMAZIONI #######################################################
 automation:
 
-  - alias: accendi switch 1
+  - alias: accendi switch natale
 #    initial_state: false
     trigger:
       platform: time_pattern
@@ -36,31 +36,31 @@ automation:
       seconds: 0
     condition:
       - condition: state
-        entity_id: input_boolean.tramonto_switch
+        entity_id: input_boolean.tramonto_switch_natale
         state: 'off'
       - condition: template
-        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.accendi_switch.state }}'
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.accendi_switch_natale.state }}'
     action:
       - service: switch.turn_on
         data:
-          entity_id: switch.shelly   # lo switch
+          entity_id: switch.widom   # lo switch
 
-  - alias: accendi switch 2
+  - alias: accendi switch 2 natale
 #    initial_state: false
     trigger:
       platform: sun
       event: sunset
-#      offset: '-00:45:00'
+      offset: '-00:30:00'
     condition:
       - condition: state
-        entity_id: input_boolean.tramonto_switch
+        entity_id: input_boolean.tramonto_switch_natale
         state: 'on'
     action:
       - service: switch.turn_on
         data:
-          entity_id: switch.shelly  # lo switch delle mie luci di natale
+          entity_id: switch.widom  # lo switch delle mie luci di natale
 
-  - alias: spengi switch
+  - alias: spengi switch natale
     initial_state: true
     trigger:
       platform: time_pattern
@@ -68,16 +68,16 @@ automation:
       seconds: 0
     condition:
       - condition: template
-        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.spengi_switch.state }}'
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.spengi_switch_natale.state }}'
     action:
       - service: switch.turn_off
         data:
-          entity_id: switch.shelly  # lo switch delle mie luci di natale
+          entity_id: switch.widom  # lo switch delle mie luci di natale
 
 group:
-  automazioni_pack_switch:
-    name: Attiva Timer
+  automazioni_pack_switch_natale:
+    name: Attiva Timer natale
     icon: mdi:progress-clock
     entities:
-      - automation.accendi_switch_1
-      - automation.accendi_switch_2
+      - automation.accendi_switch_natale
+      - automation.accendi_switch_2_natale

@@ -9,10 +9,7 @@
 !packages/garden
 !www
 !www/lovelace
-!custom_components
-!custom_components/switch
-!custom_components/sonoff-debug
-!custom_components/lovelace
+!lovelace
 !page*.png
 secrets.yaml
 zones.yaml
