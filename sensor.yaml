@@ -7,20 +7,9 @@
       - 'time_date'
       - 'time_utc'
 
-  - platform: miflora
-    mac: 'C4:7C:8D:65:F1:26'
-    name: Flower 1
-    force_update: false
-    median: 3
-    monitored_conditions:
-      - moisture
-      - light
-      - temperature
-      - conductivity
-      - battery
 #  - platform: miflora
 #    mac: 'C4:7C:8D:65:F1:26'
-#    name: Flower 2
+#    name: Flower 1
 #    force_update: false
 #    median: 3
 #    monitored_conditions:
@@ -32,10 +21,6 @@
 
   - platform: netatmo
     station: WeatherCicciput
-    modules:
-      - Regenmesser
-      - Outdoor
-      - Indoor
 
   - platform: systemmonitor
     resources:
@@ -46,20 +31,25 @@
     - type: processor_use
     - type: last_boot
 
+#  - platform: filesize
+#    file_paths:
+#      - /config/home-assistant_v2.db
+
   - platform: uptime
     name: HomeAssistant attivo da
+
 
   - platform: github
     access_token: !secret github_access_token
     repositories:
-      - path: 'AndrePier/HomeAssistant'
       - path: 'daxda/HomeAssistant'
+        name: My GitHub
 
-#  - platform: command_line # funziona solo su Raspberry
-#    name: CPU Temperature
-#    command: cat /sys/class/thermal/thermal_zone0/temp
-#    unit_of_measurement: °C
-#    value_template: '{{ value | multiply(0.001) | round(1) }}'
+  - platform: command_line # funziona solo su Raspberry
+    name: CPU Temperature
+    command: cat /sys/class/thermal/thermal_zone0/temp
+    unit_of_measurement: °C
+    value_template: '{{ value | multiply(0.001) | round(1) }}'
   - platform: cert_expiry
     host: !secret ddomain
   - platform: moon
@@ -93,6 +83,7 @@
     start: '{{ as_timestamp( now().replace(hour=0).replace(minute=0).replace(second=0) ) - now().weekday() * 86400 }}'
     end: '{{ now() }}'
 
+
 ############ Da qui in poi tutti i sensori creati tramite template
   - platform: template
     sensors:
@@ -103,6 +94,18 @@
         unit_of_measurement: "Giorni"
         entity_id: sensor.date
         icon_template: mdi:calendar
+
+      giorno_del_mese:
+        entity_id: sensor.date
+        value_template: >
+          {% set dd = now().day %}
+          {% set dm = now().month %}
+          {% set nm = (as_timestamp(now()) + (24*3600))| timestamp_custom('%m', True) | int %}
+          {% if (dm!=nm ) %}
+          ultimo
+          {% else %}
+          {{dd}}
+          {% endif %}
 
       fasilunari:
         friendly_name: "Luna"
@@ -142,6 +145,87 @@
           {% elif is_state('sensor.moon', 'waning_crescent') %}
             Luna Calante
           {% endif %}
+
+      ha_uptime:
+        entity_id: sensor.homeassistant_attivo_da
+        friendly_name_template: "HA Uptime"
+        value_template: >
+          {% if states('sensor.homeassistant_attivo_da') == '0.0' %}
+            Appena riavviato...
+          {% else %}
+            {% macro phrase(value, name) %}
+            {%- set value = value | int %}
+            {{- '{} {}{}'.format(value, name, end) if value | int > 0 else '' }}
+            {%- endmacro %}
+
+            {% set days = (states('sensor.homeassistant_attivo_da') | int) %}
+            {% set hours = (states('sensor.homeassistant_attivo_da') | float - states('sensor.homeassistant_attivo_da') | int) * 24 %}
+            {% set minutes = (hours - hours | int) * 60 %}
+
+            {{ [ phrase(days, 'giorni'), phrase(hours, 'ore'), phrase(minutes, 'minuti') ] | select('!=','') | list | join(', ') }}
+          {% endif %}
+
+      host_uptime:
+        entity_id: sensor.last_boot
+        friendly_name_template: "Host Uptime"
+        value_template: >
+          {% set up_time = as_timestamp(now()) - as_timestamp(states('sensor.last_boot')) %}
+
+          {% set minutes = (up_time // 60) | int %}
+          {% set hours = (minutes // 60) %}
+          {% set days = (hours // 24) %}
+
+          {% set minutes = (minutes % 60) %}
+          {% set hours =  (hours % 24) %}
+          {% set days = (days % 7) %}
+
+          {% macro phrase(value, name) %}
+                      {%- set value = value %}
+                      {{- '{} {}{}'.format(value, name, end) if value | int > 0 else '' }}
+          {%- endmacro %}
+
+          {% set text = [ phrase(days, 'giorni'), phrase(hours, 'ore'), phrase(minutes, 'minuti') ] | select('!=','') | list | join(', ') %}
+          {% set last_comma = text.rfind(',') %}
+          {% if last_comma != -1 %}
+              {% set text = text[:last_comma] + ' e' + text[last_comma + 1:] %}
+          {% endif %}
+
+          {{ text }}
+
+
+      stato_lavatrice:
+        friendly_name: "Lavatrice"
+        icon_template: mdi:washing-machine
+        value_template: >-
+          {% if states.sensor.lavatrice_energy_power.state | int < 5 %}
+            Spenta
+          {% elif states.sensor.lavatrice_energy_power.state | int > 5 %}
+            Lavaggio in corso
+          {% endif %}
+
+      stato_asciugatrice:
+        friendly_name: "Asciugatrice"
+        icon_template: mdi:tumble-dryer
+        value_template: >-
+          {% if states.sensor.asciugatrice_energy_power.state | int < 5 %}
+            Spenta
+          {% elif states.sensor.asciugatrice_energy_power.state | int > 5 %}
+            Asciugatura in corso
+          {% endif %}
+
+
+  - platform: filter
+    name: "consumi generali filtered"
+    entity_id: sensor.widom_ume304_energy_driven_switch_power
+    filters:
+      - filter: range
+        upper_bound: 6000
+        lower_bound: 0
+  - platform: integration
+    source: sensor.consumi_generali_filtered
+    name: Consumi Kwh filtered
+    unit_prefix: k
+    round: 2
 
 #############################################################
 ################       SHELLY SENSORI         ###############
@@ -191,7 +275,6 @@
     unit_prefix: k
     round: 2
 
-
   - platform: mqtt
     name: "Consumo Presa Corridoio"
     state_topic: "shellies/shellyswitch-5A449F/relay/power"
@@ -201,3 +284,15 @@
     name: kWh Presa Corridoio
     unit_prefix: k
     round: 2
+
+
+###################################################################
+################       Allarme Mqtt SENSORI         ###############
+###################################################################
+
+  - platform: mqtt
+    name: Allarme INTRUSIONE
+    state_topic: "riscopanel/isonalarm"
+  - platform: mqtt
+    name: Allarme ultimo evento
+    state_topic: "riscopanel/eventhistory/lastevent"

@@ -17,7 +17,7 @@
     action:
       - service: switch.toggle
         data:
-          entity_id:  switch.switch
+          entity_id: switch.switch
 
   - alias: webhook_allarme
     initial_state: true
@@ -39,7 +39,44 @@
         data:
           entity_id: switch.shelly
 
+  - alias: webhook_porta
+    initial_state: true
+    trigger:
+      platform: webhook
+      webhook_id: allarme
+    action:
+      - service: script.apriporta
+
 ###### SONOS ######
+
+  - alias: Buon Natale RFID
+    trigger:
+      - platform: webhook
+        webhook_id: RFID Buon Natale
+      - platform: event
+        event_type: ios.action_fired
+        event_data:
+          data:
+            actionName: 'Buon Natale'
+    action:
+      - service: sonos.snapshot
+        data:
+          entity_id: media_player.salotto
+          with_group: 'true'
+      - delay: '00:00:01'
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.salotto
+          volume_level: '0.4'
+      - service: tts.google_translate_say
+        entity_id: media_player.salotto
+        data:
+          message: "Buon Natale!"
+      - delay: '00:00:03'
+      - service: sonos.restore
+        data:
+          entity_id: media_player.salotto
+          with_group: 'true'
 
   - alias: atmosfera
     initial_state: True
@@ -273,11 +310,11 @@
     condition:
       condition: and
       conditions:
-        - condition: state
-          entity_id: binary_sensor.sensor
-          state: 'off'
-          for: # solo se è stato spento nell'ultimo minuto il sensore dela camerina
-            minutes: 1
+#        - condition: state
+#          entity_id: binary_sensor.sensor
+#          state: 'off'
+#          for: # solo se è stato spento nell'ultimo minuto il sensore dela camerina
+#            minutes: 1
         - condition: state
           entity_id: sun.sun
           state: "below_horizon"
@@ -299,12 +336,12 @@
         state: "below_horizon"
       - condition: time
         after: '18:00:00'
-        before: '23:59:59'
+        before: '22:00:01'
     action:
       service: light.turn_on
       data:
         entity_id: light.level
-        brightness_pct: 10
+        brightness_pct: 20
 
   - alias: bagno notte
     initial_state: true
@@ -317,9 +354,14 @@
       - condition: state
         entity_id: sun.sun
         state: "below_horizon"
-      - condition: time
-        after: '00:00:01'
-        before: '07:00:00'
+      - condition: or
+        conditions:
+          - condition: time
+            after: '00:00:01'
+            before: '07:00:00'
+          - condition: time
+            after: '22:00:03'
+            before: '23:59:59'
     action:
       service: light.turn_on
       data:
@@ -333,7 +375,7 @@
       entity_id: binary_sensor.fibaro_system_fgms001zw5_motion_sensor_sensor
       to: 'off'
       for:
-        minutes: 1
+        minutes: 3
     action:
       service: light.turn_off
       data:
@@ -344,12 +386,15 @@
     initial_state: true
     trigger:
       platform: state
-      entity_id: media_player.lg_tv_remote
-      to: 'playing'
+      entity_id: media_player.philips_tv
+      to: 'on'
     condition:
-      condition: state
-      entity_id: sun.sun
-      state: "below_horizon"
+      - condition: state
+        entity_id: sun.sun
+        state: "below_horizon"
+      - condition: time
+        after: '18:00:00'
+        before: '23:59:59'
     action:
       service: light.turn_on
       data:
@@ -365,7 +410,7 @@
         entity_id: light.sala
         state: 'on'
       - condition: state
-        entity_id: media_player.lg_tv_remote
+        entity_id: media_player.philips_tv
         state: 'off'
     action:
       service: switch.turn_off
@@ -375,13 +420,13 @@
   - alias: pensili pir
     trigger:
       - platform: state
-        entity_id: binary_sensor.dafangindoor_motion_sensor
+        entity_id: binary_sensor.pir_cucina
         to: 'on'
     condition:
       condition: and
       conditions:
         - condition: time
-          after: '21:45:01'
+          after: '21:30:01'
           before: '06:00:00'
         - condition: template
           value_template: >
@@ -394,8 +439,6 @@
         - condition: state
           entity_id: sun.sun
           state: "below_horizon"
-        - condition: template
-          value_template: '{{ not is_state("media_player.lg_tv_remote", "playing") }}'
     action:
       - service: switch.turn_on
         data:
@@ -493,6 +536,8 @@
 #  ╚═╝  ╚═══╝ ╚═════╝    ╚═╝   ╚═╝╚═╝     ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
 #
 ################################################################################################
+
+##################################### LAVATRICE ######################
   - alias: notifica lavatrice ON
     initial_state: true
     trigger:
@@ -501,7 +546,7 @@
         above: '50'
     condition:
       - condition: state
-        entity_id: automation.attiva_notifica_lavatrice
+        entity_id: automation.notifica_lavatrice_fine
         state: 'off'
     action:
       - service: automation.turn_on
@@ -528,6 +573,7 @@
       - service: automation.turn_off
         entity_id: automation.notifica_lavatrice_fine
 
+####################################### ASCIUGATRICE #######
   - alias: notifica asciugatrice ON
     initial_state: true
     trigger:
@@ -556,15 +602,17 @@
           message: "L'asciugatrice è pronta, non approfittare dell'antipiega, che consuma..."
           title: "Home Assistant"
 
+
   - alias: notifica aggiornamento
-    initial_state: true
     trigger:
-    - platform: state
-      entity_id: updater.updater
+      - platform: state
+        entity_id: binary_sensor.updater
+        from: 'off'
+        to: 'on'
     action:
-      service: notify.ios_davides_iphone
-      data_template:
-        message: "È disponibile Home Assistant {{ states.updater.updater.state }}."
+      - service: notify.davide
+        data_template:
+          message: "È disponibile Home Assistant {{ state_attr('binary_sensor.updater', 'newest_version') }}"
 
   - alias: arrivabetty
     initial_state: True
@@ -587,11 +635,15 @@
           entity_id: media_player.dot_living
           volume_level: 0.75
       - delay: 00:00:03
-      - service: notify.alexa_media_dot_living
+      - service: notify.alexa_media
         data:
-          message: "  , Chiudete a chiave il mobile dei liquori, nascondete gli oggetti che si rompono... salvate il salvabile. E buona fortuna la vecchia è arrivata "
+          target:
+            - media_player.dot_living
+          message: >
+            {{ ["Chiudete a chiave il mobile dei liquori, nascondete gli oggetti che si rompono... salvate il salvabile. E buona fortuna la vecchia è arrivata!", "guarda un po' chi si vede , è già arrivato il sei gennaio ?", "ucci, ucci, ucci, sento odor di vecchiucci"] | random}}
           data:
-            type: tts
+            type: announce
+            method: spoken
       - service: notify.ios_davides_iphone
         data:
           message: " La vecchia pazza è alla porta.... SCAPPA ! "
@@ -619,7 +671,17 @@
           entity_id: automation.backup_automatico
       - service: notify.ios_davides_iphone
         data:
-          message: "Backup Automatico disattivato... Spazio libero sulla SD in esaurimento!"
+          message: "Backup Automatico disattivato... Il spazio sul disco è in esaurimento!"
+
+  - alias: Nuovo Dispositivo in rete
+    initial_state: true
+    trigger:
+      platform: event
+      event_type: device_tracker_new_device
+    action:
+      - service: notify.davide
+        data_template:
+          message: "Ho trovato un nuovo dispositivo in rete: {{trigger.event.data.entity_id}}"
 
   - alias: toner
     initial_state: true
@@ -632,11 +694,10 @@
         data:
           message: "È quasi finito il toner della stampante Samsung M2020, ricordati di comprarlo"
 
-
-  - alias: messaggio giorno havvento  # La Notifica  dell'avvento è opera di Alberto https://github.com/JohnnyZeta/hassio
+  - alias: Notifica hAvvento  # La Notifica  dell'avvento è opera di Alberto https://github.com/JohnnyZeta/hassio
     trigger:
       - platform: time
-        at: '12:00:00'
+        at: "12:00:00"
     action:
       - service: notify.telegram_all
         data_template:
@@ -707,8 +768,6 @@
         event_type: zwave.network_complete
       - platform: event
         event_type: zwave.network_complete_some_dead
-#      - platform: homeassistant
-#        event: start
     action:
       - delay: '00:01:00'
       - service: homekit.start
@@ -733,7 +792,7 @@
             command: upload
 
 
-  - alias: elimina notifica persistente nuovo dispositivo
+  - alias: inoltra notifica login
     initial_state: true
     trigger:
       - platform: event
@@ -742,28 +801,80 @@
           domain: persistent_notification
           service: create
     action:
-      - service_template: >
-          {% set message = trigger.event.data.service_data.message %}
-          {% if 'discovered new' in message or 'new devices' in message %}
-            persistent_notification.dismiss
-          {% else %}
-          {% endif %}
+#      - service_template: >
+#          {% set message = trigger.event.data.service_data.message %}
+#          {% if 'discovered new' in message or 'new devices' in message %}
+#            persistent_notification.dismiss
+#          {% else %}
+#          {% endif %}
+#        data:
+#          notification_id: config_entry_discovery
+      - service: notify.davide
+        data_template:
+          message: >-
+            {% set message = trigger.event.data.service_data.message %}
+            {% if 'invalid authentication' in message or 'login attempts' in message %}
+              {{ message }}: http://www.ip-tracker.org/locator/ip-lookup.php?ip={{ message.split('from ')[1] }}
+            {% else %}
+              {{ message }}
+            {% endif %}
+
+  - alias: Chiudi porta
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id: group.persone  # di default quando un membro del gruppo è a casa, il gruppo è a casa
+      from: 'home'
+      to: 'not_home'
+      for:
+        minutes: 5
+    condition:
+      - condition: state
+        entity_id: lock.porta_di_casa
+        state: 'unlocked'
+    action:
+      - service: script.bloccaporta
+      - service: notify.telegram_all
         data:
-          notification_id: config_entry_discovery
-#      - service: notify.davide
-#        data_template:
-#          message: >-
-#            {% set message = trigger.event.data.service_data.message %}
-#            {% if 'invalid authentication' in message or 'login attempts' in message %}
-#              {{ message }}: http://www.ip-tracker.org/locator/ip-lookup.php?ip={{ message.split('from ')[1] }}
-#            {% else %}
-#              {{ message }}
-#            {% endif %}
+          title: '*Automazione attivata*'
+          message: "Ho chiuso a chiave la porta"
+
 
 ##################-----CONTROLLO CARICHI----##################################
 #
 #  alla fine l'ho messo in un packages per conto suo
 #############################################################################
+
+#################################################################################################
+#  ████████╗██╗███╗   ███╗███████╗██████╗     ███████╗██╗    ██╗██╗████████╗ ██████╗██╗  ██╗
+#  ╚══██╔══╝██║████╗ ████║██╔════╝██╔══██╗    ██╔════╝██║    ██║██║╚══██╔══╝██╔════╝██║  ██║
+#     ██║   ██║██╔████╔██║█████╗  ██████╔╝    ███████╗██║ █╗ ██║██║   ██║   ██║     ███████║
+#     ██║   ██║██║╚██╔╝██║██╔══╝  ██╔══██╗    ╚════██║██║███╗██║██║   ██║   ██║     ██╔══██║
+#     ██║   ██║██║ ╚═╝ ██║███████╗██║  ██║    ███████║╚███╔███╔╝██║   ██║   ╚██████╗██║  ██║
+#     ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝    ╚══════╝ ╚══╝╚══╝ ╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝
+################################################################################################
+
+
+  - alias: Programma Forno
+    initial_state: false
+    trigger:
+      platform: time_pattern
+      minutes: '/1'
+      seconds: 0
+    condition:
+      - condition: state
+        entity_id: switch.switch_6
+        state: 'off'
+      - condition: template
+        value_template: '{{ now().strftime("%H:%M:00") == states.input_datetime.accendi_forno.state }}'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_6
+      - service: automation.turn_off
+        data:
+          entity_id: automation.programma_forno
+
 
 ############################################################################
 ###############  CONDIZIONATORE STUDIO #####################################
@@ -775,14 +886,10 @@
 #      minutes: '/1'
 #      seconds: 0
 #    condition:
-#      condition: and
-#      conditions:
-#        - condition: template
-#          value_template: '{{ not is_state("person.davide", "lavoro") }}'
-#        - condition: state
-
-
-
+#      - condition: template
+#        value_template: '{{ not is_state("person.davide", "lavoro") }}'
+#        for:
+#          minutes: 10
 #    action:
 #      - service: homeassistant.turn_off
 #        entity_id: switch.hastudio_condizionatore_studio

@@ -20,10 +20,46 @@
     optimistic: false
     retain: false
 
+  - platform: mqtt
+    name: "Presa Ingresso"
+    state_topic: "shellies/shelly1pm-B1DD37/relay/0"
+    command_topic: "shellies/shelly1pm-B1DD37/relay/0/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false
+
+  - platform: mqtt
+    name: "Presa Bagno"
+    state_topic: "shellies/shelly1pm-B1D5E2/relay/0"
+    command_topic: "shellies/shelly1pm-B1D5E2/relay/0/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false
+
+  - platform: mqtt
+    name: "Presa Pranzo"
+    state_topic: "shellies/shelly1pm-B1DE80/relay/0"
+    command_topic: "shellies/shelly1pm-B1DE80/relay/0/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false
+
+  - platform: mqtt
+    name: "Presa Corridoio"
+    state_topic: "shellies/shellyswitch-5A449F/relay/0"
+    command_topic: "shellies/shellyswitch-5A449F/relay/0/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false
+
   - platform: wake_on_lan
     name: WOL iMac
-    mac_address: !secret wol_imac
-
-#  - platform: tplink
-#    host: 192.168.1.115
-#    name: tplink_switch
+    mac: !secret wol_imac

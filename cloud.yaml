@@ -67,10 +67,6 @@
         display_categories: LIGHT
       switch.shellypensili:
         display_categories: LIGHT
-      media_player.salotto:
-        display_categories: SPEAKER
-      media_player.camere:
-        display_categories: SPEAKER
       switch.sonoff_2:
         display_categories: SMARTPLUG
         name: sonoff

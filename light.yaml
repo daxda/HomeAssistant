@@ -10,3 +10,23 @@
 #        transition: 1000
 #        use_music_mode: False #(defaults to False)
 #        save_on_change: False #(defaults to True)
+
+  - platform: mqtt
+    name: "Luce Dependance"
+    state_topic: "shellies/shellyswitch-55BA14/relay/1"
+    command_topic: "shellies/shellyswitch-55BA14/relay/1/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false
+
+  - platform: mqtt
+    name: "Luce Barbecue"
+    state_topic: "shellies/shellyswitch-55BA14/relay/0"
+    command_topic: "shellies/shellyswitch-55BA14/relay/0/command"
+    qos: 0
+    payload_on: "on"
+    payload_off: "off"
+    optimistic: false
+    retain: false

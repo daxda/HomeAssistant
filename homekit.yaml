@@ -50,8 +50,10 @@
         - script.spengitv
         - script.dolcedivano
         - script.pioggia
+        - script.entro
 # altro
         - alarm_control_panel.mqtt_alarm
+#        - lock.porta_di_casa
 
   entity_config:
     alarm_control_panel.home:

@@ -1,0 +1,122 @@
+  - platform: mqtt
+    state_topic: "yicam/motion_sensor"
+    name: "Esterno Nord"
+    payload_on: "motion_start"
+    payload_off: "motion_stop"
+    device_class: motion
+
+  - platform: workday
+    country: IT
+
+
+###################################################################
+################       Allarme Mqtt SENSORI         ###############
+###################################################################
+
+  - platform: mqtt
+    name: Movimento Ingresso
+    state_topic: "riscopanel/dects/1/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: motion
+    json_attributes_topic: "riscopanel/dects/1"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: Movimento Corridoio 1P
+    state_topic: "riscopanel/dects/16/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: motion
+    json_attributes_topic: "riscopanel/dects/16"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+#####
+  - platform: mqtt
+    name: Porta Ingresso
+    state_topic: "riscopanel/dects/0/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: door
+    json_attributes_topic: "riscopanel/dects/0"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: P Finestra Soggiorno
+    state_topic: "riscopanel/dects/5/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: door
+    json_attributes_topic: "riscopanel/dects/5"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: P Finestra Cucina
+    state_topic: "riscopanel/dects/2/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: door
+    json_attributes_topic: "riscopanel/dects/2"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+########
+  - platform: mqtt
+    name: Vibrazione Cucina
+    state_topic: "riscopanel/dects/3/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: vibration
+    json_attributes_topic: "riscopanel/dects/3"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: Vibrazione Soggiorno
+    state_topic: "riscopanel/dects/6/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: vibration
+    json_attributes_topic: "riscopanel/dects/6"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+########
+  - platform: mqtt
+    name: Finestra Bagno Sx
+    state_topic: "riscopanel/dects/8/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: opening
+    json_attributes_topic: "riscopanel/dects/8"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: Finestra Bagno Dx
+    state_topic: "riscopanel/dects/10/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: opening
+    json_attributes_topic: "riscopanel/dects/10"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: Finestra Sala Sx
+    state_topic: "riscopanel/dects/12/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: opening
+    json_attributes_topic: "riscopanel/dects/12"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: Finestra Sala Dx
+    state_topic: "riscopanel/dects/14/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: opening
+    json_attributes_topic: "riscopanel/dects/14"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: Finestra Camerina
+    state_topic: "riscopanel/dects/19/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: opening
+    json_attributes_topic: "riscopanel/dects/19"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'
+  - platform: mqtt
+    name: Finestra Studio
+    state_topic: "riscopanel/dects/17/status"
+    payload_on: "triggered"
+    payload_off: "active"
+    device_class: opening
+    json_attributes_topic: "riscopanel/dects/17"
+    json_attributes_template: '{{ value_json["name"]["id"]["bypassed"]["strTimeval"]}}'

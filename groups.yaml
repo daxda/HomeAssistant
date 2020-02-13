@@ -8,8 +8,6 @@
 
  prese:
     name: Power
-    view: no
-    control: hidden
     entities:
     - switch.switch_6 #Forno
     - switch.switch_7 #Lavastoviglie
@@ -24,7 +22,6 @@
 
  luci:
     name: Luci Interne
-    view: no
     entities:
     - switch.switch_9
     - switch.shellypensili
@@ -43,7 +40,6 @@
 
  luci_pt:
     name: Luci Piano Terra
-    view: no
     entities:
     - switch.switch_9
     - switch.shellypensili
@@ -57,7 +53,6 @@
 
  finestre:
     name: Finestre
-    view: no
     entities:
     - cover.level #sala
     - cover.level_4 #bagno
@@ -66,7 +61,6 @@
 
  living:
     name: Confort Living
-    view: no
     entities:
     - climate.termostatod
     - fan.sala
@@ -81,7 +75,6 @@
 
  lavatrice:
     name: Notifiche Lavatrice
-    view: no
     entities:
       - automation.notifica_lavatrice_on
       - automation.notifica_lavatrice_fine
@@ -89,7 +82,6 @@
 
  asciugatrice:
     name: Notifiche Asciugatrice
-    view: no
     entities:
       - automation.notifica_asciugatrice_on
       - automation.notifica_asciugatrice_fine

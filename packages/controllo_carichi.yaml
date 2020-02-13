@@ -10,6 +10,13 @@ homeassistant:
 #==== Input_Numbers ====#
 #=======================#
 input_number:
+  last_power_generale:
+    name: Ultima lettura ingresso
+    min: 0
+    max: 6000
+    step: 1
+    icon: mdi:chart-bar
+    unit_of_measurement: W
   last_power_ingresso:
     name: Ultima lettura ingresso
     min: 0
@@ -67,12 +74,12 @@ automation:
     condition:
         # questa condizione ho dovuto inserirla perchè il sensore widom ogni tanto mi da delle rilevazioni assurde e fa scattare lìautomazione
       - condition: template
-        value_template: '{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int  < 6500 }}'
+        value_template: '{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int  < 5900 }}'
     action:
       - service: script.turn_on
         data_template:
           entity_id: >
-            {% if states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 3900 %}
+            {% if states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.neo_coolcam_power_plug_12a_power_2.state | int < 4000 %}
               script.carichi_lavastoviglie
             {% elif states.sensor.widom_ume304_energy_driven_switch_power.state | int - states.sensor.consumo_presa_ingresso.state | int < 3900 %}
               script.carichi_ingresso
@@ -161,8 +168,8 @@ script:
             type: announce
             method: spoken
           message: "Stava per saltare la corrente. Ho spento la Lavastoviglie "
-      - delay: '00:10:00'
-      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3500 }}"
+      - delay: '00:20:00'
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.sensor.neo_coolcam_power_plug_12a_previous_reading_6.state | int < 3000 }}"
       - service: switch.turn_on
         data:
           entity_id: switch.switch_7
@@ -274,7 +281,7 @@ script:
           message: "Ho riacceso la presa del Corridoio "
 
   carichi_bagno:
-    alias: Pranzo stop
+    alias: Bagno stop
     sequence:
       - service: input_number.set_value
         data_template:
@@ -331,7 +338,7 @@ script:
             method: spoken
           message: "Stava per saltare la corrente. Ho spento la Lavatrice "
       - delay: '00:10:00'
-      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_lavatrice.state | int < 3500 }}"
+      - wait_template: "{{ states.sensor.widom_ume304_energy_driven_switch_power.state | int + states.input_number.last_power_lavatrice.state | int < 3000 }}"
       - service: switch.turn_on
         data:
           entity_id: switch.lavatrice
@@ -425,9 +432,9 @@ script:
   carichi_fine:
     alias: Attenzione consumi eccessivi
     sequence:
-      - service: homeassistant.turn_off
-        data:
-          entity_id: group.prese
+#      - service: homeassistant.turn_off
+#        data:
+#          entity_id: group.prese
       - service: notify.alexa_media
         data:
           target:

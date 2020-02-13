@@ -13,3 +13,8 @@
     name: Chiudo le finestre alle ...
     has_date: false
     has_time: true
+
+  accendi_forno:
+    name: Accendo il forno alle ...
+    has_date: false
+    has_time: true

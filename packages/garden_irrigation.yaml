@@ -74,11 +74,11 @@ automation:
     action:
       - service: script.irrigation_run_a_cycle
         data_template:
-          cycle: 1
+          cycle: '1'
 
       - service: script.update_next_runtime
         data_template:
-          cycle: 1
+          cycle: '1'
 
   #=== Cycle 2
   - alias: Irrigation - Run Cycle 2
@@ -100,11 +100,11 @@ automation:
     action:
       - service: script.irrigation_run_a_cycle
         data_template:
-          cycle: 2
+          cycle: '2'
 
       - service: script.update_next_runtime
         data_template:
-          cycle: 2
+          cycle: '2'
 
   #======================
   # Run A Cycle Manually
@@ -328,7 +328,7 @@ script:
       - service: script.irrigation_irrigate_a_zone
         data_template:
           cycle: '{{ cycle }}'
-          zone: 1
+          zone: '1'
 
       #=== Wait for irrigate script to end
       - wait_template: "{{ is_state('script.irrigation_irrigate_a_zone', 'off') }}"
@@ -337,7 +337,7 @@ script:
       - service: script.irrigation_irrigate_a_zone
         data_template:
           cycle: '{{ cycle }}'
-          zone: 2
+          zone: '2'
 
       # Wait for script.irrigation_irrigate_a_zone to end
       - wait_template: "{{ is_state('script.irrigation_irrigate_a_zone', 'off') }}"

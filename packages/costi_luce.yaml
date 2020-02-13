@@ -1,21 +1,29 @@
 ##############################################################################################################
 #### Diamo a cesare quel che è di cesare, questa non è farina del mio sacco                               ####
 #### il Package originale è stato scaricato da https://hassiohelp.eu/2019/03/02/controllo-consumi-costi/  ####
-#### le modifiche che ho fatto sono minime                                                                ####
+#### ci sono alcune modifiche relative alle notifiche ed al salvataggio del mese ed anno precedente       ####
+####                                                                                                      ####
 ##############################################################################################################
 
 ########## sensori monitor consumi ######
 utility_meter:
   consumo_giornaliero:
-    source: sensor.widom_ume304_energy_driven_switch_energy
+    source: sensor.consumi_kwh_filtered
     cycle: daily
     tariffs:
       - f1
       - f2
 
   consumo_mensile:
-    source: sensor.widom_ume304_energy_driven_switch_energy
+    source: sensor.consumi_kwh_filtered
     cycle: monthly
+    tariffs:
+      - f1
+      - f2
+
+  consumo_annuale:
+    source: sensor.consumi_kwh_filtered
+    cycle: yearly
     tariffs:
       - f1
       - f2
@@ -40,6 +48,54 @@ input_number:
     initial: 0.068
     mode: box
     icon: mdi:currency-eur
+
+  consumo_mese_precedente:
+    name: Consumo Mensile
+    min: 0
+    max: 1000000
+    step: 0.01
+    mode: box
+    unit_of_measurement: 'kWh'
+
+  consumo_mese_precedente_f1:
+    name: Consumo Mensile
+    min: 0
+    max: 1000000
+    step: 0.01
+    mode: box
+    unit_of_measurement: 'kWh'
+
+  consumo_mese_precedente_f2:
+    name: Consumo Mensile
+    min: 0
+    max: 1000000
+    step: 0.01
+    mode: box
+    unit_of_measurement: 'kWh'
+
+  costo_mese_precedente:
+    name: Costo Mensile
+    min: 0
+    max: 5000
+    step: 0.001
+    mode: box
+    unit_of_measurement: €
+
+  consumo_anno_precedente:
+    name: Consumo Annuale
+    min: 0
+    max: 1000000
+    step: 0.01
+    mode: box
+    unit_of_measurement: 'kWh'
+
+  costo_anno_precedente:
+    name: Costo Annuale
+    min: 0
+    max: 5000
+    step: 0.001
+    mode: box
+    unit_of_measurement: €
 
 ########## input_boolean per tariffa weekend ######
 
@@ -100,6 +156,8 @@ sensor:
         value_template: "{{((states.sensor.costo_consumo_oggi_f1.state | float) + (states.sensor.costo_consumo_oggi_f2.state| float)) | round(2) }}"
         unit_of_measurement: '€'
 
+#####
+
       costo_consumo_mensile_f1:
         friendly_name_template: "Costo Consumo mensile fascia 1"
         icon_template: mdi:currency-eur
@@ -124,6 +182,45 @@ sensor:
         value_template: "{{((states.sensor.costo_consumo_mensile_f1.state | float) + (states.sensor.costo_consumo_mensile_f2.state| float)) | round(2) }}"
         unit_of_measurement: '€'
 
+#####
+
+      costo_consumo_annuale_f1:
+        friendly_name_template: "Costo Consumo annuale fascia 1"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.consumo_annuale_f1.state | float) * (states.input_number.costo_f1.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+      costo_consumo_annuale_f2:
+        friendly_name_template: "Costo Consumo annuale fascia 2"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.consumo_annuale_f2.state | float) * (states.input_number.costo_f2.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+      consumo_totale_annuale:
+        friendly_name_template: "Consumo annuale"
+        icon_template: mdi:counter
+        value_template: "{{((states.sensor.consumo_annuale_f1.state | float) + (states.sensor.consumo_annuale_f2.state | float)) | round(3) }}"
+        unit_of_measurement: 'KWh'
+
+
+      costo_consumo_annuale_totale:
+        friendly_name_template: "Costo Consumo annuale"
+        icon_template: mdi:currency-eur
+        value_template: "{{((states.sensor.costo_consumo_annuale_f1.state | float) + (states.sensor.costo_consumo_annuale_f2.state| float)) | round(2) }}"
+        unit_of_measurement: '€'
+
+# attenzione!!! questo sensore serve per sapere quando è l'ultimo giorno del mese io lo tengo commentato perchè lo tengo nel file sensor.yaml
+#      giorno_del_mese:
+#        entity_id: sensor.date
+#        value_template: >
+#          {% set dd = now().day %}
+#          {% set dm = now().month %}
+#          {% set nm = (as_timestamp(now()) + (24*3600))| timestamp_custom('%m', True) | int %}
+#          {% if (dm!=nm ) %}
+#          ultimo
+#          {% else %}
+#          {{dd}}
+#          {% endif %}
 
 ####### automazioni cambio fascia  ##########
 
@@ -152,6 +249,10 @@ automation:
       data:
         entity_id: utility_meter.consumo_mensile
         tariff: f1
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_annuale
+        tariff: f1
 
   - alias: Cambio Tariffa F2 con festivi
     initial_state: on
@@ -177,6 +278,10 @@ automation:
       data:
         entity_id: utility_meter.consumo_mensile
         tariff: f2
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_annuale
+        tariff: f2
 
   - alias: cambio tariffa f2 giorni festivi
     initial_state: 'on'
@@ -196,6 +301,10 @@ automation:
     - service: utility_meter.select_tariff
       data:
         entity_id: utility_meter.consumo_mensile
+        tariff: f2
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_annuale
         tariff: f2
 
   - alias: Cambio Tariffa F1 senza festivi
@@ -217,6 +326,11 @@ automation:
       data:
         entity_id: utility_meter.consumo_mensile
         tariff: f1
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_annuale
+        tariff: f1
+
 
   - alias: Cambio Tariffa F2 senza festivi
     initial_state: on
@@ -237,3 +351,70 @@ automation:
       data:
         entity_id: utility_meter.consumo_mensile
         tariff: f2
+    - service: utility_meter.select_tariff
+      data:
+        entity_id: utility_meter.consumo_annuale
+        tariff: f2
+
+#############
+
+  - alias: Costi Consumi Mese Precedente
+    trigger:
+      platform: time
+      at: '23:59:45'
+    condition:
+    - condition: template
+      value_template: "{{(states.sensor.giorno_del_mese.state == 'ultimo')}}"
+    action:
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.consumo_mese_precedente
+        value: '{{ (states.sensor.consumo_totale_mensile.state | float) }}'
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.consumo_mese_precedente_f1
+        value: '{{ (states.sensor.consumo_mensile_f1.state | float) }}'
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.consumo_mese_precedente_f2
+        value: '{{ (states.sensor.consumo_mensile_f2.state | float) }}'
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.costo_mese_precedente
+        value: '{{ (states.sensor.costo_consumo_mensile_totale.state | float) }}'
+    - service: notify.telegram_all
+      data:
+        message: >
+          Report Consumi Mensili
+
+          Consumo: {{(states.input_number.consumo_mese_precedente.state | float)| round(2) }} kWh
+
+          Spesa: {{(states.input_number.costo_mese_precedente.state | float)| round(2) }} €"
+
+
+  - alias: Costi Consumi Anno Precedente
+    trigger:
+      platform: time
+      at: '23:59:55'
+    condition:
+     - condition: template
+       value_template: '{{ now().strftime("%m") == "12" }}'
+     - condition: template
+       value_template: "{{(states.sensor.giorno_del_mese.state == 'ultimo')}}"
+    action:
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.consumo_anno_precedente
+        value: '{{ (states.sensor.consumo_totale_annuale.state | float) }}'
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.costo_anno_precedente
+        value: '{{ (states.sensor.costo_consumo_annuale_totale.state | float) }}'
+    - service: notify.telegram_all
+      data:
+        message: >
+          Report Consumi Annuali
+
+          Consumo: {{(states.input_number.consumo_anno_precedente.state | float)| round(2) }} kWh
+
+          Spesa: {{(states.input_number.costo_anno_precedente.state | float)| round(2) }} €"

@@ -201,8 +201,6 @@ sensor.neo_coolcam_power_plug_12a_power_2:
   icon: mdi:chart-bar
 sensor.neo_coolcam_power_plug_12a_power_3:
   icon: mdi:chart-bar
-sensor.neo_coolcam_power_plug_12a_power_8:
-  icon: mdi:chart-bar
 sensor.neo_coolcam_power_plug_12a_power_10:
   icon: mdi:chart-bar
 sensor.neo_coolcam_power_plug_12a_power_5:
@@ -218,8 +216,7 @@ light.sala:
   friendly_name: Plantana Sala
   icon: mdi:floor-lamp
   supported_features: 63
-group.automazioni_pack_switch:
-  assumed_state: true
+group.automazioni_pack_switch: {}
 group.lavatrice: {}
 sensor.consumo_presa_bagno:
   icon: mdi:chart-bar
@@ -243,3 +240,23 @@ sensor.lavatrice_energy_power:
   icon: mdi:chart-bar
 switch.asciugatrice:
   icon: mdi:tumble-dryer
+switch.sonoff_2:
+  icon: mdi:pine-tree
+switch.widom:
+  icon: mdi:candycane
+sensor.host_uptime:
+  icon: mdi:clock
+sensor.ha_uptime:
+  icon: mdi:clock
+sensor.consumi_generali_filtered:
+  friendly_name: Consumi Generali W filtered
+sensor.shenzhen_neo_electronics_co_ltd_battery_powered_pir_sensor_v2_temperature:
+  icon: mdi:thermometer
+sensor.shenzhen_neo_electronics_co_ltd_battery_powered_pir_sensor_v2_luminance:
+  icon: mdi:brightness-5
+binary_sensor.shenzhen_neo_electronics_co_ltd_battery_powered_pir_sensor_v2_sensor:
+  icon: mdi:walk
+binary_sensor.pir_cucina:
+  icon: mdi:walk
+sensor.consumo_ups_sottoscala:
+  icon: mdi:chart-bar

@@ -11,6 +11,37 @@
       - service: media_player.turn_off
         data:
           entity_id: media_player.philips_tv
+######################################
+  apriporta:
+    alias: Apri la Porta
+    sequence:
+      - service: lock.open
+        data:
+          entity_id: lock.porta_di_casa
+  bloccaporta:
+    alias: Chiudi a chiave
+    sequence:
+      - service: lock.lock
+        data:
+          entity_id: lock.porta_di_casa
+  armaallarme:
+    alias: Inserisci l'allarme
+    sequence:
+      - service: alarm_control_panel.alarm_arm_away
+        data:
+          entity_id: alarm_control_panel.mqtt_alarm
+          code: !secret allarm_code
+  entro:
+    alias: torno a casa
+    sequence:
+      - service: alarm_control_panel.alarm_disarm
+        data:
+          entity_id: alarm_control_panel.mqtt_alarm
+          code: !secret allarm_code
+      - delay: 00:00:02
+      - service: lock.open
+        data:
+          entity_id: lock.porta_di_casa
 
   toggle_allarm:
     alias: "Toggle Allarm"
@@ -24,6 +55,8 @@
       data:
         entity_id: alarm_control_panel.mqtt_alarm
         code: !secret allarm_code
+
+#########################################################################
 
   sonosflow:
     alias: "Avvia Musica"
@@ -52,7 +85,8 @@
           data:
             type: announce
             method: spoken
-          message: "prova"
+          message: >
+            {{ ["prova 1"," funziono 2"," sa sa prova 3","4"] | random}}
 
   test_notifica:
     alias: "Test Notificha"
@@ -157,6 +191,7 @@
             - switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch_6
 
 
+
   pioggia:
     alias: "Pioggia"
     sequence:
@@ -168,12 +203,18 @@
         data:
           entity_id: cover.level_3 #camera
           position: 25
-###### devono ancora essere raccordate con l'allarme
-#      - service: cover.set_cover_position
-#        data:
-#          entity_id: cover.level #sala
-#          position: 0
-#      - service: cover.set_cover_position
-#        data:
-#          entity_id: cover.level_4 #bagno
-#          position: 13
+      - condition: and
+        conditions:
+          - condition: template
+            value_template: '{{ is_state("person.davide", "home") or is_state("person.muriel", "home") }}'
+          - condition: template
+            value_template: '{{ is_state("alarm_control_panel.mqtt_alarm", "disarmed") }}'
+## queste si chiudono solo se l'allarme è spento e siamo entrambi in casa
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level #sala
+          position: 30
+      - service: cover.set_cover_position
+        data:
+          entity_id: cover.level_4 #bagno
+          position: 13

@@ -8,11 +8,14 @@ homeassistant:
   customize: !include customize.yaml
   packages: !include_dir_named packages
 automation: !include automations.yaml
+binary_sensor: !include binary.yaml
 camera: !include camera.yaml
 cloud: !include cloud.yaml
 cover: !include cover.yaml
 config:
 conversation:
+default_config:
+ffmpeg:
 group: !include groups.yaml
 homekit: !include homekit.yaml
 input_boolean: !include boolean.yaml
@@ -32,18 +35,15 @@ scene: !include scene.yaml
 script: !include scripts.yaml
 sensor: !include sensor.yaml
 stream:
+ssdp:
 sun:
 switch: !include switch.yaml
 system_health:
 timer: !include timer.yaml
 updater:
 wake_on_lan:
-#zeroconf:
+zeroconf:
 zone: !include zones.yaml
-
-binary_sensor:
-  - platform: workday
-    country: IT
 
 lovelace:
   mode: yaml
@@ -56,15 +56,14 @@ alarm_control_panel:
     payload_disarm: "disarmed"
     payload_arm_home: "partially"
     payload_arm_away: "armed"
+lock:
+  - platform: nuki
+    host: !secret nuki_host
+    token: !secret nuki_token
 
-netatmo:
-  api_key: !secret netatmo_api_key
-  secret_key: !secret netatmo_secret_key
-  username: !secret netatmo_username
-  password:  !secret netatmo_password
-  discovery: false
-climate:
-  - platform: netatmo
+#netatmo:
+#  api_key: !secret netatmo_api_key
+#  secret_key: !secret netatmo_secret_key
 
 speedtestdotnet:
   scan_interval:
@@ -111,15 +110,34 @@ media_player:
     mac: !secret philips_mac
     username: !secret philips_user
     password: !secret philips_password
-#  - platform: philips_js
-#    host: 192.168.10.59
 
+proxmoxve:
+  - host: !secret proxmox_ip
+    username: !secret proxmox_user
+    password: !secret proxmox_pass
+    verify_ssl: false
+    nodes:
+      - node: !secret proxmox_node
+        vms:
+          - 200
+          - 254
+        containers:
+          - 101
+          - 102
+          - 103
+          - 104
+          - 105
 
 frontend:
   themes: !include_dir_merge_named themes
 
 http:
   base_url: !secret dns_url
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.10.104
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
 
 discovery:
   ignore:
@@ -197,40 +215,8 @@ panel_iframe:
 ###################################################################
 ###################### HISTORY e LOG ##############################
 ###################################################################
-history:
-  use_include_order: True
-  include:
-    domains:
-      - light
-      - switch
-      - binary_sensor
-      - person
-      - alarm_control_panel
-    entities:
-      - device_tracker.davides_iphone
-      - device_tracker.iphone_di_muriel
-      - media_player.philips_tv
-      - sensor.widom_ume304_energy_driven_switch_power
-      - sensor.widom_ume304_energy_driven_switch_energy
-      - sensor.neo_coolcam_power_plug_12a_power
-      - sensor.neo_coolcam_power_plug_12a_power_2
-      - sensor.neo_coolcam_power_plug_12a_power_8
-      - sensor.neo_coolcam_power_plug_12a_power_10
-      - sensor.neo_coolcam_power_plug_12a_power_11
-      - sensor.consumototale
-      - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
-      - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance
-      - sensor.netatmo_regenmesser_rain
-      - sensor.processor_use
-      - device_tracker.suocera
-      - media_player.lg_tv_remote
-      - alarm_control_panel.mqtt_alarm
-  exclude:
-    entities:
-      - light.fibaro_system_fgd212_dimmer_2_level_2
-      - light.fibaro_system_fgd212_dimmer_2_level
 recorder:
-  purge_keep_days: 3
+  purge_keep_days: 5
   exclude:
     domains:
       - sensor
@@ -247,18 +233,21 @@ recorder:
       - input_number
       - input_text
       - automation
+      - lock
 #      - script
       - binary_sensor
       - timer
       - alarm_control_panel
       - zwave
     entities:
+      - fan.sala
       - sensor.asciugatrice_energy_power
       - sensor.lavatrice_energy_power
       - sensor.consumo_presa_bagno
       - sensor.consumo_presa_pranzo
       - sensor.consumo_presa_ingresso
       - sensor.consumo_presa_corridoio
+      - sensor.consumo_ups_sottoscala
       - sensor.widom_ume304_energy_driven_switch_power
       - sensor.widom_ume304_energy_driven_switch_energy
       - sensor.neo_coolcam_power_plug_12a_power
@@ -287,6 +276,46 @@ recorder:
       - sensor.hastudio_broadlink_sensor_temperature
       - sensor.memory_use_percent
       - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature
+      - sensor.consumi_generali_filtered
+      - sensor.consumi_kwh_filtered
+      - sensor.ore_alla_tv_oggi
+      - sensor.ore_alla_tv_settimana
+
+history:
+  use_include_order: True
+  include:
+    domains:
+      - light
+      - switch
+      - binary_sensor
+      - person
+      - alarm_control_panel
+      - lock
+    entities:
+      - device_tracker.davides_iphone
+      - device_tracker.iphone_di_muriel
+      - media_player.philips_tv
+      - sensor.widom_ume304_energy_driven_switch_power
+      - sensor.widom_ume304_energy_driven_switch_energy
+      - sensor.asciugatrice_energy_power
+      - sensor.lavatrice_energy_power
+      - sensor.neo_coolcam_power_plug_12a_power
+      - sensor.neo_coolcam_power_plug_12a_power_2
+      - sensor.neo_coolcam_power_plug_12a_power_8
+      - sensor.neo_coolcam_power_plug_12a_power_10
+      - sensor.neo_coolcam_power_plug_12a_power_11
+      - sensor.consumototale
+      - sensor.neo_coolcam_battery_powered_pir_sensor_luminance
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance
+      - sensor.netatmo_regenmesser_rain
+      - sensor.processor_use
+      - device_tracker.suocera
+      - media_player.lg_tv_remote
+      - alarm_control_panel.mqtt_alarm
+  exclude:
+    entities:
+      - light.fibaro_system_fgd212_dimmer_2_level_2
+      - light.fibaro_system_fgd212_dimmer_2_level
 logbook:
   include:
     domains:
@@ -295,6 +324,8 @@ logbook:
       - light
       - automation
       - person
+      - lock
+      - alarm_control_panel
 #      - script
     entities:
       - device_tracker.suocera
@@ -313,6 +344,13 @@ remote_homeassistant:
     secure: false
     access_token: !secret access_token_studio
     entity_prefix: "hastudio_"
+#    include:
+#      domains:
+#        - sensor
+#        - switch
+#        - binary_sensor
+#        - light
+
 # componente non ufficiale per Alexa
 alexa_media:
   accounts:

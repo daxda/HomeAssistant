@@ -1,4 +1,16 @@
 
   - platform: ffmpeg
-    name: CamLiving
-    input: -rtsp_transport tcp -i rtsp://192.168.1.202:8554/unicast
+    name: Cam Living
+    input: -rtsp_transport tcp -i rtsp://192.168.10.41:8554/unicast
+
+  - platform: ffmpeg
+    input: rtsp://admin:JFJLVI@192.168.10.40:554
+    name: Cam Terrazza
+
+  - platform: ffmpeg
+    name: Cam Ingresso
+    input: -rtsp_transport tcp -i rtsp://192.168.10.42/ch0_0.h264
+
+#  - platform: ffmpeg
+#    name: Cam dafang2
+#    input: -rtsp_transport tcp -i rtsp://192.168.10.43:8554/unicast
